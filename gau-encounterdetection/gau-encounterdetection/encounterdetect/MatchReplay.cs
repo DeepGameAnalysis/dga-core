@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using CSGO_Analytics.src.data.gameobjects;
+using CSGO_Analytics.src.data.gamestate;
+using CSGO_Analytics.src.data.gameevents;
+
+namespace EncounterDectection
+{
+    /// <summary>
+    /// Class to save all relevant data to replay the entire match with its encounters and events.
+    /// Tick is holding all the events to draw while component is holding all links to draw between players
+    /// </summary>
+    public class MatchReplay : IDisposable
+    {
+        // Tick and the component at tick t
+        Dictionary<Tick, CombatComponent> ticksdata = new Dictionary<Tick, CombatComponent>();
+
+        public void insertReplaydata(Tick tick, CombatComponent comp)
+        {
+            ticksdata.Add(tick, comp);
+        }
+
+        /// <summary>
+        /// Returns the next tick and removes the pair -> at the end the dictionary is cleared
+        /// </summary>
+        /// <returns></returns>
+        public KeyValuePair<Tick, CombatComponent> getNextTick()
+        {
+            var first = ticksdata.First();
+            ticksdata.Remove(first.Key);
+            return first;
+        }
+
+        /// <summary>
+        /// Return all ticks with same or higher tick_id(inclusive)
+        /// </summary>
+        /// <param name="tick_id"></param>
+        /// <returns></returns>
+        public List<KeyValuePair<Tick,CombatComponent>> getTicksFrom(int tick_id)
+        {
+            return ticksdata.Where(t => t.Key.tick_id >= tick_id).ToList();
+        }
+
+        /// <summary>
+        /// Return all ticks with same or lower tick_id(inclusive)
+        /// </summary>
+        /// <param name="tick_id"></param>
+        /// <returns></returns>
+        public List<KeyValuePair<Tick,CombatComponent>> getTicksUntil(int tick_id)
+        {
+            return ticksdata.Where(t => t.Key.tick_id <= tick_id).ToList();
+        }
+
+        /// <summary>
+        /// Check if this replays data has invalid tick/component pairs. f.e. tick t has player A with different data in its component(health not the same etc)
+        /// </summary>
+        private void checkIntegrity()
+        {
+
+        }
+
+        public Dictionary<Tick, CombatComponent> getReplayData()
+        {
+            return ticksdata;
+        }
+
+        public void Dispose()
+        {
+            ticksdata = null;
+        }
+    }
+}

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>gau_encounterdetection</RootNamespace>
+    <AssemblyName>gau-encounterdetection</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="data\events\BombEvents.cs" />
+    <Compile Include="data\events\CombatEvents.cs" />
+    <Compile Include="data\events\Event.cs" />
+    <Compile Include="data\gameobjects\GameObject.cs" />
+    <Compile Include="data\gamestate\Gamestate.cs" />
+    <Compile Include="data\gamestate\GamestateGenerator.cs" />
+    <Compile Include="data\exceptions\InsufficientPlayersException.cs" />
+    <Compile Include="data\exceptions\InvalidReplayDataException.cs" />
+    <Compile Include="data\gameobjects\Map.cs" />
+    <Compile Include="data\utils\MapCreator.cs" />
+    <Compile Include="data\utils\MapMetaReader.cs" />
+    <Compile Include="data\events\MovementEvents.cs" />
+    <Compile Include="data\events\NadeEvents.cs" />
+    <Compile Include="data\gameobjects\Player.cs" />
+    <Compile Include="data\exceptions\PlayerBindingException.cs" />
+    <Compile Include="data\exceptions\PlayerDisconnectException.cs" />
+    <Compile Include="data\events\ServerEvents.cs" />
+    <Compile Include="data\gamestate\Tick.cs" />
+    <Compile Include="data\gameobjects\Weapon.cs" />
+    <Compile Include="encounterdetect\utils\AttackerCluster.cs" />
+    <Compile Include="encounterdetect\CombatComponent.cs" />
+    <Compile Include="encounterdetect\Encounter.cs" />
+    <Compile Include="encounterdetect\EncounterDetection.cs" />
+    <Compile Include="encounterdetect\Link.cs" />
+    <Compile Include="encounterdetect\MatchReplay.cs" />
+    <Compile Include="encounterdetect\utils\Trajectory.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
