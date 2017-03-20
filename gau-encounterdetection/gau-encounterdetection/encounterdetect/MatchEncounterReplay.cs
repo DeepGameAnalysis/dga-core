@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.data.gameobjects;
-using CSGO_Analytics.src.data.gamestate;
-using CSGO_Analytics.src.data.gameevents;
+using Data.Gameobjects;
+using Data.Gamestate;
+using Data.Gameevents;
 
 namespace EncounterDectection
 {
@@ -13,7 +13,7 @@ namespace EncounterDectection
     /// Class to save all relevant data to replay the entire match with its encounters and events.
     /// Tick is holding all the events to draw while component is holding all links to draw between players
     /// </summary>
-    public class MatchReplay : IDisposable
+    public class MatchEncounterReplay : IDisposable
     {
         // Tick and the component at tick t
         Dictionary<Tick, CombatComponent> ticksdata = new Dictionary<Tick, CombatComponent>();

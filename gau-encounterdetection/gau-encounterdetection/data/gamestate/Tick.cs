@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.data.gameevents;
-using CSGO_Analytics.src.data.gameobjects;
+using Data.Gameobjects;
+using Data.Gameevents;
 
-namespace CSGO_Analytics.src.data.gamestate
-
+namespace Data.Gamestate
 {
     public class Tick
     {
         public int tick_id { get; set; }
+
         public List<Event> tickevents { get; set; }
 
         /// <summary>

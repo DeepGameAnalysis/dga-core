@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSGO_Analytics.src.data.exceptions
+namespace Data.Exceptions
 {
     class PlayerBindingException : Exception
     {

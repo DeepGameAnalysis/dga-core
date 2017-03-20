@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
-using CSGO_Analytics.src.data.gameobjects;
-using CSGO_Analytics.src.encounterdetect;
-using CSGO_Analytics.src.math;
+using Data.Gameobjects;
 
-namespace CSGO_Analytics.src.data.gameevents
+namespace Data.Gameevents
 {
 
     class WeaponFire : Event

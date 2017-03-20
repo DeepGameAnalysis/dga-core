@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.data.gameobjects;
-using CSGO_Analytics.src.data.gamestate;
+using Data.Gameobjects;
+using Data.Gamestate;
 
 namespace EncounterDectection
 {

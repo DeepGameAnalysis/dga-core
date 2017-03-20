@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.math;
 
-namespace CSGO_Analytics.src.data.gameobjects
+namespace Data.Gameobjects
 {
-    public class GameObject
+    public class Gameobject
     {
         /// <summary>
         /// Name of the object

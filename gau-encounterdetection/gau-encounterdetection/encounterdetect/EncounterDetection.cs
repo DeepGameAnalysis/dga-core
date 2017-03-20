@@ -4,15 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.data.gameobjects;
-using CSGO_Analytics.src.encounterdetect;
-using CSGO_Analytics.src.encounterdetect.utils;
-using CSGO_Analytics.src.math;
-using CSGO_Analytics.src.data.gamestate;
-using CSGO_Analytics.src.data.gameevents;
-using CSGO_Analytics.src.export;
-using CSGO_Analytics.src.data.exceptions;
-using CSGO_Analytics.src.data.utils;
+using Data.Gameobjects;
+using Data.Utils;
+using Data.Gamestate;
+using Data.Gameevents;
+using Data.Exceptions;
 using System.Collections;
 using FastDBScan;
 using log4net;
@@ -309,9 +305,9 @@ namespace EncounterDectection
         /// <summary>
         /// 
         /// </summary>
-        public MatchReplay detectEncounters()
+        public MatchEncounterReplay detectEncounters()
         {
-            MatchReplay replay = new MatchReplay();
+            MatchEncounterReplay replay = new MatchEncounterReplay();
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             foreach (var round in match.rounds)

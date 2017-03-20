@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// ----------------------------------------- !! NOT USED ATM!! -------------------------------
 /// </summary>
-namespace CSGO_Analytics.src.data.gameobjects
+namespace Data.Gameobjects
 {
 
     public enum WeaponType

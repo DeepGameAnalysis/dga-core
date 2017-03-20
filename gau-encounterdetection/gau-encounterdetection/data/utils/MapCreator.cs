@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.math;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
@@ -13,9 +12,9 @@ using QuadTrees;
 using QuadTrees.Common;
 using FastDBScan;
 using KdTree.Math;
-using CSGO_Analytics.src.data.gameobjects;
+using Data.Gameobjects;
 
-namespace CSGO_Analytics.src.data.utils
+namespace Data.Utils
 {
     public class MapCreator
     {

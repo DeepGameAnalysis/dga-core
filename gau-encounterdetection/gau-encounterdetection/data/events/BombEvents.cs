@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.data.gameobjects;
+using Data.Gameobjects;
 
-namespace CSGO_Analytics.src.data.gameevents
+namespace Data.Gameevents
 {
     /// <summary>
     /// Events for bomb planted, defused, abort plant and abort defuse

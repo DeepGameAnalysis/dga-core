@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.data.gameobjects;
-using CSGO_Analytics.src.math;
+using Data.Gameobjects;
 
-namespace CSGO_Analytics.src.data.gameevents
+namespace Data.Gameevents
 {
     /// <summary>
     /// Movementevents just give us a hint that we should update the current position of this player.

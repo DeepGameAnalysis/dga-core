@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CSGO_Analytics.src.math;
 using Newtonsoft.Json;
 
-namespace CSGO_Analytics.src.data.gameobjects
+namespace Data.Gameobjects
 {
     public enum Team { None, CT, T}
 

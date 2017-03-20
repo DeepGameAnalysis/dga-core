@@ -46,9 +46,9 @@
     <Compile Include="data\events\BombEvents.cs" />
     <Compile Include="data\events\CombatEvents.cs" />
     <Compile Include="data\events\Event.cs" />
-    <Compile Include="data\gameobjects\GameObject.cs" />
+    <Compile Include="data\gameobjects\Gameobject.cs" />
     <Compile Include="data\gamestate\Gamestate.cs" />
-    <Compile Include="data\gamestate\GamestateGenerator.cs" />
+    <Compile Include="data\utils\GamestateGenerator.cs" />
     <Compile Include="data\exceptions\InsufficientPlayersException.cs" />
     <Compile Include="data\exceptions\InvalidReplayDataException.cs" />
     <Compile Include="data\gameobjects\Map.cs" />
@@ -67,7 +67,7 @@
     <Compile Include="encounterdetect\Encounter.cs" />
     <Compile Include="encounterdetect\EncounterDetection.cs" />
     <Compile Include="encounterdetect\Link.cs" />
-    <Compile Include="encounterdetect\MatchReplay.cs" />
+    <Compile Include="encounterdetect\MatchEncounterReplay.cs" />
     <Compile Include="encounterdetect\utils\Trajectory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

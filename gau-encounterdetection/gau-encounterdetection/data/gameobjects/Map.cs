@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CSGO_Analytics.src.math;
 using QuadTrees;
 using KdTree;
 using KdTree.Math;
 
-namespace CSGO_Analytics.src.data.gameobjects
+namespace Data.Gameobjects
 {
     public class Map
     {
@@ -138,6 +137,7 @@ namespace CSGO_Analytics.src.data.gameobjects
             catch (Exception e)
             {
                 Console.WriteLine("Could not find next level");
+                Console.WriteLine(e.Message);
                 return null;
             }
         }
