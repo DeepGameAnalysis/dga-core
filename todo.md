@@ -10,6 +10,7 @@
 
 # Functionality
 - Export a file to replay the results of encounter detection
+- Export results as a movie file (.mp4, .avi etc)
 
 # Code changes
 - Implement spatial and temporal prunning
