@@ -9,11 +9,13 @@
   - Teamfortress 2
 
 # Functionality
-- Export a file to replay the results of encounter detection
+- Export a file to replay the results of the encounter detection
 - Export results as a movie file (.mp4, .avi etc)
 
 # Code changes
 - Implement spatial and temporal prunning
 - Build tables for links and distances
 - Add suitable data structures (trees etc)
+- Split methods to detect encounters (eventbased, sightbased, distancebased)
+- Connection handling for replays containing connetionproblems
 - Transform code to more generic form to allow above supported games (less specific as with CS:GO)
