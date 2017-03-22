@@ -13,6 +13,7 @@
 - Export results as a movie file (.mp4, .avi etc)
 
 # Code changes
+- Adjust CSV exporter to prevent adding column names for each entry
 - Implement spatial and temporal prunning
 - Build tables for links and distances
 - Add suitable data structures (trees etc)
