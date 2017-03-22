@@ -8,6 +8,9 @@ using System.Collections;
 
 namespace EncounterDectection
 {
+    /// <summary>
+    /// Cluster a pointcloud of attackerpositions
+    /// </summary>
     public class AttackerCluster : Cluster
     {
         public double cluster_attackrange { get; set; }

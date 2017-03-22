@@ -13,7 +13,10 @@ namespace EncounterDectection
     /// </summary>
     public class CombatComponent
     {
-        public Encounter parent; // "Pointer" to encounter = parent of this component
+        /// <summary>
+        /// "Pointer" to the encounter who is parent of this component
+        /// </summary>
+        public Encounter parent; 
 
         /// <summary>
         /// Set of players participating in the component

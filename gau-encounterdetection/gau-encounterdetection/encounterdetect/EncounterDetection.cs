@@ -10,9 +10,8 @@ using Data.Gamestate;
 using Data.Gameevents;
 using Data.Exceptions;
 using System.Collections;
-using FastDBScan;
 using log4net;
-
+using Export;
 
 namespace EncounterDectection
 {
@@ -66,6 +65,11 @@ namespace EncounterDectection
         /// </summary>
         private Player[] players;
 
+
+        //
+        // Data structures for saving vital information for further use in the encounter detection process
+        //
+
         /// <summary>
         /// Holds every (attackerposition, victimposition) pair of a hitevent with the attackerposition as key
         /// </summary>
@@ -87,6 +91,14 @@ namespace EncounterDectection
         public AttackerCluster[] attacker_clusters;
 
         /// <summary>
+        /// Bit array for prunning of links - common use in RTS and MMOs
+        /// </summary>
+        public BitArray links_table;
+
+        //
+        // Data about map and mapmeta
+        //
+        /// <summary>
         /// Simple representation of the map to do basic sight calculations for players
         /// </summary>
         public Map map;
@@ -106,6 +118,11 @@ namespace EncounterDectection
         /// </summary>
         public Dictionary<long, MapLevel> playerlevels = new Dictionary<long, MapLevel>();
 
+
+
+        //
+        // The match as one data object
+        //
         /// <summary>
         /// All data we have from this match.
         /// </summary>
@@ -192,22 +209,6 @@ namespace EncounterDectection
                 SUPPORTRANGE_AVERAGE_KILL = support_ranges.Average();
 
             // Generate Hurteventclusters
-            #region Old Clusteralgorithms
-            /*
-            var dbscan = new KD_DBSCANClustering((x, y) => Math.Sqrt(((x.X - y.X) * (x.X - y.X)) + ((x.Y - y.Y) * (x.Y - y.Y))));
-            var clusterset = dbscan.ComputeClusterDbscan(allPoints: hit_hashtable.Keys.Cast<EDVector3D>().ToArray(), epsilon: 150, minPts: 3);
-
-            this.attacker_clusters = new Cluster[clusterset.Count];
-            int ind = 0;
-            foreach (var clusterdata in clusterset)
-            {
-                attacker_clusters[ind] = new Cluster(clusterdata);
-                ind++;
-            } 
-
-            this.attacker_clusters = KMeanClustering.createPositionClusters(hit_hashtable.Keys.Cast<EDVector3D>().ToList(), CLUSTER_NUM, false); */
-            #endregion
-
             var leader = new LEADERClustering((float)ATTACKRANGE_AVERAGE_HURT);
             var attackerclusters = new List<AttackerCluster>();
             foreach (var cluster in leader.clusterData(hit_hashtable.Keys.Cast<EDVector3D>().ToList()))
@@ -672,9 +673,8 @@ namespace EncounterDectection
             {
                 cs.AddRange(encounter.cs); // Watch for OutOfMemoryExceptions here if too many predecessors add up -> high tau -> one big encounter!! 
             }
-            var cs_sorted = cs.OrderBy(x => x.tick_id).ToList();
-            int encounter_tick_id = cs_sorted.ElementAt(0).tick_id;
-            var merged_encounter = new Encounter(encounter_tick_id, cs_sorted);
+            
+            var merged_encounter = new Encounter(cs_sorted);
             merged_encounter.cs.ForEach(comp => comp.parent = merged_encounter); // Set new parent encounter for all components
             return merged_encounter;
         }

@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{A610B179-882F-4DE5-AF4D-92799B1ECB41}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>gau_encounterdetection</RootNamespace>
-    <AssemblyName>gau-encounterdetection</AssemblyName>
+    <RootNamespace>gau_encounterdetection_testing</RootNamespace>
+    <AssemblyName>gau-encounterdetection-testing</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,37 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="data\events\BombEvents.cs" />
-    <Compile Include="data\events\CombatEvents.cs" />
-    <Compile Include="data\events\Event.cs" />
-    <Compile Include="data\gameobjects\Gameobject.cs" />
-    <Compile Include="data\gamestate\Gamestate.cs" />
-    <Compile Include="exceptions\InsufficientPlayersException.cs" />
-    <Compile Include="exceptions\InvalidReplayDataException.cs" />
-    <Compile Include="data\gameobjects\Map.cs" />
-    <Compile Include="data\utils\MapCreator.cs" />
-    <Compile Include="data\utils\MapMetaReader.cs" />
-    <Compile Include="data\events\MovementEvents.cs" />
-    <Compile Include="data\events\NadeEvents.cs" />
-    <Compile Include="data\gameobjects\Player.cs" />
-    <Compile Include="exceptions\PlayerBindingException.cs" />
-    <Compile Include="exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="data\events\ServerEvents.cs" />
-    <Compile Include="data\gamestate\Tick.cs" />
-    <Compile Include="data\gameobjects\Weapon.cs" />
-    <Compile Include="encounterdetect\utils\clustering\AttackerCluster.cs" />
-    <Compile Include="encounterdetect\CombatComponent.cs" />
-    <Compile Include="encounterdetect\Encounter.cs" />
-    <Compile Include="encounterdetect\EncounterDetection.cs" />
-    <Compile Include="encounterdetect\Link.cs" />
-    <Compile Include="encounterdetect\MatchEncounterReplay.cs" />
-    <Compile Include="encounterdetect\utils\Trajectory.cs" />
-    <Compile Include="export\CSVExporter.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

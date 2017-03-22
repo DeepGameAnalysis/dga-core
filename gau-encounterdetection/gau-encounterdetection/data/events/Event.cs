@@ -7,6 +7,9 @@ using Data.Gameobjects;
 
 namespace Data.Gameevents
 {
+    /// <summary>
+    /// All events inheriting this class should depict all necessary events for all supported games. make sure to add events which are new if you want to support a game!
+    /// </summary>
     public class Event
     {
         /// <summary>

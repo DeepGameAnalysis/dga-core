@@ -8,7 +8,7 @@ using Data.Gameobjects;
 namespace EncounterDectection
 {
     /// <summary>
-    /// Graph showing one Encounter at a tick tick_id
+    /// Encounter showing multiple coherent combatcomponents across multiple ticks
     /// </summary>
     public class Encounter
     {
@@ -18,10 +18,14 @@ namespace EncounterDectection
         public List<CombatComponent> cs;
 
         /// <summary>
-        /// Tick in which this encounter arised
+        /// Tick in which this encounter was first built
         /// </summary>
         public int tick_id;
 
+        /// <summary>
+        /// Build a encounter with a componant
+        /// </summary>
+        /// <param name="comp"></param>
         public Encounter(CombatComponent comp)
         {
             this.tick_id = comp.tick_id;
@@ -29,9 +33,15 @@ namespace EncounterDectection
             AddComponent(comp);
         }
 
-        public Encounter(int tick_id, List<CombatComponent> newcs)
+        /// <summary>
+        /// Build a encounter with a list of components -> use the tickid of the youngest component
+        /// </summary>
+        /// <param name="tick_id"></param>
+        /// <param name="newcs"></param>
+        public Encounter(List<CombatComponent> newcs)
         {
-            this.tick_id = tick_id;
+            int encounter_tick_id = cs.OrderBy(x => x.tick_id).ElementAt(0).tick_id;
+            this.tick_id = encounter_tick_id;
             cs = newcs.OrderBy(x => x.tick_id).ToList();
             cs.AsParallel().ForAll(x => x.parent = this);
         }
