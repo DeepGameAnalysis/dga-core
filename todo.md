@@ -3,9 +3,9 @@
 # Supported games
 - Check:
 
-  - Starcraft2
-  - Company of heroes 1/2
-  - Age of empires 2 HD
+  - Starcraft 2
+  - Company of Heroes 1/2
+  - Age of Empires 2 HD (with latest DLC)
   - Teamfortress 2
 
 # Functionality
@@ -19,4 +19,6 @@
 - Split methods to detect encounters (eventbased, sightbased, distancebased)
 - Connection handling for replays containing connetionproblems
 - Transform code to more generic form to allow above supported games (less specific as with CS:GO)
-- Find smoother way to count events in encounters
+- Find smoother way to count events in encounters and calculate their registration rate per match
+- Equals Methods for Combatcomp, Encounter, Link
+- Differ between player and entity (player = avatar in csgo ; entity = unit in age of empires controlled by a player)
