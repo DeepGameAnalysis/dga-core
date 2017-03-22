@@ -19,3 +19,4 @@
 - Split methods to detect encounters (eventbased, sightbased, distancebased)
 - Connection handling for replays containing connetionproblems
 - Transform code to more generic form to allow above supported games (less specific as with CS:GO)
+- Find smoother way to count events in encounters
