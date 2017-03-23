@@ -23,3 +23,4 @@
 - Find smoother way to count events in encounters and calculate their registration rate per match
 - Equals Methods for Combatcomp, Encounter, Link
 - Differ between player and entity (player = avatar in csgo ; entity = unit in age of empires controlled by a player)
+- Store preprocessing away from orignal encounter detection - make generic for different games
