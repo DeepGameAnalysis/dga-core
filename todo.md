@@ -11,6 +11,7 @@
 # Functionality
 - Export a file to replay the results of the encounter detection
 - Export results as a movie file (.mp4, .avi etc)
+- Read timeout parameters via file or gui
 
 # Code changes
 - Adjust CSV exporter to prevent adding column names for each entry
