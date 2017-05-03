@@ -47,6 +47,9 @@ namespace EncounterDectection
             this.links = links;
         }
 
+        /// <summary>
+        /// Assign all players interacting in this combatcomponent into players
+        /// </summary>
         public void assignPlayers()
         {
             if (links.Count == 0 || links == null) throw new Exception("No links to assign players");
@@ -57,7 +60,6 @@ namespace EncounterDectection
                 players.Add(l.getReciever());
             }
             if (players.Count == 0) throw new Exception("No players assigned");
-
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace EncounterDectection
 
             foreach (var g in tick.getTickevents())
             {
-                switch (g.gameevent)
+                switch (g.gameeventtype)
                 {
                     case "player_hurt":
                         contained_hurt_events++;
@@ -88,6 +90,9 @@ namespace EncounterDectection
             }
         }
 
+        /// <summary>
+        /// Clear component data.
+        /// </summary>
         public void reset()
         {
             players.Clear();

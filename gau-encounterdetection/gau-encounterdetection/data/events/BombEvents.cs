@@ -13,6 +13,7 @@ namespace Data.Gameevents
     class BombEvents : Event
     {
         public char site { get; set; }
+
         public bool haskit { get; set; }
 
         public override Player[] getPlayers()

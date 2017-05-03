@@ -12,15 +12,20 @@ namespace Data.Gameevents
     /// </summary>
     class MovementEvents : Event
     {
+        /// <summary>
+        /// String describing a subevent of movement event //Jumping, Sliding etc
+        /// </summary>
+        public string movementtype;
 
         public override Player[] getPlayers()
         {
             return new Player[] { actor };
         }
 
-        public override EDVector3D[] getPositions()
+        public override Point3D[] getPositions()
         {
-            return new EDVector3D[] { actor.position };
+            return new Point3D[] { actor.position };
         }
     }
+
 }

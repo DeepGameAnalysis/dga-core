@@ -13,14 +13,22 @@ namespace EncounterDectection
     /// Class to save all relevant data to replay the entire match with its encounters and events.
     /// Tick is holding all the events to draw while component is holding all links to draw between players
     /// </summary>
-    public class MatchEncounterReplay : IDisposable
+    public class EncounterDetectionReplay : IDisposable
     {
-        // Tick and the component at tick t
-        Dictionary<Tick, CombatComponent> ticksdata = new Dictionary<Tick, CombatComponent>();
+        /// <summary>
+        ///  All tick and component pairs saved in a dicitionary.
+        /// </summary>
+        Dictionary<Tick, CombatComponent> data = new Dictionary<Tick, CombatComponent>();
 
-        public void insertReplaydata(Tick tick, CombatComponent comp)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tick"></param>
+        /// <param name="comp"></param>
+        public void insertReplaydata(Tick tick, CombatComponent comp) //@TODO: save encounters instead of components
         {
-            ticksdata.Add(tick, comp);
+            if (tick.tick_id != comp.tick_id) throw new Exception("Cannot save replaydata. Component and Tickdata are not matching");
+            data.Add(tick, comp);
         }
 
         /// <summary>
@@ -29,8 +37,8 @@ namespace EncounterDectection
         /// <returns></returns>
         public KeyValuePair<Tick, CombatComponent> getNextTick()
         {
-            var first = ticksdata.First();
-            ticksdata.Remove(first.Key);
+            var first = data.First();
+            data.Remove(first.Key);
             return first;
         }
 
@@ -41,7 +49,7 @@ namespace EncounterDectection
         /// <returns></returns>
         public List<KeyValuePair<Tick,CombatComponent>> getTicksFrom(int tick_id)
         {
-            return ticksdata.Where(t => t.Key.tick_id >= tick_id).ToList();
+            return data.Where(t => t.Key.tick_id >= tick_id).ToList();
         }
 
         /// <summary>
@@ -51,7 +59,7 @@ namespace EncounterDectection
         /// <returns></returns>
         public List<KeyValuePair<Tick,CombatComponent>> getTicksUntil(int tick_id)
         {
-            return ticksdata.Where(t => t.Key.tick_id <= tick_id).ToList();
+            return data.Where(t => t.Key.tick_id <= tick_id).ToList();
         }
 
         /// <summary>
@@ -64,12 +72,12 @@ namespace EncounterDectection
 
         public Dictionary<Tick, CombatComponent> getReplayData()
         {
-            return ticksdata;
+            return data;
         }
 
         public void Dispose()
         {
-            ticksdata = null;
+            data = null;
         }
     }
 }

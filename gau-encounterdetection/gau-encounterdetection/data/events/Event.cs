@@ -15,7 +15,7 @@ namespace Data.Gameevents
         /// <summary>
         /// Identifier for events f.e. "player_hurt" "player_killed"
         /// </summary>
-        public string gameevent { get; set; }
+        public string gameeventtype { get; set; }
 
         /// <summary>
         /// The actor is always the person causing this event(or being updated with a event)

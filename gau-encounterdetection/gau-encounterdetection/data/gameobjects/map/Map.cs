@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QuadTrees;
-using KdTree;
-using KdTree.Math;
+using QuadTree;
+using KDTree;
+using KDTree.Math;
 
 namespace Data.Gameobjects
 {
@@ -22,6 +22,11 @@ namespace Data.Gameobjects
         public HashSet<MapObstacle> dynamic_obstacles;
 
         /// <summary>
+        /// Dictionary holding the maplevel of player (where he is located)
+        /// </summary>
+        public Dictionary<long, MapLevel> playerlevels = new Dictionary<long, MapLevel>();
+
+        /// <summary>
         /// Width in x range
         /// </summary>
         private float width_x;
@@ -31,6 +36,8 @@ namespace Data.Gameobjects
         /// </summary>
         private float width_y;
 
+
+
         public Map(float width_x, float width_y, MapLevel[] maplevels)
         {
             this.width_x = width_x;
@@ -39,6 +46,13 @@ namespace Data.Gameobjects
             this.dynamic_obstacles = new HashSet<MapObstacle>();
         }
 
+        /// <summary>
+        /// Update the mapdata cause a dynamic object on the map changed
+        /// </summary>
+        public void updateMap()
+        {
+
+        }
 
         /// <summary>
         /// Returns if this player is standing on the level
@@ -165,7 +179,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// All map cells representing obstacles and walls on this level - maybe use kdtree for nearest neighbors
         /// </summary>
-        public KdTree<double, MapgridCell> cells_tree = new KdTree<double, MapgridCell>(2, new DoubleMath());
+        public KDTree<double, MapgridCell> cells_tree = new KDTree<double, MapgridCell>(2, new DoubleMath());
 
         /// <summary>
         /// All cells representing walls in a quadtree
@@ -192,43 +206,6 @@ namespace Data.Gameobjects
         public override string ToString()
         {
             return "Level: " + height + " From: " + min_z + " To " + max_z;
-        }
-    }
-
-    public class MapgridCell : EDRect
-    {
-        /// <summary>
-        /// Index x of the mapcell in the map grid
-        /// </summary>
-        public int index_X { get; set; }
-
-        /// <summary>
-        /// Index y of the mapcell in the map grid
-        /// </summary>
-        public int index_Y { get; set; }
-
-        /// <summary>
-        /// Is this rect already occupied as grid cell -> it has not been walked by a player
-        /// </summary>
-        public bool blocked { get; set; }
-
-        public MapgridCell Copy()
-        {
-            return new MapgridCell
-            {
-                index_X = index_X,
-                index_Y = index_Y,
-                X = X,
-                Y = Y,
-                Width = Width,
-                Height = Height,
-                blocked = false
-            };
-        }
-
-        public override string ToString()
-        {
-            return "x: " + X + " y: " + Y + " width: " + Width + " height: " + Height + " index x: " + index_X + " index y: " + index_Y;
         }
     }
 

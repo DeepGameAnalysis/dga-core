@@ -13,8 +13,15 @@ namespace Data.Gameevents
     /// </summary>
     public class NadeEvents : Event
     {
+        /// <summary>
+        /// Type of the nade
+        /// </summary>
         public string nadetype { get; set; }
-        public EDVector3D position { get; set; }
+
+        /// <summary>
+        /// Position where this nade event is referenceing to
+        /// </summary>
+        public Point3D position { get; set; }
         
         public override Player[] getPlayers()
         {
@@ -48,14 +55,14 @@ namespace Data.Gameevents
         /// <returns></returns>
         public bool isEndEventOf(NadeEvents n)
         {
-            switch (this.gameevent)
+            switch (this.gameeventtype)
             {
                 case "smoke_exploded":
-                    return n.gameevent == "smoke_ended";
+                    return n.gameeventtype == "smoke_ended";
                 case "fire_exploded":
-                    return n.gameevent == "firenade_ended";
+                    return n.gameeventtype == "firenade_ended";
                 case "decoy_exploded":
-                    return n.gameevent == "decoy_ended";
+                    return n.gameeventtype == "decoy_ended";
                 default:
                     return false;
             }

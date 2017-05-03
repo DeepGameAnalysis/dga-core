@@ -9,15 +9,25 @@ using System.Globalization;
 
 namespace Data.Utils
 {
+    /// <summary>
+    /// Every meta data about a map is located here
+    /// </summary>
     public class MapMetaData
     {
         public string mapname { get; set; }
+
         public double mapcenter_x { get; set; }
+
         public double mapcenter_y { get; set; }
+
         public double width { get; set; }
+
         public double height { get; set; }
+
         public double scale;
+
         public int rotate { get; set; }
+
         public double zoom { get; set; }
     }
 

@@ -26,16 +26,22 @@ namespace Data.Gamestate
     public class Meta
     {
         public int gamestate_id { get; set; }
+
         public string mapname { get; set; }
+
         public float tickrate { get; set; }
+
         public int tickcount { get; set; }
+
         public List<PlayerDetailed> players { get; set; }
     }
 
     public class Match
     {
         public Team winnerteam { get; set; }
-        public Player winner { get; set; }
+
+        public List<Player> winners { get; set; }
+
         public List<Round> rounds { get; set; }
 
         /// <summary>
@@ -57,7 +63,11 @@ namespace Data.Gamestate
     public class Round
     {
         public int round_id { get; set; }
-        public string winner { get; set; }
+
+        public Player winner_player { get; set; }
+
+        public Team winner_team { get; set; }
+
         public List<Tick> ticks { get; set; }
 
         /// <summary>

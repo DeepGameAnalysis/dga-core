@@ -3,17 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Data.Gameobjects
 {
-    public enum Team { None, CT, T}
+    public enum Team { //@TODO: Split for each game
+        //CSGO
+        None,
+        CT,
+        T,
+        //Age of Empires
+        One,
+        Two,
+        Three,
+        Four,
+        Five,
+        Six,
+        Seven,
+        Eight
+    }
 
     public class PlayerMeta
     {
         public string playername { get; set; }
+
         public long player_id { get; set; }
+
         public string team { get; set; }
+
         public string clanname { get; set; }
     }
 
@@ -25,12 +41,19 @@ namespace Data.Gameobjects
         public const int PLAYERMODELL_JUMPHEIGHT = 54;
 
         public string playername { get; set; }
+
         public long player_id { get; set; }
+
         public string team { get; set; }
-        public EDVector3D position { get; set; }
+
+        public Point3D position { get; set; }
+
         public Facing facing { get; set; }
+
         public Velocity velocity { get; set; }
+
         public int HP { get; set; }
+
         public bool isSpotted { get; set; }
 
         /// <summary>
@@ -115,9 +138,9 @@ namespace Data.Gameobjects
 
     public class PlayerDetailedWithItems : PlayerDetailed
     {
-        public List<Weapon> items { get; set; }
+        public List<CSGOWeapon> items { get; set; }
 
-        public Weapon getPrimaryWeapon()
+        public CSGOWeapon getPrimaryWeapon()
         {
             if (items[0] == null)
                 //errorlog
@@ -132,6 +155,9 @@ namespace Data.Gameobjects
         public float flashedduration { get; set; }
     }
 
+    /// <summary>
+    /// Facing-class: Holding the direction of sight if given. For example as yaw and pitch values
+    /// </summary>
     public class Facing
     {
         public float Yaw { get; set; }
@@ -148,6 +174,9 @@ namespace Data.Gameobjects
         }
     }
 
+    /// <summary>
+    /// Veolcity-class: Holding every component of a velocity vector
+    /// </summary>
     public class Velocity
     {
         public float VX { get; set; }

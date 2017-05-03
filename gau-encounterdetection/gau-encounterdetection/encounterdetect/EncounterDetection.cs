@@ -10,8 +10,11 @@ using Data.Gamestate;
 using Data.Gameevents;
 using Data.Exceptions;
 using System.Collections;
-using log4net;
+//using log4net;
 using Export;
+using Clustering;
+using Preprocessing;
+using GAUMath.Library;
 
 namespace EncounterDectection
 {
@@ -26,10 +29,13 @@ namespace EncounterDectection
         private CSVExporter exporter = new CSVExporter();
 
 
+
         //
         // CONSTANTS
         //
 
+        //                          CSGO
+        //
         // Timeouts in seconds.
         private const float TAU = 20;                                   // Time after which a encounter is not a predecessor anymore
         private const float ENCOUNTER_TIMEOUT = 20;                     // Time after which a Encounter ends if he is not extended before
@@ -37,18 +43,12 @@ namespace EncounterDectection
         private const float PLAYERHURT_WEAPONFIRESEARCH_TIMEOUT = 4;    // Time after which a a player hurt event is not suitable for a weapon fire event
         private const float PLAYERHURT_DAMAGEASSIST_TIMEOUT = 4;        // Time after which a player hurt event is not suitable for a damage assist
 
-        //
-        // Variables constant for the hole match
-        //
-        /// <summary>
-        /// Average of all eventbased supports (player killed events with assister - distance assister and actor)
-        /// </summary>
-        private double SUPPORTRANGE_AVERAGE_KILL;
 
-        /// <summary>
-        /// Average of all eventbased combats (player killed and hurt events)
-        /// </summary>
-        private double ATTACKRANGE_AVERAGE_HURT;
+
+
+        //
+        // Essentials
+        //
 
         /// <summary>
         /// Tickrate of the demo this algorithm runs on in Hz. 
@@ -64,6 +64,12 @@ namespace EncounterDectection
         /// All players - communicated by the meta-data - which are participating in this match. Get updated every tick.
         /// </summary>
         private Player[] players;
+
+        /// <summary>
+        /// All entities controlled by players which are acting in this match. Get updated every tick.
+        /// </summary>
+        private HashSet<Entity> entities;
+
 
 
         //
@@ -86,7 +92,7 @@ namespace EncounterDectection
         public Hashtable damage_assist_hashtable = new Hashtable();
 
         /// <summary>
-        /// All Clusters of attackpositions
+        /// All clusters of attackpositions
         /// </summary>
         public AttackerCluster[] attacker_clusters;
 
@@ -95,8 +101,27 @@ namespace EncounterDectection
         /// </summary>
         public BitArray links_table;
 
+
+
+
         //
-        // Data about map and mapmeta
+        // Variables for building links
+        //
+        /// <summary>
+        /// Average of all eventbased supports
+        /// </summary>
+        private double SUPPORTRANGE_AVERAGE;
+
+        /// <summary>
+        /// Average of all eventbased combats
+        /// </summary>
+        private double ATTACKRANGE_AVERAGE;
+
+
+
+
+        //
+        // Mapdata
         //
         /// <summary>
         /// Simple representation of the map to do basic sight calculations for players
@@ -108,15 +133,6 @@ namespace EncounterDectection
         /// </summary>
         public string mapname;
 
-        /// <summary>
-        /// Metadata about the map
-        /// </summary>
-        private MapMetaData mapmeta;
-
-        /// <summary>
-        /// Dictionary holding the level of player
-        /// </summary>
-        public Dictionary<long, MapLevel> playerlevels = new Dictionary<long, MapLevel>();
 
 
 
@@ -128,8 +144,12 @@ namespace EncounterDectection
         /// </summary>
         private Match match;
 
-
-        public EncounterDetection(Gamestate gamestate, MapMetaData mapmeta)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gamestate">The gamestate to work on</param>
+        /// <param name="preprocessor">The preprocessor that should be used to prepare all necessary data</param>
+        public EncounterDetection(Gamestate gamestate, IPreprocessor preprocessor)
         {
             this.match = gamestate.match;
             this.mapname = gamestate.meta.mapname;
@@ -139,86 +159,13 @@ namespace EncounterDectection
             Console.WriteLine("Start with " + players.Count() + " players.");
             printplayers();
 
-            this.mapmeta = mapmeta;
 
             // Gather and prepare data for later 
-            preprocessReplayData();
+            preprocessor.preprocessData(gamestate);
 
         }
 
-        /// <summary>
-        /// Loop through the replay data and collect important data such as positions, hurtevent, averages etc for later calculations.
-        /// Alternatively load a file with this information. TODO
-        /// </summary>
-        /// <returns></returns>
-        private void preprocessReplayData()
-        {
-            var ps = new HashSet<EDVector3D>();
-            List<double> hurt_ranges = new List<double>();
-            List<double> support_ranges = new List<double>();
 
-            #region Collect positions for preprocessing  and build hashtables of events
-            foreach (var round in match.rounds)
-            {
-                foreach (var tick in round.ticks)
-                {
-                    foreach (var gevent in tick.getTickevents())
-                    {
-                        switch (gevent.gameevent) //Build hashtables with events we need later
-                        {
-                            case "player_hurt":
-                                PlayerHurt ph = (PlayerHurt)gevent;
-                                // Remove Z-Coordinate because we later get keys from clusters with points in 2D space -> hashtable needs keys with 2d data
-                                hit_hashtable[ph.actor.position.ResetZ()] = ph.victim.position.ResetZ();
-                                hurt_ranges.Add(EDMathLibrary.getEuclidDistance2D(ph.actor.position, ph.victim.position));
-                                continue;
-                            case "player_killed":
-                                PlayerKilled pk = (PlayerKilled)gevent;
-                                hit_hashtable[pk.actor.position.ResetZ()] = pk.victim.position.ResetZ();
-                                hurt_ranges.Add(EDMathLibrary.getEuclidDistance2D(pk.actor.position, pk.victim.position));
-
-                                if (pk.assister != null)
-                                {
-                                    assist_hashtable[pk.actor.position.ResetZ()] = pk.assister.position.ResetZ();
-                                    support_ranges.Add(EDMathLibrary.getEuclidDistance2D(pk.actor.position, pk.assister.position));
-                                }
-                                continue;
-                        }
-
-                        foreach (var player in gevent.getPlayers())
-                        {
-                            var vz = player.velocity.VZ;
-                            if (vz == 0) //If player is standing thus not experiencing an acceleration on z-achsis -> TRACK POSITION
-                                ps.Add(player.position);
-                            else
-                                ps.Add(player.position.ChangeZ(-54)); // Player jumped -> Z-Value is false -> correct with jumpheight
-                        }
-
-                    }
-                }
-            }
-            #endregion
-            Console.WriteLine("\nRegistered Positions for Sightgraph: " + ps.Count);
-
-            // Generate 
-            this.map = MapCreator.createMap(mapmeta, ps);
-
-            if (support_ranges.Count != 0)
-                ATTACKRANGE_AVERAGE_HURT = hurt_ranges.Average();
-            if (support_ranges.Count != 0)
-                SUPPORTRANGE_AVERAGE_KILL = support_ranges.Average();
-
-            // Generate Hurteventclusters
-            var leader = new LEADERClustering((float)ATTACKRANGE_AVERAGE_HURT);
-            var attackerclusters = new List<AttackerCluster>();
-            foreach (var cluster in leader.clusterData(hit_hashtable.Keys.Cast<EDVector3D>().ToList()))
-            {
-                var attackcluster = new AttackerCluster(cluster.data.ToArray());
-                attackcluster.calculateClusterAttackrange(hit_hashtable);
-                attackerclusters.Add(attackcluster);
-            }
-            this.attacker_clusters = attackerclusters.ToArray();
-        }
 
 
 
@@ -229,7 +176,7 @@ namespace EncounterDectection
         // MAIN ENCOUNTER DETECTION ALGORITHM
         //
         //
-
+        #region MAIN ALGORITHM
         /// <summary>
         /// All currently active - not timed out - encounters
         /// </summary>
@@ -306,9 +253,9 @@ namespace EncounterDectection
         /// <summary>
         /// 
         /// </summary>
-        public MatchEncounterReplay detectEncounters()
+        public EncounterDetectionReplay detectEncounters()
         {
-            MatchEncounterReplay replay = new MatchEncounterReplay();
+            EncounterDetectionReplay replay = new EncounterDetectionReplay();
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             foreach (var round in match.rounds)
@@ -459,11 +406,12 @@ namespace EncounterDectection
             return replay;
         }
 
+        #endregion
 
 
 
 
-        #region Methods for mainloop - keep updates consistent
+        #region Methods for mainloop - keep updates/data consistent
         /// <summary>
         /// All currently disconnected players
         /// </summary>
@@ -522,10 +470,10 @@ namespace EncounterDectection
         {
             foreach (var sevent in tick.getServerEvents())
             {
-                Console.WriteLine(sevent.gameevent + " " + sevent.actor);
+                Console.WriteLine(sevent.gameeventtype + " " + sevent.actor);
 
                 var player = sevent.actor;
-                switch (sevent.gameevent)
+                switch (sevent.gameeventtype)
                 {
                     case "player_bind":
                         bindedplayers.Add(player);
@@ -545,7 +493,7 @@ namespace EncounterDectection
         {
             foreach (var g in tick.getTickevents())
             {
-                switch (g.gameevent)
+                switch (g.gameeventtype)
                 {
                     case "player_hurt":
                         hurteventCount++;
@@ -611,7 +559,7 @@ namespace EncounterDectection
 
 
 
-        #region Methods on Encounters and Componentsmanipulation
+        #region Methods on Encounters and Componentmanipulation
         /// <summary>
         /// Searches all predecessor encounters of an component. or in other words:
         /// tests if a component is a successor of another encounters component
@@ -674,7 +622,7 @@ namespace EncounterDectection
                 cs.AddRange(encounter.cs); // Watch for OutOfMemoryExceptions here if too many predecessors add up -> high tau -> one big encounter!! 
             }
             
-            var merged_encounter = new Encounter(cs_sorted);
+            var merged_encounter = new Encounter(cs);
             merged_encounter.cs.ForEach(comp => comp.parent = merged_encounter); // Set new parent encounter for all components
             return merged_encounter;
         }
@@ -820,10 +768,10 @@ namespace EncounterDectection
             // Update playerlevels before we start using them to search links
             foreach (var p in players.Where(counterplayer => !counterplayer.isDead()))
             {
-                if (playerlevels.ContainsKey(p.player_id))
-                    playerlevels[p.player_id] = map.findLevelFromPlayer(p);
+                if (map.playerlevels.ContainsKey(p.player_id))
+                    map.playerlevels[p.player_id] = map.findLevelFromPlayer(p);
                 else
-                    playerlevels.Add(p.player_id, map.findLevelFromPlayer(p));
+                    map.playerlevels.Add(p.player_id, map.findLevelFromPlayer(p));
             }
 
             // Check for each team if a player can see a player of the other team
@@ -848,19 +796,19 @@ namespace EncounterDectection
         private bool checkVisibility(Player p1, Player p2, List<Link> links)
         {
             // Console.WriteLine("New test");
-            bool p1FOVp2 = EDMathLibrary.isInFOV(p1.position, p1.facing.Yaw, p2.position); // p2 is in fov of p1
-            bool p2FOVp1 = EDMathLibrary.isInFOV(p2.position, p2.facing.Yaw, p1.position); // p2 is in fov of p1
+            bool p1FOVp2 = ExtendedMath.IsInHVFOV(p1.position, p1.facing.Yaw, p2.position); // p2 is in fov of p1
+            bool p2FOVp1 = ExtendedMath.IsInHVFOV(p2.position, p2.facing.Yaw, p1.position); // p2 is in fov of p1
             if (!p1FOVp2 && !p2FOVp1) return false; // If false -> no sight from p1 to p2 possible because p2 is not even in the fov of p1 -> no link
 
             //Level height of p1 and p2
-            var p1Height = playerlevels[p1.player_id].height;
-            var p2Height = playerlevels[p2.player_id].height;
+            var p1Height = map.playerlevels[p1.player_id].height;
+            var p2Height = map.playerlevels[p2.player_id].height;
 
-            var current_maplevel = playerlevels[p1.player_id];
+            var current_maplevel = map.playerlevels[p1.player_id];
 
             // var coll_pos = EDMathLibrary.LOSIntersectsMapBresenham(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var coll_pos = EDMathLibrary.LOSIntersectsMap(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var coll_pos2 = EDMathLibrary.LOSIntersectsMap(p2.position, p1.position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var coll_pos = ExtendedMath.LOSIntersectsMap(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var coll_pos2 = ExtendedMath.LOSIntersectsMap(p2.position, p1.position, current_maplevel); // Check if the p1`s view is blocked on his level
             //if(coll_pos == null)Console.WriteLine("Start coll: " + coll_pos);
             if (p1Height != p2Height) throw new Exception("Wrong level height. Not possible");
             //Both players are on same level and a collision with a rect was found -> No free sight -> no link
@@ -904,9 +852,9 @@ namespace EncounterDectection
             {
                 foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
                 {
-                    var distance = EDMathLibrary.getEuclidDistance2D(player.position, other.position);
+                    var distance = ExtendedMath.GetEuclidDistance3D(player.position, other.position);
 
-                    if (distance <= ATTACKRANGE_AVERAGE_HURT && other.getTeam() != player.getTeam())
+                    if (distance <= ATTACKRANGE_AVERAGE && other.getTeam() != player.getTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
                         distancetestCLinksCount++;
@@ -930,7 +878,7 @@ namespace EncounterDectection
             {
                 foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
                 {
-                    var distance = EDMathLibrary.getEuclidDistance2D(player.position, other.position);
+                    var distance = ExtendedMath.GetEuclidDistance3D(player.position, other.position);
                     AttackerCluster playercluster = null;
                     for (int i = 0; i < attacker_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
@@ -969,7 +917,7 @@ namespace EncounterDectection
             // Events contain players with newest data to this tick
             foreach (var g in tick.getTickevents())
             { // Read all gameevents in that tick and build links of them for the component
-                switch (g.gameevent)
+                switch (g.gameeventtype)
                 {
                     //
                     //  Combatlink-Relevant Events
@@ -1087,7 +1035,7 @@ namespace EncounterDectection
             // Update active nades list with the new tick
             foreach (var g in tick.getTickevents())
             {
-                switch (g.gameevent)
+                switch (g.gameeventtype)
                 {
                     //    
                     //  Supportlink-Relevant Events
@@ -1132,7 +1080,7 @@ namespace EncounterDectection
         /// <param name="tick"></param>
         private void updateFlashes(Tick tick)
         {
-            foreach (var flashitem in activeNades.Where(item => item.Key.gameevent == "flash_exploded").ToList()) // Make Copy to enable deleting while iterating
+            foreach (var flashitem in activeNades.Where(item => item.Key.gameeventtype == "flash_exploded").ToList()) // Make Copy to enable deleting while iterating
             {
                 int finishedcount = 0;
                 FlashNade flash = (FlashNade)flashitem.Key;
@@ -1159,7 +1107,7 @@ namespace EncounterDectection
         /// <param name="links"></param>
         private void searchSupportFlashes(List<Link> links)
         {
-            foreach (var f in activeNades.Where(item => item.Key.gameevent == "flash_exploded")) //Update players flashtime and check for links
+            foreach (var f in activeNades.Where(item => item.Key.gameeventtype == "flash_exploded")) //Update players flashtime and check for links
             {
                 FlashNade flash = (FlashNade)f.Key;
 
@@ -1195,12 +1143,12 @@ namespace EncounterDectection
         /// <param name="supportlinks"></param>
         private void searchSupportSmokes(List<Link> supportlinks)
         {
-            foreach (var smokeitem in activeNades.Where(item => item.Key.gameevent == "smoke_exploded"))
+            foreach (var smokeitem in activeNades.Where(item => item.Key.gameeventtype == "smoke_exploded"))
             {
                 foreach (var counterplayer in players.Where(player => !player.isDead() && player.getTeam() != smokeitem.Key.actor.getTeam()))
                 {
                     //If a player from the opposing team of the smoke thrower saw into the smoke
-                    if (EDMathLibrary.vectorIntersectsSphere2D(smokeitem.Key.position.X, smokeitem.Key.position.Y, 250, counterplayer.position, counterplayer.facing.Yaw))
+                    if (ExtendedMath.VectorIntersectsSphere2D(smokeitem.Key.position.X, smokeitem.Key.position.Y, 250, counterplayer.position, counterplayer.facing.Yaw))
                     {
                         // Check if he could have seen a player from the thrower team
                         foreach (var teammate in players.Where(teammate => !teammate.isDead() && teammate.getTeam() == smokeitem.Key.actor.getTeam()))
@@ -1247,12 +1195,12 @@ namespace EncounterDectection
                 if (wf.actor.Equals(hurtevent.actor) && hurtevent.victim.getTeam() != wf.actor.getTeam() && aliveplayers.Contains(hurtevent.victim) && aliveplayers.Contains(wf.actor))
                 {
                     // Roughly test if an enemy can see our actor
-                    if (EDMathLibrary.isInFOV(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position) && hurtevent.victim.isSpotted)
+                    if (ExtendedMath.IsInHVFOV(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position) && hurtevent.victim.isSpotted)
                     {
                         vcandidates.Add(hurtevent.victim);
                         // Order by closest distance or by closest los player to determine which is the probablest candidate
                         //vcandidates.OrderBy(candidate => EDMathLibrary.getEuclidDistance2D(hvictimpos, wfactorpos));
-                        vcandidates.OrderBy(candidate => EDMathLibrary.getLOSOffset(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position)); //  Offset = Angle between lineofsight of actor and position of candidate
+                        vcandidates.OrderBy(candidate => ExtendedMath.GetLOSOffset2D(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position)); //  Offset = Angle between lineofsight of actor and position of candidate
                         break;
                     }
 
@@ -1286,10 +1234,10 @@ namespace EncounterDectection
             foreach (var counterplayer in players.Where(player => !player.isDead() && player.getTeam() != actor.getTeam()))
             {
                 // Test if an enemy can see our actor
-                if (EDMathLibrary.isInFOV(counterplayer.position, counterplayer.facing.Yaw, actor.position))
+                if (ExtendedMath.IsInHVFOV(counterplayer.position, counterplayer.facing.Yaw, actor.position))
                 {
                     scandidates.Add(counterplayer);
-                    scandidates.OrderBy(candidate => EDMathLibrary.getLOSOffset(counterplayer.position, counterplayer.facing.Yaw, actor.position)); //  Offset = Angle between lineofsight of actor and position of candidate
+                    scandidates.OrderBy(candidate => ExtendedMath.GetLOSOffset2D(counterplayer.position, counterplayer.facing.Yaw, actor.position)); //  Offset = Angle between lineofsight of actor and position of candidate
                 }
             }
 

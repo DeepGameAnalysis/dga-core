@@ -8,20 +8,22 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Windows;
 using System.Collections;
-using QuadTrees;
-using QuadTrees.Common;
-using FastDBScan;
-using KdTree.Math;
+using QuadTree;
+using QuadTree.Common;
+using KDTree.Math;
 using Data.Gameobjects;
 
 namespace Data.Utils
 {
-    public class MapCreator
+    /// <summary>
+    /// Rebuild the map by use of positional data.
+    /// </summary>
+    public class SimpleMapBuilder
     {
         /// <summary>
-        /// Defines the height of a level. Meaning all points starting from lowest till lowest+levelheight are included.
+        /// Defines the height of a level aka granularity of rastering all height map levels.
         /// </summary>
-        private const int LEVELHEIGHT = 1200;//(int)(Player.PLAYERMODELL_HEIGHT * 1.5);
+        private static int rastering_height;
 
         /// <summary>
         /// Map width - width of the grid
@@ -62,7 +64,7 @@ namespace Data.Utils
         /// reconstruct a polygonal represenatation of the map with serveral levels
         /// </summary>
         /// <param name="ps"></param>
-        public static Map createMap(MapMetaData mapmeta, HashSet<EDVector3D> ps)
+        public static Map createMap(MapMetaData mapmeta, HashSet<Point3D> ps)
         {
             EDMathLibrary.pos_x = pos_x = (int)mapmeta.mapcenter_x;
             EDMathLibrary.pos_y = pos_y = (int)mapmeta.mapcenter_y;
@@ -118,7 +120,7 @@ namespace Data.Utils
         /// <returns></returns>
         private static MapLevel[] createMapLevels(HashSet<EDVector3D> ps)
         {
-            int levelamount = (int)Math.Ceiling((getZRange(ps) / LEVELHEIGHT));
+            int levelamount = (int)Math.Ceiling((getZRange(ps) / rastering_height));
 
             MapLevel[] maplevels = new MapLevel[levelamount];
 
@@ -129,8 +131,8 @@ namespace Data.Utils
 
             for (int i = 0; i < levelamount; i++)
             {
-                var upperbound = min_z + (i + 1) * LEVELHEIGHT;
-                var lowerbound = min_z + i * LEVELHEIGHT;
+                var upperbound = min_z + (i + 1) * rastering_height;
+                var lowerbound = min_z + i * rastering_height;
                 var levelps = new HashSet<EDVector3D>(ps.Where(point => point.Z >= lowerbound && point.Z <= upperbound).OrderBy(point => point.Z));
                 Console.WriteLine("Z Range for Level " + i + " between " + lowerbound + " and " + upperbound);
 

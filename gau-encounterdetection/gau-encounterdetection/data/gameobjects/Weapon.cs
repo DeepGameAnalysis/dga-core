@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-/// <summary>
-/// ----------------------------------------- !! NOT USED ATM!! -------------------------------
-/// </summary>
+
 namespace Data.Gameobjects
 {
-
-    public enum WeaponType
+    /// <summary>
+    /// ----------------------------------------- !! NOT USED ATM!! -------------------------------
+    /// </summary>
+    public enum CSGOWeaponType
     {
         Unknown = 0,
         Gravity = 999,
@@ -74,7 +74,7 @@ namespace Data.Gameobjects
         HE = 506
     }
 
-    public enum WeaponCategorie
+    public enum CSGOWeaponCategorie
     {
         Unknown = 0,
         Pistol = 1,
@@ -86,7 +86,7 @@ namespace Data.Gameobjects
     }
 
 
-    public class Weapon
+    public class CSGOWeapon
     {
 
 
@@ -100,12 +100,12 @@ namespace Data.Gameobjects
         /// <summary>
         /// Type of the weapon
         /// </summary>
-        public WeaponType weaponType { get; set; }
+        public CSGOWeaponType weaponType { get; set; }
 
         /// <summary>
         /// Categorie of the weapon
         /// </summary>
-        public WeaponCategorie weaponCategorie { get; set; }
+        public CSGOWeaponCategorie weaponCategorie { get; set; }
 
         /// <summary>
         /// Ammo left in the magazine. NOT! total ammo for this weapon

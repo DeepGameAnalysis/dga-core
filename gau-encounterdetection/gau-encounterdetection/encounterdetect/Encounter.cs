@@ -34,24 +34,32 @@ namespace EncounterDectection
         }
 
         /// <summary>
-        /// Build a encounter with a list of components -> use the tickid of the youngest component
+        /// Build a encounter with a list of components -> use the tickid of the oldest component
         /// </summary>
         /// <param name="tick_id"></param>
         /// <param name="newcs"></param>
         public Encounter(List<CombatComponent> newcs)
         {
-            int encounter_tick_id = cs.OrderBy(x => x.tick_id).ElementAt(0).tick_id;
+            int encounter_tick_id = cs.OrderBy(x => x.tick_id).ElementAt(0).tick_id; //find oldest tickid(smallest)
             this.tick_id = encounter_tick_id;
             cs = newcs.OrderBy(x => x.tick_id).ToList();
             cs.AsParallel().ForAll(x => x.parent = this);
         }
 
+        /// <summary>
+        /// Update a encounter with a combatcomp (if comp is successor)
+        /// </summary>
+        /// <param name="update"></param>
         public void update(CombatComponent update)
         {
             AddComponent(update);
             cs = cs.OrderBy(x => x.tick_id).ToList();
         }
 
+        /// <summary>
+        /// Add a component to a encounter
+        /// </summary>
+        /// <param name="comp"></param>
         public void AddComponent(CombatComponent comp)
         {
             cs.Add(comp);
