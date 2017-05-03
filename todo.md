@@ -3,19 +3,37 @@
 # Supported games
 - Check:
 
-  - Starcraft2
-  - Company of heroes 1/2
-  - Age of empires 2 HD
+  - Starcraft 2
+  - Company of Heroes 1/2
+  - Age of Empires 2 HD (with latest DLC)
   - Teamfortress 2
 
 # Functionality
 - Export a file to replay the results of the encounter detection
 - Export results as a movie file (.mp4, .avi etc)
+- Read timeout parameters via file or gui
 
 # Code changes
-- Implement spatial and temporal prunning
+- Adjust CSV exporter to prevent adding column names for each entry
+
+- Implement spatial and temporal prunning for rts and mmo
+
 - Build tables for links and distances
+
 - Add suitable data structures (trees etc)
+
 - Split methods to detect encounters (eventbased, sightbased, distancebased)
+
 - Connection handling for replays containing connetionproblems
+
 - Transform code to more generic form to allow above supported games (less specific as with CS:GO)
+
+- Find smoother way to count events in encounters and calculate their registration rate per match
+
+- Equals Methods for Combatcomp, Encounter, Link
+
+- Differ between player and entity (player = avatar in csgo ; entity = unit in age of empires controlled by a player)
+
+- Store preprocessing away from orignal encounter detection - make generic for different games
+
+- Create structs where possible (Links, Components, Encounter, Entities, Players)
