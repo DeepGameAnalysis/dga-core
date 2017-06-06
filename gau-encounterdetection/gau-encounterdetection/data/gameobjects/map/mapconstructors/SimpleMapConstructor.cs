@@ -18,7 +18,7 @@ namespace Data.Utils
     /// <summary>
     /// Rebuild the map by use of positional data.
     /// </summary>
-    public class SimpleMapBuilder
+    public class SimpleMapConstructor
     {
         /// <summary>
         /// Defines the height of a level aka granularity of rastering all height map levels.

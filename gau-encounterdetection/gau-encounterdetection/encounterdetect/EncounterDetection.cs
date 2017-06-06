@@ -92,14 +92,18 @@ namespace EncounterDectection
         public Hashtable damage_assist_hashtable = new Hashtable();
 
         /// <summary>
+        /// </summary>
+        public Hashtable heal_hashtable = new Hashtable();
+
+        /// <summary>
+        /// </summary>
+        public Hashtable resupply_hashtable = new Hashtable();
+
+        /// <summary>
         /// All clusters of attackpositions
         /// </summary>
         public AttackerCluster[] attacker_clusters;
 
-        /// <summary>
-        /// Bit array for prunning of links - common use in RTS and MMOs
-        /// </summary>
-        public BitArray links_table;
 
 
 
@@ -144,12 +148,23 @@ namespace EncounterDectection
         /// </summary>
         private Match match;
 
+
+
+        //
+        // Efficiency and Prunning
+        //
+
+        /// <summary>
+        /// Bit array for prunning of links - common use in RTS and MMOs
+        /// </summary>
+        public BitArray links_table;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="gamestate">The gamestate to work on</param>
         /// <param name="preprocessor">The preprocessor that should be used to prepare all necessary data</param>
-        public EncounterDetection(Gamestate gamestate, IPreprocessor preprocessor)
+        public EncounterDetection(ReplayGamestate gamestate, IPreprocessor preprocessor)
         {
             this.match = gamestate.match;
             this.mapname = gamestate.meta.mapname;
@@ -661,7 +676,7 @@ namespace EncounterDectection
 
         /// <summary>
         /// Main Method to build components in CS:GO
-        /// Feeds the component with a links resulting from the procedure handling this tick
+        /// Feeds the component with a links resulting from the procedure handling this tick @TODO implement linker here
         /// </summary>
         /// <param name="component"></param>
         /// <param name="g"></param>

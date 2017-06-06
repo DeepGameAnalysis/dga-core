@@ -8,7 +8,7 @@ using Data.Gameobjects;
 namespace Data.Gameevents
 {
     /// <summary>
-    /// Events for bomb planted, defused, abort plant and abort defuse
+    /// Events for bomb planted, defused, abort plant and abort defuse for all games supporting a carry and plant bomb mode.
     /// </summary>
     class BombEvents : Event
     {

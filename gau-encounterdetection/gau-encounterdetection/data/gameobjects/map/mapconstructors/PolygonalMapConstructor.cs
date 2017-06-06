@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace gau_encounterdetection.data.gameobjects.map.builders
 {
-    class PolygonalMapBuilder
+    class PolygonalMapConstructor
     {
     }
 }

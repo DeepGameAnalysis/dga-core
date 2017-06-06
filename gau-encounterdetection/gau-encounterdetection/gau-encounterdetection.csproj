@@ -43,35 +43,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="data\events\BombEvents.cs" />
-    <Compile Include="data\events\CombatEvents.cs" />
+    <Compile Include="data\events\csgo\BombEvents.cs" />
+    <Compile Include="data\events\csgo\CombatEvents.cs" />
     <Compile Include="data\events\Event.cs" />
     <Compile Include="data\gameobjects\Entity.cs" />
-    <Compile Include="data\gameobjects\map\builders\LeveldMapBuilder.cs" />
-    <Compile Include="data\gameobjects\map\builders\PolygonalMapBuilder.cs" />
+    <Compile Include="data\gameobjects\map\mapconstructors\LeveldMapConstructor.cs" />
+    <Compile Include="data\gameobjects\map\mapconstructors\PolygonalMapConstructor.cs" />
     <Compile Include="data\gameobjects\map\MapGrid.cs" />
-    <Compile Include="data\gamestate\Gamestate.cs" />
+    <Compile Include="data\replaygamestate\ReplayGamestate.cs" />
     <Compile Include="encounterdetect\ConstantsTable.cs" />
     <Compile Include="encounterdetect\Linker.cs" />
     <Compile Include="exceptions\InsufficientPlayersException - Copy.cs" />
     <Compile Include="exceptions\InvalidEntityException.cs" />
     <Compile Include="exceptions\InvalidReplayDataException.cs" />
     <Compile Include="data\gameobjects\map\Map.cs" />
-    <Compile Include="data\gameobjects\map\builders\SimpleMapBuilder.cs" />
+    <Compile Include="data\gameobjects\map\mapconstructors\SimpleMapConstructor.cs" />
     <Compile Include="data\gameobjects\map\MapMetaReader.cs" />
-    <Compile Include="data\events\MovementEvents.cs" />
-    <Compile Include="data\events\NadeEvents.cs" />
+    <Compile Include="data\events\csgo\MovementEvents.cs" />
+    <Compile Include="data\events\csgo\NadeEvents.cs" />
     <Compile Include="data\gameobjects\Player.cs" />
     <Compile Include="exceptions\PlayerBindingException.cs" />
     <Compile Include="exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="data\events\ServerEvents.cs" />
-    <Compile Include="data\gamestate\Tick.cs" />
+    <Compile Include="data\events\csgo\ServerEvents.cs" />
+    <Compile Include="data\replaygamestate\Tick.cs" />
     <Compile Include="data\gameobjects\Weapon.cs" />
     <Compile Include="encounterdetect\CombatComponent.cs" />
     <Compile Include="encounterdetect\Encounter.cs" />
     <Compile Include="encounterdetect\EncounterDetection.cs" />
     <Compile Include="encounterdetect\Link.cs" />
     <Compile Include="encounterdetect\EncounterDetectionReplay.cs" />
+    <Compile Include="encounterdetect\preprocessing\CSGOPreprocessor.cs" />
+    <Compile Include="encounterdetect\preprocessing\IPreprocessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -91,12 +93,10 @@
       <Project>{e44b7cf6-cf39-439d-9119-801aed161cf0}</Project>
       <Name>gau-exporter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\gau-preprocessing\gau-preprocessing.csproj">
-      <Project>{2be0e8b4-225e-48c5-a5d0-5bc9b71cb201}</Project>
-      <Name>gau-preprocessing</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="encounterdetect\connectionmanager\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

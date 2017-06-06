@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace gau_encounterdetection.data.gameobjects.map
+namespace gau_exporter
 {
-    class LeveldMapBuilder
+    class MovieExporter
     {
     }
 }

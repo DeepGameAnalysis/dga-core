@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSVExporter.cs" />
+    <Compile Include="JSONExporter.cs" />
+    <Compile Include="MovieExporter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

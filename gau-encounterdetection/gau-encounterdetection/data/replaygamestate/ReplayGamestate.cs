@@ -8,14 +8,16 @@ using Data.Gameobjects;
 namespace Data.Gamestate
 {
     /// <summary>
-    /// This holds our entire game from tick 1 till end
+    /// !! DO NOT CONFUSE THIS WITH THE TERM "GAMESTATE" IN VIDEO GAME DEVELOPMENT FOR THE CURRENT STATE OF THE GAME. !!
+    /// !! THIS IS EVERY GAMESTATE CHANGE IN ON BIG REPLAYGAMESTATE OBJECT !!
+    /// This holds our entire game from tick 1 till end. 
     /// </summary>
-    public class Gamestate
+    public class ReplayGamestate
     {
         /// <summary>
         /// Meta data about this match`s gamestate
         /// </summary>
-        public Meta meta { get; set; }
+        public ReplayGamstateMeta meta { get; set; }
 
         /// <summary>
         /// The data about the match itself
@@ -23,7 +25,7 @@ namespace Data.Gamestate
         public Match match { get; set; }
     }
 
-    public class Meta
+    public class ReplayGamstateMeta
     {
         public int gamestate_id { get; set; }
 
@@ -70,16 +72,22 @@ namespace Data.Gamestate
 
         public List<Tick> ticks { get; set; }
 
+        public int max_tick_id { get; set; }
+
+        public int min_tick_id { get; set; }
+
         /// <summary>
         /// Get range of ticks in a round.
         /// </summary>
         /// <returns></returns>
         public int getRoundTickRange()
         {
-            var mintick = ticks.Min(tick => tick.tick_id);
-            var maxtick = ticks.Max(tick => tick.tick_id);
+            if(min_tick_id == 0)
+                min_tick_id = ticks.Min(tick => tick.tick_id);
+            if (max_tick_id == 0)
+                max_tick_id = ticks.Max(tick => tick.tick_id);
 
-            return (maxtick - mintick);
+            return (max_tick_id - min_tick_id);
         }
     }
 }

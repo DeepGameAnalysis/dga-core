@@ -5,15 +5,15 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-encounterdetection", "gau-encounterdetection\gau-encounterdetection.csproj", "{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-encounterdetection-testing", "gau-encounterdetection-testing\gau-encounterdetection-testing.csproj", "{A610B179-882F-4DE5-AF4D-92799B1ECB41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-testing", "gau-encounterdetection-testing\gau-testing.csproj", "{A610B179-882F-4DE5-AF4D-92799B1ECB41}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-spatial", "..\..\gau-spatial\gau-spatial\gau-spatial\gau-spatial.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-math", "..\..\gau-math\gau-math\gau-math\gau-math.csproj", "{8BCEE5D8-8203-46C7-8B08-A50353979029}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-preprocessing", "gau-preprocessing\gau-preprocessing.csproj", "{2BE0E8B4-225E-48C5-A5D0-5BC9B71CB201}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-exporter", "gau-exporter\gau-exporter.csproj", "{E44B7CF6-CF39-439D-9119-801AED161CF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gau-ed-gui", "gau-ed-gui\gau-ed-gui.csproj", "{F997D531-CDAC-473B-956E-E73FF5B824DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,14 @@ Global
 		{8BCEE5D8-8203-46C7-8B08-A50353979029}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BCEE5D8-8203-46C7-8B08-A50353979029}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BCEE5D8-8203-46C7-8B08-A50353979029}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BE0E8B4-225E-48C5-A5D0-5BC9B71CB201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BE0E8B4-225E-48C5-A5D0-5BC9B71CB201}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BE0E8B4-225E-48C5-A5D0-5BC9B71CB201}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BE0E8B4-225E-48C5-A5D0-5BC9B71CB201}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E44B7CF6-CF39-439D-9119-801AED161CF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E44B7CF6-CF39-439D-9119-801AED161CF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E44B7CF6-CF39-439D-9119-801AED161CF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E44B7CF6-CF39-439D-9119-801AED161CF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F997D531-CDAC-473B-956E-E73FF5B824DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F997D531-CDAC-473B-956E-E73FF5B824DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F997D531-CDAC-473B-956E-E73FF5B824DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F997D531-CDAC-473B-956E-E73FF5B824DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
