@@ -14,7 +14,9 @@ using System.Collections;
 using Export;
 using Clustering;
 using Preprocessing;
-using GAUMath.Library;
+using MathNet.Spatial.Functions;
+using MathNet.Spatial.Euclidean;
+using CollisionManager;
 
 namespace EncounterDectection
 {
@@ -171,7 +173,7 @@ namespace EncounterDectection
             this.tickrate = gamestate.meta.tickrate;
             this.ticktime = 1000 / tickrate;
             this.players = gamestate.meta.players.ToArray();
-            Console.WriteLine("Start with " + players.Count() + " players.");
+            Console.WriteLine("Match starts with " + players.Count() + " players.");
             printplayers();
 
 
@@ -811,8 +813,8 @@ namespace EncounterDectection
         private bool checkVisibility(Player p1, Player p2, List<Link> links)
         {
             // Console.WriteLine("New test");
-            bool p1FOVp2 = ExtendedMath.IsInHVFOV(p1.position, p1.facing.Yaw, p2.position); // p2 is in fov of p1
-            bool p2FOVp1 = ExtendedMath.IsInHVFOV(p2.position, p2.facing.Yaw, p1.position); // p2 is in fov of p1
+            bool p1FOVp2 = FOVFunctions.IsInHVFOV(p1.position, p1.facing.Yaw, p2.position, 106.0f); // p2 is in fov of p1
+            bool p2FOVp1 = FOVFunctions.IsInHVFOV(p2.position, p2.facing.Yaw, p1.position, 106.0f); // p2 is in fov of p1
             if (!p1FOVp2 && !p2FOVp1) return false; // If false -> no sight from p1 to p2 possible because p2 is not even in the fov of p1 -> no link
 
             //Level height of p1 and p2
@@ -822,8 +824,8 @@ namespace EncounterDectection
             var current_maplevel = map.playerlevels[p1.player_id];
 
             // var coll_pos = EDMathLibrary.LOSIntersectsMapBresenham(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var coll_pos = ExtendedMath.LOSIntersectsMap(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var coll_pos2 = ExtendedMath.LOSIntersectsMap(p2.position, p1.position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var coll_pos = CollisionController.LOSIntersectsObstacle2D(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var coll_pos2 = CollisionController.LOSIntersectsObstacle2D(p2.position, p1.position, current_maplevel); // Check if the p1`s view is blocked on his level
             //if(coll_pos == null)Console.WriteLine("Start coll: " + coll_pos);
             if (p1Height != p2Height) throw new Exception("Wrong level height. Not possible");
             //Both players are on same level and a collision with a rect was found -> No free sight -> no link
@@ -867,7 +869,7 @@ namespace EncounterDectection
             {
                 foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
                 {
-                    var distance = ExtendedMath.GetEuclidDistance3D(player.position, other.position);
+                    var distance = DistanceFunctions.GetEuclidDistance3D(player.position, other.position);
 
                     if (distance <= ATTACKRANGE_AVERAGE && other.getTeam() != player.getTeam())
                     {
@@ -893,12 +895,12 @@ namespace EncounterDectection
             {
                 foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
                 {
-                    var distance = ExtendedMath.GetEuclidDistance3D(player.position, other.position);
+                    var distance = DistanceFunctions.GetEuclidDistance3D(player.position, other.position);
                     AttackerCluster playercluster = null;
                     for (int i = 0; i < attacker_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
                         var cluster = attacker_clusters[i];
-                        if (cluster.boundings.Contains(player.position))
+                        if (cluster.boundings.Contains(player.position.SubstractZ()))
                         {
                             playercluster = cluster;
                             break;
@@ -910,7 +912,7 @@ namespace EncounterDectection
                         continue; // No Cluster found
                     }
 
-                    var attackrange = playercluster.cluster_attackrange;
+                    var attackrange = playercluster.cluster_attackrange_avg;
                     if (distance <= attackrange && other.getTeam() != player.getTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
@@ -1163,7 +1165,8 @@ namespace EncounterDectection
                 foreach (var counterplayer in players.Where(player => !player.isDead() && player.getTeam() != smokeitem.Key.actor.getTeam()))
                 {
                     //If a player from the opposing team of the smoke thrower saw into the smoke
-                    if (ExtendedMath.VectorIntersectsSphere2D(smokeitem.Key.position.X, smokeitem.Key.position.Y, 250, counterplayer.position, counterplayer.facing.Yaw))
+                    var nadecircle = new Circle2D(new Point2D(smokeitem.Key.position.X, smokeitem.Key.position.Y), 250);
+                    if (nadecircle.CircleIntersectsVector2D(counterplayer.position.SubstractZ(), counterplayer.facing.Yaw))
                     {
                         // Check if he could have seen a player from the thrower team
                         foreach (var teammate in players.Where(teammate => !teammate.isDead() && teammate.getTeam() == smokeitem.Key.actor.getTeam()))
@@ -1210,12 +1213,12 @@ namespace EncounterDectection
                 if (wf.actor.Equals(hurtevent.actor) && hurtevent.victim.getTeam() != wf.actor.getTeam() && aliveplayers.Contains(hurtevent.victim) && aliveplayers.Contains(wf.actor))
                 {
                     // Roughly test if an enemy can see our actor
-                    if (ExtendedMath.IsInHVFOV(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position) && hurtevent.victim.isSpotted)
+                    if (FOVFunctions.IsInHVFOV(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position, 106.0f) && hurtevent.victim.isSpotted)
                     {
                         vcandidates.Add(hurtevent.victim);
                         // Order by closest distance or by closest los player to determine which is the probablest candidate
                         //vcandidates.OrderBy(candidate => EDMathLibrary.getEuclidDistance2D(hvictimpos, wfactorpos));
-                        vcandidates.OrderBy(candidate => ExtendedMath.GetLOSOffset2D(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position)); //  Offset = Angle between lineofsight of actor and position of candidate
+                        vcandidates.OrderBy(candidate => FOVFunctions.GetLOSOffset2D(wf.actor.position.SubstractZ(), wf.actor.facing.Yaw, hurtevent.victim.position.SubstractZ())); //  Offset = Angle between lineofsight of actor and position of candidate
                         break;
                     }
 
@@ -1249,10 +1252,10 @@ namespace EncounterDectection
             foreach (var counterplayer in players.Where(player => !player.isDead() && player.getTeam() != actor.getTeam()))
             {
                 // Test if an enemy can see our actor
-                if (ExtendedMath.IsInHVFOV(counterplayer.position, counterplayer.facing.Yaw, actor.position))
+                if (FOVFunctions.IsInHVFOV(counterplayer.position, counterplayer.facing.Yaw, actor.position, 106.0f))
                 {
                     scandidates.Add(counterplayer);
-                    scandidates.OrderBy(candidate => ExtendedMath.GetLOSOffset2D(counterplayer.position, counterplayer.facing.Yaw, actor.position)); //  Offset = Angle between lineofsight of actor and position of candidate
+                    scandidates.OrderBy(candidate => FOVFunctions.GetLOSOffset2D(counterplayer.position.SubstractZ(), counterplayer.facing.Yaw, actor.position.SubstractZ())); //  Offset = Angle between lineofsight of actor and position of candidate
                 }
             }
 

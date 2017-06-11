@@ -4,6 +4,7 @@ using System.Linq;
 using QuadTree;
 using KDTree;
 using KDTree.Math;
+using MathNet.Spatial.Euclidean;
 
 namespace Data.Gameobjects
 {
@@ -61,7 +62,7 @@ namespace Data.Gameobjects
         public MapLevel findLevelFromPlayer(Player p)
         {
             var vz = p.velocity.VZ;
-            float pz = p.position.Z;
+            double pz = p.position.Z;
             if (vz != 0)
                 pz -= Player.PLAYERMODELL_JUMPHEIGHT; // Substract jumpheight to get real z coordinate(see process data)
             foreach (var level in maplevels)
@@ -169,22 +170,22 @@ namespace Data.Gameobjects
         /// <summary>
         /// Clusters containing the points describing this level
         /// </summary>
-        public HashSet<EDVector3D[]> clusters;
+        public HashSet<Vector3D[]> clusters;
 
         /// <summary>
         /// Array holding all grid cells 
         /// </summary>
-        public MapgridCell[][] level_grid;
+        public MapGridCell[][] level_grid;
 
         /// <summary>
         /// All map cells representing obstacles and walls on this level - maybe use kdtree for nearest neighbors
         /// </summary>
-        public KDTree<double, MapgridCell> cells_tree = new KDTree<double, MapgridCell>(2, new DoubleMath());
+        public KDTree<double, MapGridCell> cells_tree = new KDTree<double, MapGridCell>(2, new DoubleMath());
 
         /// <summary>
         /// All cells representing walls in a quadtree
         /// </summary>
-        public QuadTreeRect<MapgridCell> walls_tree = new QuadTreeRect<MapgridCell>();
+        public QuadTreeRect<MapGridCell> walls_tree = new QuadTreeRect<MapGridCell>();
 
         /// <summary>
         /// Height of this level on the map - > 0 lowest level 

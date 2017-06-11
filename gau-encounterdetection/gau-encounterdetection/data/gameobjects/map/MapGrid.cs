@@ -10,7 +10,7 @@ namespace Data.Gameobjects
     {
     }
 
-    public class MapgridCell : EDRect
+    public class MapGridCell : EDRect
     {
         /// <summary>
         /// Index x of the mapcell in the map grid
@@ -27,9 +27,9 @@ namespace Data.Gameobjects
         /// </summary>
         public bool blocked { get; set; }
 
-        public MapgridCell Copy()
+        public MapGridCell Copy()
         {
-            return new MapgridCell
+            return new MapGridCell
             {
                 index_X = index_X,
                 index_Y = index_Y,
@@ -45,5 +45,11 @@ namespace Data.Gameobjects
         {
             return "x: " + X + " y: " + Y + " width: " + Width + " height: " + Height + " index x: " + index_X + " index y: " + index_Y;
         }
+    }
+
+    public class MapGridCellQuery
+    {
+        public MapGridCell cell { get; set; }
+        public float yaw { get; set; }
     }
 }

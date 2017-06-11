@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
 using Data.Gameobjects;
+using MathNet.Spatial.Euclidean;
 
 namespace Data.Gameevents
 {
@@ -13,7 +14,7 @@ namespace Data.Gameevents
     /// </summary>
     class WeaponFire : Event
     {
-        public CSGOWeapon weapon { get; set; }
+        public Weapon weapon { get; set; }
 
         public override Player[] getPlayers()
         {
@@ -52,16 +53,16 @@ namespace Data.Gameevents
 
         public int hitgroup { get; set; }
 
-        public CSGOWeapon weapon { get; set; }
+        public Weapon weapon { get; set; }
 
         public override Player[] getPlayers()
         {
             return new Player[] { actor, victim };
         }
 
-        public override EDVector3D[] getPositions()
+        public override Point3D[] getPositions()
         {
-            return new EDVector3D[] { actor.position, victim.position };
+            return new Point3D[] { actor.position, victim.position };
         }
     }
 
@@ -85,12 +86,12 @@ namespace Data.Gameevents
                 return base.getPlayers();
         }
 
-        public override EDVector3D[] getPositions()
+        public override Point3D[] getPositions()
         {
             if(assister != null)
-                return new EDVector3D[] { actor.position, assister.position, victim.position };
+                return new Point3D[] { actor.position, assister.position, victim.position };
             else
-                return new EDVector3D[] { actor.position, victim.position };
+                return new Point3D[] { actor.position, victim.position };
         }
     }
 }

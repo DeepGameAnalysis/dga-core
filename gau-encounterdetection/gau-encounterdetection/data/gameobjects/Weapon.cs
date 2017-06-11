@@ -10,8 +10,11 @@ namespace Data.Gameobjects
     /// <summary>
     /// ----------------------------------------- !! NOT USED ATM!! -------------------------------
     /// </summary>
-    public enum CSGOWeaponType
+    public enum WeaponType
     {
+        //
+        // CS GO
+        //
         Unknown = 0,
         Gravity = 999,
 
@@ -74,7 +77,7 @@ namespace Data.Gameobjects
         HE = 506
     }
 
-    public enum CSGOWeaponCategorie
+    public enum WeaponCategorie
     {
         Unknown = 0,
         Pistol = 1,
@@ -83,40 +86,55 @@ namespace Data.Gameobjects
         Rifle = 4,
         Equipment = 5,
         Grenade = 6,
+        RocketLauncher = 7,
+        Knife = 8
     }
 
 
-    public class CSGOWeapon
+    public class Weapon
     {
 
 
         /// <summary>
         /// Owner of this weapon
         /// </summary>
-        //public Player owner { get; set; } // Is always null. Not correctly returned by DemoInfo?
+        public Player owner { get; set; }
 
+        /// <summary>
+        /// Name of this weapon
+        /// </summary>
         public string name { get; set; }
 
         /// <summary>
         /// Type of the weapon
         /// </summary>
-        public CSGOWeaponType weaponType { get; set; }
+        public WeaponType weaponType { get; set; }
 
         /// <summary>
         /// Categorie of the weapon
         /// </summary>
-        public CSGOWeaponCategorie weaponCategorie { get; set; }
+        public WeaponCategorie weaponCategorie { get; set; }
 
         /// <summary>
-        /// Ammo left in the magazine. NOT! total ammo for this weapon
+        /// Ammo left in the magazine.
         /// </summary>
         public int ammo_in_magazine { get; set; }
 
-        // Weapon data
-        //private int currentAmmo;
+        /// <summary>
+        /// Maximum ammo in a magazine
+        /// </summary>
+        private int max_ammo_in_magazine;
 
-        //private int maxAmmo;
+        /// <summary>
+        /// Maximum ammo in total
+        /// </summary>
+        private int max_ammo;
 
-        //private bool isSilenced;
+        /// <summary>
+        /// Is the weapon silenced
+        /// </summary>
+        private bool is_silenced;
+
+        private bool is_blunt;
     }
 }

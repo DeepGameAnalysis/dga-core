@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Spatial.Euclidean;
 
 namespace Data.Gameobjects
 {
@@ -110,19 +111,6 @@ namespace Data.Gameobjects
             return this.player_id.GetHashCode();
         }
 
-        public Player Copy()
-        {
-            Player me = new Player();
-            me.player_id = player_id;
-
-            me.playername = playername;
-            me.team = team;
-            me.position = position.Copy();
-            me.facing = facing.Copy();
-
-
-            return me;
-        }
     }
 
     public class PlayerDetailed : Player
@@ -138,9 +126,9 @@ namespace Data.Gameobjects
 
     public class PlayerDetailedWithItems : PlayerDetailed
     {
-        public List<CSGOWeapon> items { get; set; }
+        public List<Weapon> items { get; set; }
 
-        public CSGOWeapon getPrimaryWeapon()
+        public Weapon getPrimaryWeapon()
         {
             if (items[0] == null)
                 //errorlog

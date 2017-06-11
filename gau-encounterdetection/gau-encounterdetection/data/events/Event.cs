@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Data.Gameobjects;
+using MathNet.Spatial.Euclidean;
 
 namespace Data.Gameevents
 {
@@ -32,7 +33,7 @@ namespace Data.Gameevents
         /// Get positions tracked in the event
         /// </summary>
         /// <returns></returns>
-        public virtual EDVector3D[] getPositions() { return new EDVector3D[] { actor.position }; }
+        public virtual Point3D[] getPositions() { return new Point3D[] { actor.position }; }
 
     }
 }

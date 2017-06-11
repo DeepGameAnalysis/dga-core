@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Data.Gameevents;
 using Data.Gamestate;
 using Data.Utils;
-using GAUMath.Library;
 using Clustering;
+using MathNet.Spatial.Euclidean;
+using MathNet.Spatial.Functions;
 
 namespace Preprocessing
 {
@@ -38,17 +39,17 @@ namespace Preprocessing
                                 PlayerHurt ph = (PlayerHurt)gevent;
                                 // Remove Z-Coordinate because we later get keys from clusters with points in 2D space -> hashtable needs keys with 2d data
                                 hit_hashtable[ph.actor.position.ResetZ()] = ph.victim.position.ResetZ();
-                                hurt_ranges.Add(ExtendedMath.GetEuclidDistance2D(ph.actor.position, ph.victim.position));
+                                hurt_ranges.Add(DistanceFunctions.GetEuclidDistance3D(ph.actor.position, ph.victim.position));
                                 continue;
                             case "player_killed":
                                 PlayerKilled pk = (PlayerKilled)gevent;
                                 hit_hashtable[pk.actor.position.ResetZ()] = pk.victim.position.ResetZ();
-                                hurt_ranges.Add(ExtendedMath.GetEuclidDistance2D(pk.actor.position, pk.victim.position));
+                                hurt_ranges.Add(DistanceFunctions.GetEuclidDistance3D(pk.actor.position, pk.victim.position));
 
                                 if (pk.assister != null)
                                 {
                                     assist_hashtable[pk.actor.position.ResetZ()] = pk.assister.position.ResetZ();
-                                    support_ranges.Add(ExtendedMath.GetEuclidDistance2D(pk.actor.position, pk.assister.position));
+                                    support_ranges.Add(DistanceFunctions.GetEuclidDistance3D(pk.actor.position, pk.assister.position));
                                 }
                                 continue;
                         }
@@ -79,10 +80,10 @@ namespace Preprocessing
             // Generate Hurteventclusters
             var leader = new LEADER<float>((float)ATTACKRANGE_AVERAGE_HURT);
             var attackerclusters = new List<AttackerCluster>();
-            foreach (var cluster in leader.createClusters(hit_hashtable.Keys.Cast<EDVector3D>().ToList()))
+            foreach (var cluster in leader.createClusters(hit_hashtable.Keys.Cast<Point3D>().ToList()))
             {
                 var attackcluster = new AttackerCluster(cluster.data.ToArray());
-                attackcluster.calculateClusterAttackrange(hit_hashtable);
+                attackcluster.calculateClusterAttackranges(hit_hashtable);
                 attackerclusters.Add(attackcluster);
             }
             this.attacker_clusters = attackerclusters.ToArray();

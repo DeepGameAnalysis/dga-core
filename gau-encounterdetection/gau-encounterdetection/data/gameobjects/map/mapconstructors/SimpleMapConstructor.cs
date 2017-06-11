@@ -47,7 +47,7 @@ namespace Data.Utils
         /// <summary>
         /// The grid deployed over the map
         /// </summary>
-        private static MapgridCell[][] map_grid;
+        private static MapGridCell[][] map_grid;
 
         /// <summary>
         /// Lenght of the edges of a square in the mapgrid
@@ -77,11 +77,11 @@ namespace Data.Utils
             var currenty = pos_y;
             var cells = (mapdata_height / celledge_length) * (mapdata_width / celledge_length);
 
-            map_grid = new MapgridCell[mapdata_height / celledge_length][];
+            map_grid = new MapGridCell[mapdata_height / celledge_length][];
 
             for (int k = 0; k < map_grid.Length; k++)
             {
-                map_grid[k] = new MapgridCell[mapdata_height / celledge_length];
+                map_grid[k] = new MapGridCell[mapdata_height / celledge_length];
 
                 for (int l = 0; l < map_grid[k].Length; l++)
                 {
@@ -167,9 +167,9 @@ namespace Data.Utils
             ml.clusters = dbscan.ComputeClusterDbscan(allPoints: points, epsilon: 60.0, minPts: 2);
             points = null; // Collect points for garbage
 
-            ml.level_grid = new MapgridCell[mapdata_height / celledge_length][];
+            ml.level_grid = new MapGridCell[mapdata_height / celledge_length][];
             for (int k = 0; k < ml.level_grid.Length; k++)
-                ml.level_grid[k] = new MapgridCell[mapdata_height / celledge_length];
+                ml.level_grid[k] = new MapGridCell[mapdata_height / celledge_length];
 
 
             QuadTreePoint<EDVector3D> qtree = new QuadTreePoint<EDVector3D>();

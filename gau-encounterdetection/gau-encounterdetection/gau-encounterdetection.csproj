@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,22 +48,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="data\events\csgo\BombEvents.cs" />
-    <Compile Include="data\events\csgo\CombatEvents.cs" />
+    <Compile Include="data\events\CombatEvents.cs" />
     <Compile Include="data\events\Event.cs" />
     <Compile Include="data\gameobjects\Entity.cs" />
     <Compile Include="data\gameobjects\map\mapconstructors\LeveldMapConstructor.cs" />
     <Compile Include="data\gameobjects\map\mapconstructors\PolygonalMapConstructor.cs" />
     <Compile Include="data\gameobjects\map\MapGrid.cs" />
     <Compile Include="data\replaygamestate\ReplayGamestate.cs" />
+    <Compile Include="encounterdetect\collisionmanager\CollisionController.cs" />
     <Compile Include="encounterdetect\ConstantsTable.cs" />
     <Compile Include="encounterdetect\Linker.cs" />
+    <Compile Include="encounterdetect\preprocessing\MainPreprocessor.cs" />
     <Compile Include="exceptions\InsufficientPlayersException - Copy.cs" />
     <Compile Include="exceptions\InvalidEntityException.cs" />
     <Compile Include="exceptions\InvalidReplayDataException.cs" />
     <Compile Include="data\gameobjects\map\Map.cs" />
     <Compile Include="data\gameobjects\map\mapconstructors\SimpleMapConstructor.cs" />
     <Compile Include="data\gameobjects\map\MapMetaReader.cs" />
-    <Compile Include="data\events\csgo\MovementEvents.cs" />
+    <Compile Include="data\events\MovementEvents.cs" />
     <Compile Include="data\events\csgo\NadeEvents.cs" />
     <Compile Include="data\gameobjects\Player.cs" />
     <Compile Include="exceptions\PlayerBindingException.cs" />
@@ -79,15 +85,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\gau-math\gau-math\gau-math\gau-math.csproj">
-      <Project>{8bcee5d8-8203-46c7-8b08-a50353979029}</Project>
-      <Name>gau-math</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-spatial\gau-spatial\gau-spatial\gau-spatial.csproj">
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis.csproj">
       <Project>{6b5b8f00-f0ba-4ac2-af69-6c851628ef59}</Project>
-      <Name>gau-spatial</Name>
+      <Name>gau-spatialanalysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
+      <Project>{1f3364c6-9da3-4006-b83f-6d1335099895}</Project>
+      <Name>Spatial</Name>
     </ProjectReference>
     <ProjectReference Include="..\gau-exporter\gau-exporter.csproj">
       <Project>{e44b7cf6-cf39-439d-9119-801aed161cf0}</Project>
