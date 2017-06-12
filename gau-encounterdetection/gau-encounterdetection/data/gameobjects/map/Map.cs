@@ -30,19 +30,19 @@ namespace Data.Gameobjects
         /// <summary>
         /// Width in x range
         /// </summary>
-        private float width_x;
+        private double width;
 
         /// <summary>
         /// Width in y range
         /// </summary>
-        private float width_y;
+        private double height;
 
 
 
-        public Map(float width_x, float width_y, MapLevel[] maplevels)
+        public Map(double width, double height, MapLevel[] maplevels)
         {
-            this.width_x = width_x;
-            this.width_y = width_y;
+            this.width = width;
+            this.height = height;
             this.maplevels = maplevels;
             this.dynamic_obstacles = new HashSet<MapObstacle>();
         }
@@ -86,15 +86,9 @@ namespace Data.Gameobjects
         /// Returns a bounding box of the map with root at 0,0
         /// </summary>
         /// <returns></returns>
-        public EDRect getMapBoundingBox()
+        public Rectangle2D getMapBoundingBox()
         {
-            return new EDRect
-            {
-                X = 0,
-                Y = 0,
-                Width = this.width_x,
-                Height = this.width_y
-            };
+            return new Rectangle2D(new Point2D(0,0), width, height);
         }
 
 
@@ -170,7 +164,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// Clusters containing the points describing this level
         /// </summary>
-        public HashSet<Vector3D[]> clusters;
+        public HashSet<Point3D[]> clusters;
 
         /// <summary>
         /// Array holding all grid cells 
@@ -193,11 +187,11 @@ namespace Data.Gameobjects
         public int height;
 
         /// <summary>
-        /// Min and Max z-Koordinate occuring in levelpoints
+        /// Min and Max z-Koordinate occuring in walkable positions registered
         /// </summary>
-        public float min_z, max_z;
+        public double min_z, max_z;
 
-        public MapLevel(int height, float min_z, float max_z)
+        public MapLevel(int height, double min_z, double max_z)
         {
             this.max_z = max_z;
             this.min_z = min_z;

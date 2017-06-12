@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Data.Gamestate;
 using Data.Gameevents;
 using Data.Gameobjects;
+using MathNet.Spatial.Functions;
 
 namespace Preprocessing
 {
@@ -31,12 +32,12 @@ namespace Preprocessing
             {
                 var kevent = tevent as PlayerHurt;
                 // Hash the start and end cell
-                var actor_grid_x = getGridPosition(kevent.actor.position);
-                var actor_grid_y = getGridPosition(kevent.actor.position);
+                var actor_grid_x = GridFunctions.GetGridPosX(kevent.actor.position.X, 0, 0); // TODO: read from file origin and cellwidth
+                var actor_grid_y = GridFunctions.GetGridPosY(kevent.actor.position.Y, 0, 0);
                 var actor_yaw = kevent.actor.facing.Yaw;
 
-                var target_grid_x = getGridPosition(kevent.victim.position);
-                var target_grid_y = getGridPosition(kevent.victim.position);
+                var target_grid_x = GridFunctions.GetGridPosX(kevent.victim.position.X,0,0);
+                var target_grid_y = GridFunctions.GetGridPosY(kevent.victim.position.Y,0,0);
 
                 // Hash all cells on the way to the target with bresenham stepping TODO
                 var bres_cells = performBresenham(actor_grid_x, actor_grid_y, target_grid_x, target_grid_y);

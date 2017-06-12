@@ -12,6 +12,8 @@ using QuadTree;
 using QuadTree.Common;
 using KDTree.Math;
 using Data.Gameobjects;
+using MathNet.Spatial.Euclidean;
+using Clustering;
 
 namespace Data.Utils
 {
@@ -85,14 +87,11 @@ namespace Data.Utils
 
                 for (int l = 0; l < map_grid[k].Length; l++)
                 {
-                    map_grid[k][l] = new MapgridCell
+                    map_grid[k][l] = new MapGridCell
                     {
                         index_X = k,
                         index_Y = l,
-                        X = currentx,
-                        Y = currenty,
-                        Width = celledge_length,
-                        Height = celledge_length,
+                        bounds = new Rectangle2D(new Point2D(currentx, currenty), celledge_length, celledge_length),
                         blocked = false
                     };
                     currentx += celledge_length;
@@ -118,7 +117,7 @@ namespace Data.Utils
         /// </summary>
         /// <param name="ps"></param>
         /// <returns></returns>
-        private static MapLevel[] createMapLevels(HashSet<EDVector3D> ps)
+        private static MapLevel[] createMapLevels(HashSet<Point3D> ps)
         {
             int levelamount = (int)Math.Ceiling((getZRange(ps) / rastering_height));
 
@@ -133,7 +132,7 @@ namespace Data.Utils
             {
                 var upperbound = min_z + (i + 1) * rastering_height;
                 var lowerbound = min_z + i * rastering_height;
-                var levelps = new HashSet<EDVector3D>(ps.Where(point => point.Z >= lowerbound && point.Z <= upperbound).OrderBy(point => point.Z));
+                var levelps = new HashSet<Point3D>(ps.Where(point => point.Z >= lowerbound && point.Z <= upperbound).OrderBy(point => point.Z));
                 Console.WriteLine("Z Range for Level " + i + " between " + lowerbound + " and " + upperbound);
 
                 if (levelps.Count() == 0)
@@ -157,14 +156,15 @@ namespace Data.Utils
         /// Assgins all wall cells on a maplevel
         /// </summary>
         /// <param name="ml"></param>
-        public static void assignLevelcells(MapLevel ml, EDVector3D[] points)
+        public static void assignLevelcells(MapLevel ml, Point3D[] points)
         {
             var count = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            var dbscan = new KD_DBSCANClustering((x, y) => Math.Sqrt(((x.X - y.X) * (x.X - y.X)) + ((x.Y - y.Y) * (x.Y - y.Y))));
+            //var dbscan = new DBSCAN<Point3D>((x, y) => Math.Sqrt(((x.X - y.X) * (x.X - y.X)) + ((x.Y - y.Y) * (x.Y - y.Y))));
+            var dbscan = new DBSCAN<Point3D>(points, 60, 2);
 
-            ml.clusters = dbscan.ComputeClusterDbscan(allPoints: points, epsilon: 60.0, minPts: 2);
+            ml.clusters = dbscan.createClusters(true);
             points = null; // Collect points for garbage
 
             ml.level_grid = new MapGridCell[mapdata_height / celledge_length][];
@@ -172,15 +172,16 @@ namespace Data.Utils
                 ml.level_grid[k] = new MapGridCell[mapdata_height / celledge_length];
 
 
-            QuadTreePoint<EDVector3D> qtree = new QuadTreePoint<EDVector3D>();
+            QuadTreePoint<DataPoint<Point3D>> qtree = new QuadTreePoint<DataPoint<Point3D>>();
             foreach (var cl in ml.clusters)
-                qtree.AddRange(cl);
+                foreach(var c in cl)
+                    qtree.Add(new DataPoint<Point3D>(c));
 
              for (int k = 0; k < map_grid.Length; k++)
                 for (int l = 0; l < map_grid[k].Length; l++)
                 {
-                    var cell = map_grid[k][l].Copy();
-                    var rectps = qtree.GetObjects(cell.getAsQuadTreeRect()); //Get points in a cell
+                    var cell = map_grid[k][l];
+                    var rectps = qtree.GetObjects(cell.Rect); //Get points in a cell
                     if (rectps.Count >= MIN_CELL_QUERY)
                     {
                         cell.blocked = false;
@@ -193,7 +194,7 @@ namespace Data.Utils
                         ml.walls_tree.Add(cell);
                     }
 
-                    ml.cells_tree.Add(cell.Center.getAsDoubleArray2D(), cell);
+                    ml.cells_tree.Add(cell.bounds.Center.getAsDoubleArray(), cell);
                     ml.level_grid[k][l] = cell;
                     count++;
                 }
@@ -210,7 +211,7 @@ namespace Data.Utils
         /// Returns Range of Z for this set of points
         /// </summary>
         /// <returns></returns>
-        public static float getZRange(HashSet<EDVector3D> ps)
+        public static double getZRange(HashSet<Point3D> ps)
         {
             return ps.Max(point => point.Z) - ps.Min(point => point.Z);
         }

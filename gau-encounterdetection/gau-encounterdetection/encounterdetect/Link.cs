@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Data.Gameobjects;
+using MathNet.Spatial.Euclidean;
 
 namespace EncounterDectection
 {
@@ -38,7 +39,10 @@ namespace EncounterDectection
         /// </summary>
         public bool isKill { get; set; }
 
-        public EDVector3D coll;
+        /// <summary>
+        /// Position of a collision with an obstacle by this link
+        /// </summary>
+        public Point3D coll;
 
         public Link()
         {
@@ -64,7 +68,7 @@ namespace EncounterDectection
             this.dir = dir;
         }
 
-        public Link(Player actor, Player reciever, LinkType type, Direction dir, EDVector3D coll)
+        public Link(Player actor, Player reciever, LinkType type, Direction dir, Point3D coll)
         {
             if (actor == null || reciever == null) throw new Exception("Players cannot be null");
             if (actor.getTeam() != reciever.getTeam() && type == LinkType.SUPPORTLINK)

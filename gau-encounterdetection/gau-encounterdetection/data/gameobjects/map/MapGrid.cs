@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Spatial.Euclidean;
+using QuadTree.QTreeRect;
 
 namespace Data.Gameobjects
 {
@@ -10,7 +13,7 @@ namespace Data.Gameobjects
     {
     }
 
-    public class MapGridCell : EDRect
+    public class MapGridCell : IRectQuadStorable
     {
         /// <summary>
         /// Index x of the mapcell in the map grid
@@ -23,33 +26,39 @@ namespace Data.Gameobjects
         public int index_Y { get; set; }
 
         /// <summary>
-        /// Is this rect already occupied as grid cell -> it has not been walked by a player
+        /// Is this cell already occupied -> it has not been walked by a player
         /// </summary>
         public bool blocked { get; set; }
 
-        public MapGridCell Copy()
+        /// <summary>
+        /// Rectangular respresentation of the cell
+        /// </summary>
+        public Rectangle2D bounds { get; set; }
+
+        //TODO Change to own type rectangle
+        public Rectangle Rect
         {
-            return new MapGridCell
+            get
             {
-                index_X = index_X,
-                index_Y = index_Y,
-                X = X,
-                Y = Y,
-                Width = Width,
-                Height = Height,
-                blocked = false
-            };
+                return bounds.getAsQuadTreeRect();
+            }
         }
 
-        public override string ToString()
-        {
-            return "x: " + X + " y: " + Y + " width: " + Width + " height: " + Height + " index x: " + index_X + " index y: " + index_Y;
-        }
     }
 
+    /// <summary>
+    /// Class for fast queries on maprgridcells to determine free sight or other relations TODO: maybe split into different queries
+    /// </summary>
     public class MapGridCellQuery
     {
+        /// <summary>
+        /// Queried cell 
+        /// </summary>
         public MapGridCell cell { get; set; }
+
+        /// <summary>
+        /// Possible yaw for a FOV Query
+        /// </summary>
         public float yaw { get; set; }
     }
 }

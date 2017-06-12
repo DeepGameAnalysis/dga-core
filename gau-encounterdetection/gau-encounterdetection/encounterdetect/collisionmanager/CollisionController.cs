@@ -18,7 +18,7 @@ namespace CollisionManager
         /// <param name="end"></param>
         /// <param name="level_cells"></param>
         /// <returns></returns>
-        public static Point3D LOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
+        public static Point3D? LOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
         {
             //return BresenhamLineStepping(start, end, maplevel);
             if (maplevel == null) throw new Exception("Maplevel cannot be null");
@@ -28,9 +28,9 @@ namespace CollisionManager
 
             var queriedRects = maplevel.walls_tree.GetObjects(searchrect.getAsQuadTreeRect());
 
-            foreach (var wallcell in queriedRects.OrderBy(r => Math.Abs(r.Center.X - start.X)).ThenBy(r => Math.Abs(r.Center.Y - start.Y))) //Order Rectangles by distance to the actor. 
+            foreach (var wallcell in queriedRects.OrderBy(cell => Math.Abs(cell.bounds.X - start.X)).ThenBy(cell => Math.Abs(cell.bounds.Y - start.Y))) //Order Rectangles by distance to the actor. 
             {
-                var intersection_point = wallcell.Rect2DIntersectsLine(start, end);
+                var intersection_point = wallcell.bounds.Rect2DIntersectsLine(start.SubstractZ(), end.SubstractZ());
                 if (intersection_point != null)
                     return intersection_point;
             }

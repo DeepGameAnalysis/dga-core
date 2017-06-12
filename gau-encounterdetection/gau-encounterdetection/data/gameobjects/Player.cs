@@ -47,10 +47,19 @@ namespace Data.Gameobjects
 
         public string team { get; set; }
 
+        /// <summary>
+        /// Defining a position of a player (if hes not controlling entities in the current game)
+        /// Change in X means left or right movement on a minimap
+        /// Change in Y means up or down movement on a minimap
+        /// Change in Z means vertical movement (jumps, heightchanges on the map by climbing etc)
+        /// </summary>
         public Point3D position { get; set; }
 
         public Facing facing { get; set; }
 
+        /// <summary>
+        /// Velocity changes correlate with the positioning as mentioned for a players "position"
+        /// </summary>
         public Velocity velocity { get; set; }
 
         public int HP { get; set; }
