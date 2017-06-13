@@ -68,12 +68,15 @@ namespace Data.Utils
         /// <param name="ps"></param>
         public static Map createMap(MapMetaData mapmeta, HashSet<Point3D> ps)
         {
-            EDMathLibrary.pos_x = pos_x = (int)mapmeta.mapcenter_x;
-            EDMathLibrary.pos_y = pos_y = (int)mapmeta.mapcenter_y;
-            EDMathLibrary.mapwidth = mapdata_width = (int)mapmeta.width;
-            EDMathLibrary.mapheight = mapdata_height = (int)mapmeta.height;
+            //TODO Assign right values!!
+            pos_x = pos_x = (int)mapmeta.mapcenter_x;
+            pos_y = pos_y = (int)mapmeta.mapcenter_y;
+
+            mapdata_width = (int)mapmeta.width;
+            mapdata_height = (int)mapmeta.height;
+
             double length = mapdata_width / cellamount;
-            EDMathLibrary.cell_width = celledge_length = (int)Math.Ceiling(length);
+            celledge_length = (int)Math.Ceiling(length);
 
             var currentx = pos_x;
             var currenty = pos_y;

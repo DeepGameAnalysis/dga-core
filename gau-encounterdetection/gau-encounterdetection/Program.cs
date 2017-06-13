@@ -4,21 +4,13 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
+using System.IO;
+using Detection;
 
 namespace gau_encounterdetection
 {
     class Program
     {
-
-        static void Main(string[] args)
-        {
-            Hashtable h = new Hashtable();
-
-            h["names"] = "Dick";
-            h[2] = "Dick2";
-
-            Console.WriteLine(h["names"]);
-            Console.WriteLine(h[2]);
-        }
     }
 }

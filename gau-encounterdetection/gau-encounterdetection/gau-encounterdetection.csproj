@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
@@ -57,6 +61,7 @@
     <Compile Include="data\gameobjects\map\MapGrid.cs" />
     <Compile Include="data\replaygamestate\ReplayGamestate.cs" />
     <Compile Include="encounterdetect\collisionmanager\CollisionController.cs" />
+    <Compile Include="encounterdetect\EncounterDetectionData.cs" />
     <Compile Include="encounterdetect\Linker.cs" />
     <Compile Include="encounterdetect\preprocessing\MainPreprocessor.cs" />
     <Compile Include="exceptions\InsufficientPlayersException - Copy.cs" />

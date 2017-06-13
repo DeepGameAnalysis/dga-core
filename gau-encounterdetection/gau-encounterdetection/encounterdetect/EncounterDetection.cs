@@ -10,7 +10,7 @@ using Data.Gamestate;
 using Data.Gameevents;
 using Data.Exceptions;
 using System.Collections;
-//using log4net;
+using log4net;
 using Export;
 using Clustering;
 using Preprocessing;
@@ -18,7 +18,7 @@ using MathNet.Spatial.Functions;
 using MathNet.Spatial.Euclidean;
 using CollisionManager;
 
-namespace EncounterDectection
+namespace Detection
 {
 
     public class EncounterDetection
@@ -178,7 +178,7 @@ namespace EncounterDectection
 
 
             // Gather and prepare data for later 
-            preprocessor.preprocessData(gamestate);
+            preprocessor.preprocessData(gamestate, null); //TODO: insert mapmetadata somewhere
 
         }
 

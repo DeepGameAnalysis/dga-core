@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Data.Gamestate;
 using Data.Gameevents;
 using Data.Gameobjects;
+using Data.Utils;
 using MathNet.Spatial.Functions;
 
 namespace Preprocessing
@@ -17,7 +18,7 @@ namespace Preprocessing
         static Hashtable gridsights_hash = new Hashtable();
 
 
-        public void preprocessData(ReplayGamestate gamestate)
+        public void preprocessData(ReplayGamestate gamestate, MapMetaData mapmeta)
         {
 
             foreach (var round in gamestate.match.rounds)

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Data.Gameevents;
 using Data.Gamestate;
+using Data.Gameobjects;
 using Data.Utils;
 using Clustering;
 using MathNet.Spatial.Euclidean;
@@ -18,8 +19,16 @@ namespace Preprocessing
     /// </summary>
     public class CSGOPreprocessor : IPreprocessor
     {
+        Hashtable hit_hashtable;
+        Hashtable assist_hashtable;
 
-        public void preprocessData(ReplayGamestate gamestate)
+        Map map;
+
+        private double ATTACKRANGE_AVERAGE_HURT;
+        private double SUPPORTRANGE_AVERAGE_KILL;
+        private AttackerCluster[] attacker_clusters;
+
+        public void preprocessData(ReplayGamestate gamestate, MapMetaData mapmeta)
         {
 
             var ps = new HashSet<Point3D>();
@@ -78,9 +87,13 @@ namespace Preprocessing
                 SUPPORTRANGE_AVERAGE_KILL = support_ranges.Average();
 
             // Generate Hurteventclusters
-            var leader = new LEADER<float>((float)ATTACKRANGE_AVERAGE_HURT);
+            // Keys of the hashtable are attacker positions, ordering defines a function on how to order the data before performing LEADER
+            Func<Point3D[], Point3D[]> ordering = ops => ops.OrderBy(p => p.X).ThenBy(p => p.Y).ToArray();
+
+            var leader = new LEADER<Point3D>((float)ATTACKRANGE_AVERAGE_HURT, hit_hashtable.Keys.Cast<Point3D>().ToArray(), ordering);
             var attackerclusters = new List<AttackerCluster>();
-            foreach (var cluster in leader.createClusters(hit_hashtable.Keys.Cast<Point3D>().ToList()))
+
+            foreach (var cluster in leader.createClusters())
             {
                 var attackcluster = new AttackerCluster(cluster.data.ToArray());
                 attackcluster.calculateClusterAttackranges(hit_hashtable);

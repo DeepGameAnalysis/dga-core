@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Data.Gamestate;
+using Data.Utils;
 
 namespace Preprocessing
 {
@@ -16,6 +17,6 @@ namespace Preprocessing
         /// <summary>
         /// 
         /// </summary>
-        void preprocessData(ReplayGamestate gamestate);
+        void preprocessData(ReplayGamestate gamestate, MapMetaData map);
     }
 }
