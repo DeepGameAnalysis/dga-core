@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Data.Gameobjects;
 using Data.Gamestate;
 
-namespace EncounterDectection
+namespace Detection
 {
     /// <summary>
     /// Subgraph of an Encountergraph

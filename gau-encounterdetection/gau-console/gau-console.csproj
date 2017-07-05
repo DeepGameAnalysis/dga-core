@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GAUConsole.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,6 +60,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\demoinfo\DemoInfo\DemoInfo.csproj">
+      <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
+      <Name>DemoInfo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\gau-json.csproj">
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
       <Name>gau-json</Name>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Data.Gameobjects;
 using MathNet.Spatial.Euclidean;
 
-namespace EncounterDectection
+namespace Detection
 {
     public enum LinkType { COMBATLINK, SUPPORTLINK };
 

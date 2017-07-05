@@ -60,6 +60,8 @@
     <Compile Include="data\gameobjects\map\mapconstructors\PolygonalMapConstructor.cs" />
     <Compile Include="data\gameobjects\map\MapGrid.cs" />
     <Compile Include="data\replaygamestate\ReplayGamestate.cs" />
+    <Compile Include="encounterdetect\clustertypes\EventCluster.cs" />
+    <Compile Include="encounterdetect\clustertypes\EventPositionCluster.cs" />
     <Compile Include="encounterdetect\collisionmanager\CollisionController.cs" />
     <Compile Include="encounterdetect\EncounterDetectionData.cs" />
     <Compile Include="encounterdetect\Linker.cs" />

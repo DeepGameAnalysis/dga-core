@@ -68,7 +68,7 @@ namespace Data.Gamestate
 
         public Player winner_player { get; set; }
 
-        public Team winner_team { get; set; }
+        public string winner_team { get; set; }
 
         public List<Tick> ticks { get; set; }
 

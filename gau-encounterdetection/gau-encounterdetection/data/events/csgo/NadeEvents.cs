@@ -97,7 +97,7 @@ namespace Data.Gameevents
         }
     }
 
-    class FlashNade : NadeEvents
+    public class FlashNade : NadeEvents
     {
         public IList<PlayerFlashed> flashedplayers { get; set; }
 

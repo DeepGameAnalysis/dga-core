@@ -7,7 +7,7 @@ using Data.Gameobjects;
 using Data.Gamestate;
 using Data.Gameevents;
 
-namespace EncounterDectection
+namespace Detection
 {
     /// <summary>
     /// Class to save all relevant data to replay the entire match with its encounters and events.

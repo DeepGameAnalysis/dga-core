@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Data.Gameobjects;
 
-namespace EncounterDectection
+namespace Detection
 {
     /// <summary>
     /// Encounter showing multiple coherent combatcomponents across multiple ticks

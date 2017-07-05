@@ -26,7 +26,7 @@ namespace Preprocessing
 
         private double ATTACKRANGE_AVERAGE_HURT;
         private double SUPPORTRANGE_AVERAGE_KILL;
-        private AttackerCluster[] attacker_clusters;
+        private EventPositionCluster[] attacker_clusters;
 
         public void preprocessData(ReplayGamestate gamestate, MapMetaData mapmeta)
         {
@@ -91,12 +91,12 @@ namespace Preprocessing
             Func<Point3D[], Point3D[]> ordering = ops => ops.OrderBy(p => p.X).ThenBy(p => p.Y).ToArray();
 
             var leader = new LEADER<Point3D>((float)ATTACKRANGE_AVERAGE_HURT, hit_hashtable.Keys.Cast<Point3D>().ToArray(), ordering);
-            var attackerclusters = new List<AttackerCluster>();
+            var attackerclusters = new List<EventPositionCluster>();
 
             foreach (var cluster in leader.createClusters())
             {
-                var attackcluster = new AttackerCluster(cluster.data.ToArray());
-                attackcluster.calculateClusterAttackranges(hit_hashtable);
+                var attackcluster = new EventPositionCluster(cluster.data.ToArray());
+                attackcluster.calculateClusterRanges(hit_hashtable);
                 attackerclusters.Add(attackcluster);
             }
             this.attacker_clusters = attackerclusters.ToArray();

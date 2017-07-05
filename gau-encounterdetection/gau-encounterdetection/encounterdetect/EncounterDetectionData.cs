@@ -104,7 +104,7 @@ namespace Detection
         /// <summary>
         /// All clusters of attackpositions
         /// </summary>
-        public AttackerCluster[] attacker_clusters;
+        public EventPositionCluster[] attacker_clusters;
 
 
 

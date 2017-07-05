@@ -23,7 +23,7 @@ namespace Detection
 
     public class EncounterDetection
     {
-        private const bool exportingEnabled = true;
+        private const bool exportingEnabled = false;
 
         /// <summary>
         /// Exporter for csv file format
@@ -104,7 +104,7 @@ namespace Detection
         /// <summary>
         /// All clusters of attackpositions
         /// </summary>
-        public AttackerCluster[] attacker_clusters;
+        public EventPositionCluster[] attacker_clusters;
 
 
 
@@ -896,7 +896,7 @@ namespace Detection
                 foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
                 {
                     var distance = DistanceFunctions.GetEuclidDistance3D(player.position, other.position);
-                    AttackerCluster playercluster = null;
+                    EventPositionCluster playercluster = null;
                     for (int i = 0; i < attacker_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
                         var cluster = attacker_clusters[i];
@@ -912,7 +912,7 @@ namespace Detection
                         continue; // No Cluster found
                     }
 
-                    var attackrange = playercluster.cluster_attackrange_avg;
+                    var attackrange = playercluster.cluster_range_average;
                     if (distance <= attackrange && other.getTeam() != player.getTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));

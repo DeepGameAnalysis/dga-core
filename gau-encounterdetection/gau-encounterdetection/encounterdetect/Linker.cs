@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Data.Gamestate;
 
-namespace EncounterDectection
+namespace Detection
 {
     public enum CombatlinkSettings
     {

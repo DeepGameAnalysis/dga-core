@@ -11,7 +11,7 @@ namespace Data.Gameevents
     /// <summary>
     /// Movementevents just give us a hint that we should update the current position of this player.
     /// </summary>
-    class MovementEvents : Event
+    public class MovementEvents : Event
     {
         /// <summary>
         /// String describing a subevent of movement event //Jumping, Sliding etc

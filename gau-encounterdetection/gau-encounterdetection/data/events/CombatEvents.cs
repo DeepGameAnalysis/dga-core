@@ -12,7 +12,7 @@ namespace Data.Gameevents
     /// <summary>
     /// Event describing a location where a player fired a shot at.
     /// </summary>
-    class WeaponFire : Event
+    public class WeaponFire : Event
     {
         public Weapon weapon { get; set; }
 
@@ -26,7 +26,7 @@ namespace Data.Gameevents
     /// <summary>
     /// Event describing where a player saw another player of the opposing team
     /// </summary>
-    class PlayerSpotted : Event
+    public class PlayerSpotted : Event
     {
         public Player spotter { get; set; } //TODO: how find out spotter? or do this in algorithm?
 
@@ -39,7 +39,7 @@ namespace Data.Gameevents
     /// <summary>
     /// Event describing dealt damage from a attacker to a vicitim
     /// </summary>
-    class PlayerHurt : Event
+    public class PlayerHurt : Event
     {
         public Player victim { get; set; }
 
@@ -69,7 +69,7 @@ namespace Data.Gameevents
     /// <summary>
     /// Event describing a death of a player caused by another player
     /// </summary>
-    class PlayerKilled : PlayerHurt
+    public class PlayerKilled : PlayerHurt
     {
 
         public bool headshot { get; set; }
