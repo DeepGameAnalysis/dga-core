@@ -17,7 +17,7 @@ namespace Data.Gameobjects
 
     public class Entity
     {
-        public string entityname { get; set; }
+        public string Entityname { get; set; }
 
         /// <summary>
         /// Unique identifier for this unit
@@ -27,12 +27,12 @@ namespace Data.Gameobjects
         /// <summary>
         /// Player who controlls this unit
         /// </summary>
-        public Player  owner { get; set; }
+        public Player Owner { get; set; }
 
         /// <summary>
         /// Team of the player of this unit
         /// </summary>
-        public Team team { get { return owner.getTeam(); } }
+        public Team Team { get { return Owner.GetTeam(); } }
 
         /// <summary>
         /// Defining a position of a player (if hes not controlling entities in the current game)
@@ -40,18 +40,18 @@ namespace Data.Gameobjects
         /// Change in Y means up or down movement on a minimap
         /// Change in Z means vertical movement (jumps, heightchanges on the map by climbing etc)
         /// </summary>
-        public Point3D position { get; set; }
+        public Point3D Position { get; set; }
 
-        public Facing facing { get; set; }
+        public Facing Facing { get; set; }
 
-        public Velocity velocity { get; set; }
+        public Velocity Velocity { get; set; }
 
         public int HP { get; set; }
 
-        public float attackrange { get; set; }
+        public float Attackrange { get; set; }
 
-        public float supportrange { get; set; }
+        public float Supportrange { get; set; }
 
-        public float damage { get; set; }
+        public float Damage { get; set; }
     }
 }

@@ -65,7 +65,7 @@ namespace Detection
         /// <summary>
         /// Check if this replays data has invalid tick/component pairs. f.e. tick t has player A with different data in its component(health not the same etc)
         /// </summary>
-        private void checkIntegrity()
+        private void CheckIntegrity()
         {
 
         }

@@ -1,9 +1,5 @@
-﻿using System;
+﻿using MathNet.Spatial.Euclidean;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MathNet.Spatial.Euclidean;
 
 namespace Data.Gameobjects
 {
@@ -36,16 +32,16 @@ namespace Data.Gameobjects
 
     public class Player
     {
-        public const int PLAYERMODELL_HEIGHT = 72;
-        public const int PLAYERMODELL_CROUCH_HEIGHT = 54;
-        public const int PLAYERMODELL_WIDTH = 32;
-        public const int PLAYERMODELL_JUMPHEIGHT = 54;
+        public const int CSGO_PLAYERMODELL_HEIGHT = 72;
+        public const int CSGO_PLAYERMODELL_CROUCH_HEIGHT = 54;
+        public const int CSGO_PLAYERMODELL_WIDTH = 32;
+        public const int CSGO_PLAYERMODELL_JUMPHEIGHT = 54;
 
-        public string playername { get; set; }
+        public string Playername { get; set; }
 
         public long player_id { get; set; }
 
-        public string team { get; set; }
+        public string Team { get; set; }
 
         /// <summary>
         /// Defining a position of a player (if hes not controlling entities in the current game)
@@ -53,45 +49,45 @@ namespace Data.Gameobjects
         /// Change in Y means up or down movement on a minimap
         /// Change in Z means vertical movement (jumps, heightchanges on the map by climbing etc)
         /// </summary>
-        public Point3D position { get; set; }
+        public Point3D Position { get; set; }
 
-        public Facing facing { get; set; }
+        public Facing Facing { get; set; }
 
         /// <summary>
         /// Velocity changes correlate with the positioning as mentioned for a players "position"
         /// </summary>
-        public Velocity velocity { get; set; }
+        public Velocity Velocity { get; set; }
 
         public int HP { get; set; }
 
-        public bool isSpotted { get; set; }
+        public bool IsSpotted { get; set; }
 
         /// <summary>
         /// Maps strings back to Team.Enum
         /// </summary>
         /// <returns></returns>
-        public Team getTeam()
+        public Team GetTeam()
         {
-            if(team == "Terrorist")
+            if(Team == "Terrorist")
             {
-                return Team.T;
-            } else if(team == "CounterTerrorist")
+                return Gameobjects.Team.T;
+            } else if(Team == "CounterTerrorist")
             {
-                return Team.CT;
+                return Gameobjects.Team.CT;
             }
-            return Team.None;
+            return Gameobjects.Team.None;
 
         }
 
-        public bool sameTeam(Player p)
+        public bool SameTeam(Player p)
         {
-            if (getTeam() == p.getTeam())
+            if (GetTeam() == p.GetTeam())
                 return true;
 
             return false;
         }
 
-        public bool isDead()
+        public bool IsDead()
         {
             if (HP == 0)
                 return true;
@@ -101,7 +97,7 @@ namespace Data.Gameobjects
 
         public override string ToString()
         {
-            return "Name: " + playername + " ID: "+ player_id + " Team: " +team;
+            return "Name: " + Playername + " ID: "+ player_id + " Team: " +Team;
         }
 
         public override bool Equals(object obj) //Why does a true overriden Equals kill the json serialisation?!?
@@ -124,32 +120,29 @@ namespace Data.Gameobjects
 
     public class PlayerDetailed : Player
     {
-        public int armor { get; set; }
-        public bool hasHelmet { get; set; }
-        public bool hasDefuser { get; set; }
-        public bool hasBomb { get; set; }
-        public bool isDucking { get; set; }
-        public bool isWalking { get; set; }
-        public bool isScoped { get; set; }
-    }
+        public int Armor { get; set; }
+        public bool HasHelmet { get; set; }
+        public bool HasDefuser { get; set; }
+        public bool HasBomb { get; set; }
+        public bool IsDucking { get; set; }
+        public bool IsWalking { get; set; }
+        public bool IsScoped { get; set; }
 
-    public class PlayerDetailedWithItems : PlayerDetailed
-    {
-        public List<Weapon> items { get; set; }
+        public List<Item> Items { get; set; }
 
-        public Weapon getPrimaryWeapon()
+        public Item GetPrimaryWeapon()
         {
-            if (items[0] == null)
+            if (Items[0] == null)
                 //errorlog
                 return null;
 
-            return items[0];
+            return Items[0];
         }
     }
 
     public class PlayerFlashed : Player
     {
-        public float flashedduration { get; set; }
+        public float Flashedduration { get; set; }
     }
 
     /// <summary>
@@ -165,7 +158,7 @@ namespace Data.Gameobjects
             return new Facing() { Yaw = Yaw, Pitch = Pitch };
         }
 
-        internal float[] getAsArray()
+        internal float[] GetAsArray()
         {
             return new float[] { Yaw, Pitch };
         }
@@ -185,7 +178,7 @@ namespace Data.Gameobjects
             return new Velocity() { VX = VX, VY = VY, VZ = VZ };
         }
 
-        internal float[] getAsArray()
+        internal float[] GetAsArray()
         {
             return new float[] { VX, VY, VZ };
         }

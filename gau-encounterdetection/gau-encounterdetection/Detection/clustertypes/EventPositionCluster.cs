@@ -69,7 +69,7 @@ namespace Clustering
         /// Calculate all relevant ranges for this cluster
         /// </summary>
         /// <param name="hit_hashtable"></param>
-        public void calculateClusterRanges(Hashtable hit_hashtable)
+        public void CalculateClusterRanges(Hashtable hit_hashtable)
         {
             double[] distances = new double[data.Count];
             int arr_ptr = 0;

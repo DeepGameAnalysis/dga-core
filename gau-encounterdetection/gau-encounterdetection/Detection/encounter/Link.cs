@@ -20,7 +20,7 @@ namespace Detection
         private LinkType type;
 
         /// <summary>
-        /// Players contained in this Link. Use getActor() and getReciever().
+        /// Players contained in this Link. Use getActor() and getReciever() to get single participants.
         /// </summary>
         private Player[] players;
 
@@ -30,14 +30,14 @@ namespace Detection
         private Direction dir;
 
         /// <summary>
-        /// Impact dont by this link. Can either be the amount of damage or heal or buff etc
+        /// Impact done by this link. Can either be the amount of damage or heal or buff etc aka it is the weight to this edge
         /// </summary>
-        public double impact { get; set; }
+        public double Impact { get; set; }
 
         /// <summary>
         /// Defines if this link was built with a kill event
         /// </summary>
-        public bool isKill { get; set; }
+        public bool IsKill { get; set; }
 
         /// <summary>
         /// Position of a collision with an obstacle by this link
@@ -52,11 +52,11 @@ namespace Detection
         public Link(Player actor, Player reciever, LinkType type, Direction dir)
         {
             if (actor == null || reciever == null) throw new Exception("Players cannot be null");
-            if (actor.getTeam() != reciever.getTeam() && type == LinkType.SUPPORTLINK)
+            if (actor.GetTeam() != reciever.GetTeam() && type == LinkType.SUPPORTLINK)
             {
                 Console.WriteLine("Cannot create Supportlink between different teams"); // Occurs if a kill occurs where an enemy hit his teammate so hard that he is registered as assister
             }
-            if (actor.getTeam() == reciever.getTeam() && type == LinkType.COMBATLINK)
+            if (actor.GetTeam() == reciever.GetTeam() && type == LinkType.COMBATLINK)
             {
                 Console.WriteLine("Cannot create Combatlink in the same team"); //Can occur if teamdamage happens. Dman antimates
             }
@@ -71,9 +71,9 @@ namespace Detection
         public Link(Player actor, Player reciever, LinkType type, Direction dir, Point3D coll)
         {
             if (actor == null || reciever == null) throw new Exception("Players cannot be null");
-            if (actor.getTeam() != reciever.getTeam() && type == LinkType.SUPPORTLINK)
+            if (actor.GetTeam() != reciever.GetTeam() && type == LinkType.SUPPORTLINK)
                 Console.WriteLine("Cannot create Supportlink between different teams"); // Occurs if a kill occurs where an enemy hit his teammate so hard that he is registered as assister
-            if (actor.getTeam() == reciever.getTeam() && type == LinkType.COMBATLINK)
+            if (actor.GetTeam() == reciever.GetTeam() && type == LinkType.COMBATLINK)
                 Console.WriteLine("Cannot create Combatlink in the same team"); //Can occur if teamdamage happens. Dman antimates
 
             players = new Player[2];
@@ -84,34 +84,34 @@ namespace Detection
             this.coll = coll;
         }
 
-        public bool isUndirected()
+        public bool IsUndirected()
         {
             return dir == Direction.UNDIRECTED;
         }
 
-        public Player getActor()
+        public Player GetActor()
         {
             return players[0];
         }
 
-        public Player getReciever()
+        public Player GetReciever()
         {
             return players[1];
         }
 
-        public LinkType getLinkType()
+        public LinkType GetLinkType()
         {
             return type;
         }
 
-        public double getImpact()
+        public double GetImpact()
         {
-            return impact;
+            return Impact;
         }
 
         override public string ToString()
         {
-            return type.ToString() + " | Actor: " + players[0].playername + "- Reciever: " + players[1].playername;
+            return type.ToString() + " | Actor: " + players[0].Playername + "- Reciever: " + players[1].Playername;
         }
 
         override public bool Equals(object other)
@@ -119,7 +119,7 @@ namespace Detection
             var link = other as Link;
             if (link == null)
                 return false;
-            if (getActor().Equals(link.getActor()) && getReciever().Equals(link.getReciever()) && dir == link.dir)
+            if (GetActor().Equals(link.GetActor()) && GetReciever().Equals(link.GetReciever()) && dir == link.dir)
                 return true;
 
             return false;

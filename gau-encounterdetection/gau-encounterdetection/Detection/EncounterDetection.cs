@@ -135,6 +135,11 @@ namespace Detection
         public Map map;
 
         /// <summary>
+        /// Metadata about the map played in this replay (dimensions name etc)
+        /// </summary>
+        public MapMetaData mapmeta;
+
+        /// <summary>
         /// Name of the map this encounter detection is running on
         /// </summary>
         public string mapname;
@@ -162,27 +167,29 @@ namespace Detection
         public BitArray links_table;
 
         /// <summary>
+        /// All data structures and tables and variables needed for encounter detection
+        /// </summary>
+        EncounterDetectionData edData;
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="gamestate">The gamestate to work on</param>
         /// <param name="preprocessor">The preprocessor that should be used to prepare all necessary data</param>
-        public EncounterDetection(ReplayGamestate gamestate, IPreprocessor preprocessor)
+        public EncounterDetection(ReplayGamestate gamestate, MapMetaData mapmeta, IPreprocessor preprocessor)
         {
             this.match = gamestate.match;
             this.mapname = gamestate.meta.mapname;
+            this.mapmeta = mapmeta;
             this.tickrate = gamestate.meta.tickrate;
             this.ticktime = 1000 / tickrate;
             this.players = gamestate.meta.players.ToArray();
             Console.WriteLine("Match starts with " + players.Count() + " players.");
             printplayers();
 
-
-            // Gather and prepare data for later 
-            preprocessor.preprocessData(gamestate, null); //TODO: insert mapmetadata somewhere
+            // Gather and prepare data for later algorithms
+            preprocessor.PreprocessData(gamestate, mapmeta, out edData);
 
         }
-
-
 
 
 
@@ -270,7 +277,7 @@ namespace Detection
         /// <summary>
         /// 
         /// </summary>
-        public EncounterDetectionReplay detectEncounters()
+        public EncounterDetectionReplay DetectEncounters()
         {
             EncounterDetectionReplay replay = new EncounterDetectionReplay();
 
@@ -278,7 +285,7 @@ namespace Detection
             foreach (var round in match.rounds)
             {
                 //Total gametime -> measure time each round is running
-                totalgametime += (round.getRoundTickRange() * ticktime / 1000) * 10; // 10 = total playercount
+                totalgametime += (round.getRoundTickRange() * ticktime / 1000) * players.Length; // 10 = total playercount for csgo(if no one disconnected)
 
                 foreach (var tick in new HashSet<Tick>(round.ticks))
                 {
@@ -292,12 +299,12 @@ namespace Detection
                     foreach (var updatedPlayer in tick.getUpdatedPlayers()) // Update tables if player is alive
                     {
                         updatePlayer(updatedPlayer);
-                        if (updatedPlayer.isSpotted) isSpotted_playersCount++;
+                        if (updatedPlayer.IsSpotted) isSpotted_playersCount++;
                     }
 
                     handleDisconnects();
 
-                    CombatComponent component = buildComponent(tick);
+                    CombatComponent component = BuildComponent(tick);
 
                     replay.insertReplaydata(tick, component); // Save the tick with its component for later replaying. 
 
@@ -307,7 +314,7 @@ namespace Detection
                     //
                     // Everything after here is just sorting components into encounters (use component.parent to identify to which encounter it belongs)
                     //
-                    predecessors = searchPredecessors(component); // Check if this component has predecessors
+                    predecessors = SearchPredecessors(component); // Check if this component has predecessors
 
                     if (predecessors.Count == 0)
                     {
@@ -323,7 +330,7 @@ namespace Detection
                     {
                         // Remove all predecessor encounters from open encounters because we re-add them as joint_encounter
                         open_encounters.RemoveAll(encounter => predecessors.Contains(encounter));
-                        var joint_encounter = join(predecessors); // Merge encounters holding these predecessors
+                        var joint_encounter = JoinWithPredecessors(predecessors); // Merge encounters holding these predecessors
                         joint_encounter.update(component);
                         open_encounters.Add(joint_encounter);
                         mergeEncounterCount++;
@@ -456,7 +463,7 @@ namespace Detection
                 if (player.player_id == 0) // Player is a bot -> map his id on a disconnectedplayer -> we update the player with the botdata
                 {
                     if (disconnected_ids.Count == 0) throw new PlayerBindingException();
-                    botid_to_steamid.Add(player.playername, disconnected_ids.Dequeue());
+                    botid_to_steamid.Add(player.Playername, disconnected_ids.Dequeue());
                     continue;
                 }
 
@@ -473,7 +480,7 @@ namespace Detection
             {
                 if (player.player_id == 0) // Player is a bot -> when a bot disconnects remove his binding to the players steamid
                 {
-                    botid_to_steamid.Remove(player.playername);
+                    botid_to_steamid.Remove(player.Playername);
                     continue;
                 }
             }
@@ -540,22 +547,22 @@ namespace Detection
             {
                 var updateid = toUpdate.player_id;
                 if (updateid == 0) // We want to update data from a bot in the name of a disconnected player
-                    botid_to_steamid.TryGetValue(toUpdate.playername, out updateid);
+                    botid_to_steamid.TryGetValue(toUpdate.Playername, out updateid);
 
                 if (player.player_id == updateid) // We found the player with a matching id -> update all changeable values
                 {
                     idcount++;
-                    if (toUpdate.isDead()) // && !deadplayers.Contains(player)) //This player is dead but not in removed from the living -> do so
+                    if (toUpdate.IsDead()) // && !deadplayers.Contains(player)) //This player is dead but not in removed from the living -> do so
                     {
                         player.HP = toUpdate.HP;
                     }
                     else //Player is alive -> make sure hes in the living list and update him
                     {
-                        player.facing = toUpdate.facing;
-                        player.position = toUpdate.position;
-                        player.velocity = toUpdate.velocity;
+                        player.Facing = toUpdate.Facing;
+                        player.Position = toUpdate.Position;
+                        player.Velocity = toUpdate.Velocity;
                         player.HP = toUpdate.HP;
-                        player.isSpotted = toUpdate.isSpotted;
+                        player.IsSpotted = toUpdate.IsSpotted;
                     }
                 }
 
@@ -583,30 +590,29 @@ namespace Detection
         /// </summary>
         /// <param name="newcomp"></param>
         /// <returns></returns>
-        private List<Encounter> searchPredecessors(CombatComponent newcomp)
+        private List<Encounter> SearchPredecessors(CombatComponent newcomp)
         {
             List<Encounter> predecessors = new List<Encounter>();
-            foreach (var encounter in open_encounters.Where(e => checkPredecessorTimeout(e.tick_id, newcomp.tick_id, TAU)))
+            foreach (var encounter in open_encounters.Where(e => CheckPredecessorTimeout(e.tick_id, newcomp.tick_id, TAU)))
             {
                 bool registered = false;
                 foreach (var comp in encounter.cs)
                 {
-                    // Test if c and comp have at least two players from different teams in common -> Intersection of player lists
+                    // Test if c and comp have at least two players in common -> Intersection of player lists
                     var intersectPlayers = comp.players.Intersect(newcomp.players).ToList();
 
                     if (intersectPlayers.Count < 2)
                         continue;
-
-                    var knownteam = intersectPlayers[0].getTeam(); //TODO: Shorten
+                    //are these players from different teams
+                    var knownteam = intersectPlayers[0].GetTeam(); //TODO: Shorten
                     foreach (var p in intersectPlayers)
                     {
                         // Team different to one we know -> this encounter e is a predecessor of the component comp
-                        if (knownteam != Team.None && knownteam != p.getTeam())
+                        if (knownteam != Team.None && knownteam != p.GetTeam())
                         {
                             predecessors.Add(encounter);
                             registered = true; // Stop multiple adding of encounter
                             break;
-
                         }
                     }
                     if (registered) break;
@@ -616,7 +622,7 @@ namespace Detection
             return predecessors;
         }
 
-        private bool checkPredecessorTimeout(int eid, int tickid, float TAU)
+        private bool CheckPredecessorTimeout(int eid, int tickid, float TAU)
         {
             var dt = tickid - eid;
             if (dt < 0) throw new Exception("Encounter cannot be newer than component");
@@ -631,7 +637,7 @@ namespace Detection
         /// </summary>
         /// <param name="predecessors"></param>
         /// <returns></returns>
-        private Encounter join(List<Encounter> predecessors)
+        private Encounter JoinWithPredecessors(List<Encounter> predecessors)
         {
             List<CombatComponent> cs = new List<CombatComponent>();
             foreach (var encounter in predecessors)
@@ -649,7 +655,7 @@ namespace Detection
         /// </summary>
         /// <param name="tick_id"></param>
         /// <param name="insertlink"></param>
-        private void insertLinkIntoComponent(int tick_id, Link insertlink)
+        private void InsertLinkIntoComponent(int tick_id, Link insertlink)
         {
             foreach (var en in open_encounters) // Search the component in a encounter in which this link has to be sorted in 
             {
@@ -682,12 +688,12 @@ namespace Detection
         /// </summary>
         /// <param name="component"></param>
         /// <param name="g"></param>
-        private CombatComponent buildComponent(Tick tick)
+        private CombatComponent BuildComponent(Tick tick)
         {
             List<Link> links = new List<Link>();
 
             //searchEventbasedSightCombatLinks(tick, links);
-            searchSightbasedSightCombatLinks(tick, links); //First update playerlevels
+            SearchSightbasedSightCombatLinks(tick, links); //First update playerlevels
 
             //searchClusterDistancebasedLinks(links); // With clusterbased distance
             //searchDistancebasedLinks(links); // With average distance 
@@ -755,9 +761,9 @@ namespace Detection
         /// </summary>
         /// <param name="tick"></param>
         /// <param name="links"></param>
-        private void searchEventbasedSightCombatLinks(Tick tick, List<Link> links)
+        private void SearchEventbasedSightCombatLinks(Tick tick, List<Link> links)
         {
-            foreach (var uplayer in players.Where(p => !p.isDead() && p.isSpotted)) // Search for all spotted players in this tick who spotted them
+            foreach (var uplayer in players.Where(p => !p.IsDead() && p.IsSpotted)) // Search for all spotted players in this tick who spotted them
             {
                 var potential_spotter = searchSpotterCandidates(uplayer);
                 // This should not happend because spotted table is correct and somebody must have seen the player!!
@@ -780,10 +786,10 @@ namespace Detection
         /// </summary>
         /// <param name="tick"></param>
         /// <param name="links"></param>
-        private void searchSightbasedSightCombatLinks(Tick tick, List<Link> links)
+        private void SearchSightbasedSightCombatLinks(Tick tick, List<Link> links)
         {
             // Update playerlevels before we start using them to search links
-            foreach (var p in players.Where(counterplayer => !counterplayer.isDead()))
+            foreach (var p in players.Where(counterplayer => !counterplayer.IsDead()))
             {
                 if (map.playerlevels.ContainsKey(p.player_id))
                     map.playerlevels[p.player_id] = map.findLevelFromPlayer(p);
@@ -792,9 +798,9 @@ namespace Detection
             }
 
             // Check for each team if a player can see a player of the other team
-            foreach (var player in players.Where(player => !player.isDead() && player.getTeam() == Team.CT))
+            foreach (var player in players.Where(player => !player.IsDead() && player.GetTeam() == Team.CT))
             {
-                foreach (var counterplayer in players.Where(counterplayer => !counterplayer.isDead() && counterplayer.getTeam() != Team.CT))
+                foreach (var counterplayer in players.Where(counterplayer => !counterplayer.IsDead() && counterplayer.GetTeam() != Team.CT))
                 {
                     checkVisibility(player, counterplayer, links);
                 }
@@ -813,8 +819,8 @@ namespace Detection
         private bool checkVisibility(Player p1, Player p2, List<Link> links)
         {
             // Console.WriteLine("New test");
-            bool p1FOVp2 = FOVFunctions.IsInHVFOV(p1.position, p1.facing.Yaw, p2.position, 106.0f); // p2 is in fov of p1
-            bool p2FOVp1 = FOVFunctions.IsInHVFOV(p2.position, p2.facing.Yaw, p1.position, 106.0f); // p2 is in fov of p1
+            bool p1FOVp2 = FOVFunctions.IsInHVFOV(p1.Position, p1.Facing.Yaw, p2.Position, 106.0f); // p2 is in fov of p1
+            bool p2FOVp1 = FOVFunctions.IsInHVFOV(p2.Position, p2.Facing.Yaw, p1.Position, 106.0f); // p2 is in fov of p1
             if (!p1FOVp2 && !p2FOVp1) return false; // If false -> no sight from p1 to p2 possible because p2 is not even in the fov of p1 -> no link
 
             //Level height of p1 and p2
@@ -824,8 +830,8 @@ namespace Detection
             var current_maplevel = map.playerlevels[p1.player_id];
 
             // var coll_pos = EDMathLibrary.LOSIntersectsMapBresenham(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var coll_pos = CollisionController.LOSIntersectsObstacle2D(p1.position, p2.position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var coll_pos2 = CollisionController.LOSIntersectsObstacle2D(p2.position, p1.position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var coll_pos = CollisionController.LOSIntersectsObstacle2D(p1.Position, p2.Position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var coll_pos2 = CollisionController.LOSIntersectsObstacle2D(p2.Position, p1.Position, current_maplevel); // Check if the p1`s view is blocked on his level
             //if(coll_pos == null)Console.WriteLine("Start coll: " + coll_pos);
             if (p1Height != p2Height) throw new Exception("Wrong level height. Not possible");
             //Both players are on same level and a collision with a rect was found -> No free sight -> no link
@@ -865,13 +871,13 @@ namespace Detection
         /// <param name="links"></param>
         private void searchDistancebasedLinks(List<Link> links)
         {
-            foreach (var player in players.Where(p => !p.isDead()))
+            foreach (var player in players.Where(p => !p.IsDead()))
             {
-                foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
+                foreach (var other in players.Where(p => !p.Equals(player) && !p.IsDead()))
                 {
-                    var distance = DistanceFunctions.GetEuclidDistance3D(player.position, other.position);
+                    var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
 
-                    if (distance <= ATTACKRANGE_AVERAGE && other.getTeam() != player.getTeam())
+                    if (distance <= ATTACKRANGE_AVERAGE && other.GetTeam() != player.GetTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
                         distancetestCLinksCount++;
@@ -891,16 +897,16 @@ namespace Detection
         /// <param name="links"></param>
         private void searchClusterDistancebasedLinks(List<Link> links)
         {
-            foreach (var player in players.Where(p => !p.isDead()))
+            foreach (var player in players.Where(p => !p.IsDead()))
             {
-                foreach (var other in players.Where(p => !p.Equals(player) && !p.isDead()))
+                foreach (var other in players.Where(p => !p.Equals(player) && !p.IsDead()))
                 {
-                    var distance = DistanceFunctions.GetEuclidDistance3D(player.position, other.position);
+                    var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
                     EventPositionCluster playercluster = null;
                     for (int i = 0; i < attacker_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
                         var cluster = attacker_clusters[i];
-                        if (cluster.boundings.Contains(player.position.SubstractZ()))
+                        if (cluster.boundings.Contains(player.Position.SubstractZ()))
                         {
                             playercluster = cluster;
                             break;
@@ -913,7 +919,7 @@ namespace Detection
                     }
 
                     var attackrange = playercluster.cluster_range_average;
-                    if (distance <= attackrange && other.getTeam() != player.getTeam())
+                    if (distance <= attackrange && other.GetTeam() != player.GetTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
                         clustered_average_distancetestCLinksCount++;
@@ -941,22 +947,22 @@ namespace Detection
                     //
                     case "player_hurt":
                         PlayerHurt ph = (PlayerHurt)g;
-                        if (ph.actor.getTeam() == ph.victim.getTeam()) continue; // No Team damage
-                        var link_ph = new Link(ph.actor, ph.victim, LinkType.COMBATLINK, Direction.DEFAULT);
+                        if (ph.actor.GetTeam() == ph.Victim.GetTeam()) continue; // No Team damage
+                        var link_ph = new Link(ph.actor, ph.Victim, LinkType.COMBATLINK, Direction.DEFAULT);
                         links.Add(link_ph);
-                        link_ph.impact = ph.HP_damage + ph.armor_damage;
+                        link_ph.Impact = ph.HP_damage + ph.Armor_damage;
                         handleIncomingHurtEvent(ph, tick.tick_id, links); // CAN PRODUCE SUPPORTLINKS!
                         eventtestCLinksCount++;
                         break;
                     case "player_killed":
                         PlayerKilled pk = (PlayerKilled)g;
-                        if (pk.actor.getTeam() == pk.victim.getTeam()) continue; // No Team kills
-                        var link_pk = new Link(pk.actor, pk.victim, LinkType.COMBATLINK, Direction.DEFAULT);
-                        link_pk.impact = pk.HP_damage + pk.armor_damage;
-                        link_pk.isKill = true;
+                        if (pk.actor.GetTeam() == pk.Victim.GetTeam()) continue; // No Team kills
+                        var link_pk = new Link(pk.actor, pk.Victim, LinkType.COMBATLINK, Direction.DEFAULT);
+                        link_pk.Impact = pk.HP_damage + pk.Armor_damage;
+                        link_pk.IsKill = true;
                         links.Add(link_pk);
 
-                        if (pk.assister != null && pk.assister.getTeam() == pk.actor.getTeam())
+                        if (pk.Assister != null && pk.Assister.GetTeam() == pk.actor.GetTeam())
                         {
                             //links.Add(new Link(pk.assister, pk.actor, LinkType.SUPPORTLINK, Direction.DEFAULT));
                             //killAssistCount++;
@@ -970,7 +976,7 @@ namespace Detection
 
                         // No candidate found. Either wait for a incoming playerhurt event or there was no suitable victim
                         if (potential_victim == null) break;
-                        if (wf.actor.getTeam() != potential_victim.getTeam()) break;
+                        if (wf.actor.GetTeam() != potential_victim.GetTeam()) break;
                         wf_matchedVictimCount++;
                         links.Add(new Link(wf.actor, potential_victim, LinkType.COMBATLINK, Direction.DEFAULT));
                         eventtestCLinksCount++;
@@ -1003,17 +1009,17 @@ namespace Detection
                 }
 
                 // If same victim but different actors from the same team-> damageassist -> multiple teammates attack one enemy
-                if (ph.victim.Equals(hurtevent.victim) && !ph.actor.Equals(hurtevent.actor) && ph.actor.getTeam() == hurtevent.actor.getTeam())
+                if (ph.Victim.Equals(hurtevent.Victim) && !ph.actor.Equals(hurtevent.actor) && ph.actor.GetTeam() == hurtevent.actor.GetTeam())
                 {
                     links.Add(new Link(ph.actor, hurtevent.actor, LinkType.SUPPORTLINK, Direction.DEFAULT));
-                    if (!damage_assist_hashtable.ContainsKey(ph.actor.position)) damage_assist_hashtable.Add(ph.actor.position, hurtevent.actor.position);
+                    if (!damage_assist_hashtable.ContainsKey(ph.actor.Position)) damage_assist_hashtable.Add(ph.actor.Position, hurtevent.actor.Position);
                     damageAssistCount++;
                 }
                 // If ph.actor hits an enemy while this enemy has hit somebody from p.actors team
-                if (ph.victim.Equals(hurtevent.actor) && hurtevent.victim.getTeam() == ph.actor.getTeam())
+                if (ph.Victim.Equals(hurtevent.actor) && hurtevent.Victim.GetTeam() == ph.actor.GetTeam())
                 {
-                    links.Add(new Link(ph.actor, hurtevent.victim, LinkType.SUPPORTLINK, Direction.DEFAULT));
-                    if (!damage_assist_hashtable.ContainsKey(ph.actor.position)) damage_assist_hashtable.Add(ph.actor.position, hurtevent.victim.position);
+                    links.Add(new Link(ph.actor, hurtevent.Victim, LinkType.SUPPORTLINK, Direction.DEFAULT));
+                    if (!damage_assist_hashtable.ContainsKey(ph.actor.Position)) damage_assist_hashtable.Add(ph.actor.Position, hurtevent.Victim.Position);
                     damageAssistCount++;
                 }
             }
@@ -1033,12 +1039,12 @@ namespace Detection
                     continue;
                 }
 
-                if (ph.actor.Equals(weaponfireevent.actor) && !ph.actor.isDead() && players.Where(p => !p.isDead()).Contains(weaponfireevent.actor)) // We found a weaponfire event that matches the new playerhurt event
+                if (ph.actor.Equals(weaponfireevent.actor) && !ph.actor.IsDead() && players.Where(p => !p.IsDead()).Contains(weaponfireevent.actor)) // We found a weaponfire event that matches the new playerhurt event
                 {
-                    Link insertlink = new Link(weaponfireevent.actor, ph.victim, LinkType.COMBATLINK, Direction.DEFAULT);
+                    Link insertlink = new Link(weaponfireevent.actor, ph.Victim, LinkType.COMBATLINK, Direction.DEFAULT);
                     eventtestCLinksCount++;
 
-                    insertLinkIntoComponent(wftick_id, insertlink);
+                    InsertLinkIntoComponent(wftick_id, insertlink);
                     pendingWFEQueue.Remove(weaponfireevent); // Delete the weaponfire event from the queue
                 }
 
@@ -1059,7 +1065,7 @@ namespace Detection
                     //
                     case "flash_exploded":
                         FlashNade flash = (FlashNade)g;
-                        if (flash.flashedplayers.Count == 0)
+                        if (flash.Flashedplayers.Count == 0)
                             continue; // The nade flashed noone
                         activeNades.Add(flash, tick.tick_id);
                         flashexplodedCount++;
@@ -1103,17 +1109,17 @@ namespace Detection
                 FlashNade flash = (FlashNade)flashitem.Key;
                 int ftick = flashitem.Value;
                 float tickdt = Math.Abs(ftick - tick.tick_id);
-                foreach (var player in flash.flashedplayers)
+                foreach (var player in flash.Flashedplayers)
                 {
-                    if (player.flashedduration >= 0)
+                    if (player.Flashedduration >= 0)
                     {
                         float dtime = tickdt * (ticktime / 1000);
-                        player.flashedduration -= dtime; // Count down time
+                        player.Flashedduration -= dtime; // Count down time
                     }
                     else
                         finishedcount++;
                 }
-                if (finishedcount == flash.flashedplayers.Count)
+                if (finishedcount == flash.Flashedplayers.Count)
                     activeNades.Remove(flash);
             }
         }
@@ -1129,7 +1135,7 @@ namespace Detection
                 FlashNade flash = (FlashNade)f.Key;
 
                 // Each (STILL!) living flashed player - as long as it is not a teammate of the actor - is tested for sight on a teammember of the flasher (has flasher prevented sight on one of his teammates) 
-                var flashedenemies = flash.flashedplayers.Where(player => player.getTeam() != flash.actor.getTeam() && player.flashedduration >= 0 && getLivingPlayer(player) != null);
+                var flashedenemies = flash.Flashedplayers.Where(player => player.GetTeam() != flash.actor.GetTeam() && player.Flashedduration >= 0 && getLivingPlayer(player) != null);
                 if (flashedenemies.Count() == 0)
                     continue;
 
@@ -1140,7 +1146,7 @@ namespace Detection
                     eventtestCLinksCount++;
                     flashCLinkCount++;
 
-                    foreach (var teammate in players.Where(teamate => !teamate.isDead() && teamate.getTeam() == flash.actor.getTeam() && flash.actor != teamate))
+                    foreach (var teammate in players.Where(teamate => !teamate.IsDead() && teamate.GetTeam() == flash.actor.GetTeam() && flash.actor != teamate))
                     {
                         if (checkVisibility(getLivingPlayer(flashedEnemyplayer), teammate, null))
                         {
@@ -1162,14 +1168,14 @@ namespace Detection
         {
             foreach (var smokeitem in activeNades.Where(item => item.Key.gameeventtype == "smoke_exploded"))
             {
-                foreach (var counterplayer in players.Where(player => !player.isDead() && player.getTeam() != smokeitem.Key.actor.getTeam()))
+                foreach (var counterplayer in players.Where(player => !player.IsDead() && player.GetTeam() != smokeitem.Key.actor.GetTeam()))
                 {
                     //If a player from the opposing team of the smoke thrower saw into the smoke
                     var nadecircle = new Circle2D(new Point2D(smokeitem.Key.position.X, smokeitem.Key.position.Y), 250);
-                    if (nadecircle.CircleIntersectsVector2D(counterplayer.position.SubstractZ(), counterplayer.facing.Yaw))
+                    if (nadecircle.IntersectsVector2D(counterplayer.Position.SubstractZ(), counterplayer.Facing.Yaw))
                     {
                         // Check if he could have seen a player from the thrower team
-                        foreach (var teammate in players.Where(teammate => !teammate.isDead() && teammate.getTeam() == smokeitem.Key.actor.getTeam()))
+                        foreach (var teammate in players.Where(teammate => !teammate.IsDead() && teammate.GetTeam() == smokeitem.Key.actor.GetTeam()))
                         {
                             if (checkVisibility(counterplayer, teammate, null))
                             {
@@ -1209,16 +1215,16 @@ namespace Detection
                     continue;
                 }
                 // If we find a actor that hurt somebody. this weaponfireevent is likely to be a part of his burst and is therefore a combatlink
-                var aliveplayers = players.Where(player => !player.isDead());
-                if (wf.actor.Equals(hurtevent.actor) && hurtevent.victim.getTeam() != wf.actor.getTeam() && aliveplayers.Contains(hurtevent.victim) && aliveplayers.Contains(wf.actor))
+                var aliveplayers = players.Where(player => !player.IsDead());
+                if (wf.actor.Equals(hurtevent.actor) && hurtevent.Victim.GetTeam() != wf.actor.GetTeam() && aliveplayers.Contains(hurtevent.Victim) && aliveplayers.Contains(wf.actor))
                 {
                     // Roughly test if an enemy can see our actor
-                    if (FOVFunctions.IsInHVFOV(wf.actor.position, wf.actor.facing.Yaw, hurtevent.victim.position, 106.0f) && hurtevent.victim.isSpotted)
+                    if (FOVFunctions.IsInHVFOV(wf.actor.Position, wf.actor.Facing.Yaw, hurtevent.Victim.Position, 106.0f) && hurtevent.Victim.IsSpotted)
                     {
-                        vcandidates.Add(hurtevent.victim);
+                        vcandidates.Add(hurtevent.Victim);
                         // Order by closest distance or by closest los player to determine which is the probablest candidate
                         //vcandidates.OrderBy(candidate => EDMathLibrary.getEuclidDistance2D(hvictimpos, wfactorpos));
-                        vcandidates.OrderBy(candidate => FOVFunctions.GetLOSOffset2D(wf.actor.position.SubstractZ(), wf.actor.facing.Yaw, hurtevent.victim.position.SubstractZ())); //  Offset = Angle between lineofsight of actor and position of candidate
+                        vcandidates.OrderBy(candidate => FOVFunctions.GetLOSOffset2D(wf.actor.Position.SubstractZ(), wf.actor.Facing.Yaw, hurtevent.Victim.Position.SubstractZ())); //  Offset = Angle between lineofsight of actor and position of candidate
                         break;
                     }
 
@@ -1234,7 +1240,7 @@ namespace Detection
                 return null;
             // Choose the first in the list as we ordered it by Offset (see above)
             var victim = vcandidates[0];
-            if (victim.getTeam() == wf.actor.getTeam()) throw new Exception("No teamfire possible for combatlink creation");
+            if (victim.GetTeam() == wf.actor.GetTeam()) throw new Exception("No teamfire possible for combatlink creation");
             vcandidates.Clear();
             return victim;
         }
@@ -1247,15 +1253,15 @@ namespace Detection
         /// <returns></returns>
         private Player searchSpotterCandidates(Player actor)
         {
-            if (actor.isDead()) return null;
+            if (actor.IsDead()) return null;
 
-            foreach (var counterplayer in players.Where(player => !player.isDead() && player.getTeam() != actor.getTeam()))
+            foreach (var counterplayer in players.Where(player => !player.IsDead() && player.GetTeam() != actor.GetTeam()))
             {
                 // Test if an enemy can see our actor
-                if (FOVFunctions.IsInHVFOV(counterplayer.position, counterplayer.facing.Yaw, actor.position, 106.0f))
+                if (FOVFunctions.IsInHVFOV(counterplayer.Position, counterplayer.Facing.Yaw, actor.Position, 106.0f))
                 {
                     scandidates.Add(counterplayer);
-                    scandidates.OrderBy(candidate => FOVFunctions.GetLOSOffset2D(counterplayer.position.SubstractZ(), counterplayer.facing.Yaw, actor.position.SubstractZ())); //  Offset = Angle between lineofsight of actor and position of candidate
+                    scandidates.OrderBy(candidate => FOVFunctions.GetLOSOffset2D(counterplayer.Position.SubstractZ(), counterplayer.Facing.Yaw, actor.Position.SubstractZ())); //  Offset = Angle between lineofsight of actor and position of candidate
                 }
             }
 
@@ -1263,7 +1269,7 @@ namespace Detection
                 return null;
 
             var nearestplayer = scandidates[0];
-            if (nearestplayer.getTeam() == actor.getTeam()) throw new Exception("No teamspotting possible");
+            if (nearestplayer.GetTeam() == actor.GetTeam()) throw new Exception("No teamspotting possible");
             scandidates.Clear();
             return nearestplayer;
         }
@@ -1280,6 +1286,7 @@ namespace Detection
         //
         #region Helping Methods
         private bool rowset = false;
+
         private void exportEDDataToCSV(float sec)
         {
             if (!rowset)

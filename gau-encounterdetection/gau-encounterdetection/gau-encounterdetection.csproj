@@ -24,13 +24,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -52,44 +72,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="data\events\csgo\BombEvents.cs" />
-    <Compile Include="data\events\CombatEvents.cs" />
-    <Compile Include="data\events\Event.cs" />
-    <Compile Include="data\gameobjects\Entity.cs" />
-    <Compile Include="data\gameobjects\map\mapconstructors\LeveldMapConstructor.cs" />
-    <Compile Include="data\gameobjects\map\mapconstructors\PolygonalMapConstructor.cs" />
-    <Compile Include="data\gameobjects\map\MapGrid.cs" />
-    <Compile Include="data\replaygamestate\ReplayGamestate.cs" />
-    <Compile Include="encounterdetect\clustertypes\EventCluster.cs" />
-    <Compile Include="encounterdetect\clustertypes\EventPositionCluster.cs" />
-    <Compile Include="encounterdetect\collisionmanager\CollisionController.cs" />
-    <Compile Include="encounterdetect\EncounterDetectionData.cs" />
-    <Compile Include="encounterdetect\Linker.cs" />
-    <Compile Include="encounterdetect\preprocessing\MainPreprocessor.cs" />
-    <Compile Include="exceptions\InsufficientPlayersException - Copy.cs" />
-    <Compile Include="exceptions\InvalidEntityException.cs" />
-    <Compile Include="exceptions\InvalidReplayDataException.cs" />
-    <Compile Include="data\gameobjects\map\Map.cs" />
-    <Compile Include="data\gameobjects\map\mapconstructors\SimpleMapConstructor.cs" />
-    <Compile Include="data\gameobjects\map\MapMetaReader.cs" />
-    <Compile Include="data\events\MovementEvents.cs" />
-    <Compile Include="data\events\csgo\NadeEvents.cs" />
-    <Compile Include="data\gameobjects\Player.cs" />
-    <Compile Include="exceptions\PlayerBindingException.cs" />
-    <Compile Include="exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="data\events\csgo\ServerEvents.cs" />
-    <Compile Include="data\replaygamestate\Tick.cs" />
-    <Compile Include="data\gameobjects\Weapon.cs" />
-    <Compile Include="encounterdetect\CombatComponent.cs" />
-    <Compile Include="encounterdetect\Encounter.cs" />
-    <Compile Include="encounterdetect\EncounterDetection.cs" />
-    <Compile Include="encounterdetect\Link.cs" />
-    <Compile Include="encounterdetect\EncounterDetectionReplay.cs" />
-    <Compile Include="encounterdetect\preprocessing\CSGOPreprocessor.cs" />
-    <Compile Include="encounterdetect\preprocessing\IPreprocessor.cs" />
+    <Compile Include="Data\events\csgo\BombEvents.cs" />
+    <Compile Include="Data\events\CombatEvents.cs" />
+    <Compile Include="Data\events\Event.cs" />
+    <Compile Include="Data\gameobjects\Entity.cs" />
+    <Compile Include="Data\gameobjects\map\mapconstructors\LeveldMapConstructor.cs" />
+    <Compile Include="Data\gameobjects\map\mapconstructors\PolygonalMapConstructor.cs" />
+    <Compile Include="Data\gameobjects\map\MapGrid.cs" />
+    <Compile Include="Data\replaygamestate\ReplayGamestate.cs" />
+    <Compile Include="Detection\clustertypes\EventCluster.cs" />
+    <Compile Include="Detection\clustertypes\EventPositionCluster.cs" />
+    <Compile Include="Detection\collisionmanager\CollisionController.cs" />
+    <Compile Include="Detection\EncounterDetectionData.cs" />
+    <Compile Include="Detection\Linker.cs" />
+    <Compile Include="Detection\preprocessing\MainPreprocessor.cs" />
+    <Compile Include="Exceptions\InsufficientPlayersException - Copy.cs" />
+    <Compile Include="Exceptions\InvalidEntityException.cs" />
+    <Compile Include="Exceptions\InvalidReplayDataException.cs" />
+    <Compile Include="Data\gameobjects\map\Map.cs" />
+    <Compile Include="Data\gameobjects\map\mapconstructors\SimpleMapConstructor.cs" />
+    <Compile Include="Data\gameobjects\map\MapMetaReader.cs" />
+    <Compile Include="Data\events\MovementEvents.cs" />
+    <Compile Include="Data\events\csgo\NadeEvents.cs" />
+    <Compile Include="Data\gameobjects\Player.cs" />
+    <Compile Include="Exceptions\PlayerBindingException.cs" />
+    <Compile Include="Exceptions\PlayerDisconnectException.cs" />
+    <Compile Include="Data\events\csgo\ServerEvents.cs" />
+    <Compile Include="Data\replaygamestate\Tick.cs" />
+    <Compile Include="Data\gameobjects\Item.cs" />
+    <Compile Include="Detection\encounter\CombatComponent.cs" />
+    <Compile Include="Detection\encounter\Encounter.cs" />
+    <Compile Include="Detection\EncounterDetection.cs" />
+    <Compile Include="Detection\encounter\Link.cs" />
+    <Compile Include="Detection\EncounterDetectionReplay.cs" />
+    <Compile Include="Detection\preprocessing\CSGOPreprocessor.cs" />
+    <Compile Include="Detection\preprocessing\IPreprocessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="utils\PropertyReader.cs" />
+    <Compile Include="Utils\PropertyReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -110,7 +130,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="encounterdetect\connectionmanager\" />
+    <Folder Include="Detection\connectionmanager\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -143,7 +143,7 @@ namespace Data.Utils
 
                 Console.WriteLine("Level " + i + ": " + levelps.Count() + " points");
                 var ml = new MapLevel(i, lowerbound, upperbound);
-                assignLevelcells(ml, levelps.ToArray());
+                AssignLevelcells(ml, levelps.ToArray());
                 maplevels[i] = ml;
             }
             map_grid = null;
@@ -159,15 +159,20 @@ namespace Data.Utils
         /// Assgins all wall cells on a maplevel
         /// </summary>
         /// <param name="ml"></param>
-        public static void assignLevelcells(MapLevel ml, Point3D[] points)
+        public static void AssignLevelcells(MapLevel ml, Point3D[] points)
         {
             var count = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             //var dbscan = new DBSCAN<Point3D>((x, y) => Math.Sqrt(((x.X - y.X) * (x.X - y.X)) + ((x.Y - y.Y) * (x.Y - y.Y))));
-            var dbscan = new DBSCAN<Point3D>(points, 60, 2);
+            var wrapped = new List<Point3DDataPoint>(); // Wrapp Point3D to execute Clustering
+            points.ToList().ForEach(p => wrapped.Add(new Point3DDataPoint(p)));
+            var dbscan = new DBSCAN<Point3DDataPoint, Point3D>(wrapped.ToArray(), 60, 2);
 
-            ml.clusters = dbscan.createClusters(true);
+            var extractedpos = new List<Point3D>();
+            dbscan.CreateClusters(true).ToList().ForEach(data => data.ToList().ForEach(pos => extractedpos.Add(pos.clusterPoint)));
+
+            ml.clusters = extractedpos;
             points = null; // Collect points for garbage
 
             ml.level_grid = new MapGridCell[mapdata_height / celledge_length][];
@@ -175,12 +180,11 @@ namespace Data.Utils
                 ml.level_grid[k] = new MapGridCell[mapdata_height / celledge_length];
 
 
-            QuadTreePoint<DataPoint<Point3D>> qtree = new QuadTreePoint<DataPoint<Point3D>>();
+            PointQuadTree<Point3DDataPoint> qtree = new PointQuadTree<Point3DDataPoint>();
             foreach (var cl in ml.clusters)
-                foreach(var c in cl)
-                    qtree.Add(new DataPoint<Point3D>(c));
+                    qtree.Add(new Point3DDataPoint(cl));
 
-             for (int k = 0; k < map_grid.Length; k++)
+            for (int k = 0; k < map_grid.Length; k++)
                 for (int l = 0; l < map_grid[k].Length; l++)
                 {
                     var cell = map_grid[k][l];
@@ -197,7 +201,7 @@ namespace Data.Utils
                         ml.walls_tree.Add(cell);
                     }
 
-                    ml.cells_tree.Add(cell.bounds.Center.getAsDoubleArray(), cell);
+                    ml.cells_tree.Add(cell.bounds.Center.Data, cell);
                     ml.level_grid[k][l] = cell;
                     count++;
                 }

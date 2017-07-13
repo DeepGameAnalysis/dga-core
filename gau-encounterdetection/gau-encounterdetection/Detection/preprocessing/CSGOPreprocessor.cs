@@ -11,16 +11,17 @@ using Data.Utils;
 using Clustering;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Functions;
+using Detection;
 
 namespace Preprocessing
 {
     /// <summary>
     /// The CSGO preprocessor is designed to recreate the map of the gamestate data. Furthermore hashtables are built to perform calculations and predictions
     /// </summary>
-    public class CSGOPreprocessor : IPreprocessor
+    public class CSGOPreprocessor : MainPreprocessor, IPreprocessor
     {
-        Hashtable hit_hashtable;
-        Hashtable assist_hashtable;
+        Hashtable hit_hash;
+        Hashtable assist_hash;
 
         Map map;
 
@@ -28,8 +29,10 @@ namespace Preprocessing
         private double SUPPORTRANGE_AVERAGE_KILL;
         private EventPositionCluster[] attacker_clusters;
 
-        public void preprocessData(ReplayGamestate gamestate, MapMetaData mapmeta)
+        public void PreprocessData(ReplayGamestate gamestate, MapMetaData mapmeta, out EncounterDetectionData edData)
         {
+            var nedData = new EncounterDetectionData();
+            base.preprocessMain(gamestate,mapmeta, out nedData);
 
             var ps = new HashSet<Point3D>();
             List<double> hurt_ranges = new List<double>();
@@ -47,29 +50,29 @@ namespace Preprocessing
                             case "player_hurt":
                                 PlayerHurt ph = (PlayerHurt)gevent;
                                 // Remove Z-Coordinate because we later get keys from clusters with points in 2D space -> hashtable needs keys with 2d data
-                                hit_hashtable[ph.actor.position.ResetZ()] = ph.victim.position.ResetZ();
-                                hurt_ranges.Add(DistanceFunctions.GetEuclidDistance3D(ph.actor.position, ph.victim.position));
+                                hit_hash[ph.actor.Position.ResetZ()] = ph.Victim.Position.ResetZ();
+                                hurt_ranges.Add(DistanceFunctions.GetEuclidDistance3D(ph.actor.Position, ph.Victim.Position));
                                 continue;
                             case "player_killed":
                                 PlayerKilled pk = (PlayerKilled)gevent;
-                                hit_hashtable[pk.actor.position.ResetZ()] = pk.victim.position.ResetZ();
-                                hurt_ranges.Add(DistanceFunctions.GetEuclidDistance3D(pk.actor.position, pk.victim.position));
+                                hit_hash[pk.actor.Position.ResetZ()] = pk.Victim.Position.ResetZ();
+                                hurt_ranges.Add(DistanceFunctions.GetEuclidDistance3D(pk.actor.Position, pk.Victim.Position));
 
-                                if (pk.assister != null)
+                                if (pk.Assister != null)
                                 {
-                                    assist_hashtable[pk.actor.position.ResetZ()] = pk.assister.position.ResetZ();
-                                    support_ranges.Add(DistanceFunctions.GetEuclidDistance3D(pk.actor.position, pk.assister.position));
+                                    assist_hash[pk.actor.Position.ResetZ()] = pk.Assister.Position.ResetZ();
+                                    support_ranges.Add(DistanceFunctions.GetEuclidDistance3D(pk.actor.Position, pk.Assister.Position));
                                 }
                                 continue;
                         }
 
                         foreach (var player in gevent.getPlayers())
                         {
-                            var vz = player.velocity.VZ;
+                            var vz = player.Velocity.VZ;
                             if (vz == 0) //If player is standing thus not experiencing an acceleration on z-achsis -> TRACK POSITION
-                                ps.Add(player.position);
+                                ps.Add(player.Position);
                             else
-                                ps.Add(player.position.ChangeZ(-54)); // Player jumped -> Z-Value is false -> correct with jumpheight
+                                ps.Add(player.Position.ChangeZ(-54)); // Player jumped -> Z-Value is false -> correct with jumpheight
                         }
 
                     }
@@ -88,18 +91,25 @@ namespace Preprocessing
 
             // Generate Hurteventclusters
             // Keys of the hashtable are attacker positions, ordering defines a function on how to order the data before performing LEADER
-            Func<Point3D[], Point3D[]> ordering = ops => ops.OrderBy(p => p.X).ThenBy(p => p.Y).ToArray();
+            Func<Point3DDataPoint[], Point3DDataPoint[]> ordering = ops => ops.OrderBy(p => p.clusterPoint.X).ThenBy(p => p.clusterPoint.Y).ToArray();
+            var clusterpos = hit_hash.Keys.Cast<Point3D>();
+            var wrapped = new List<Point3DDataPoint>(); // Wrapp Point3D to execute Clustering
+            clusterpos.ToList().ForEach(p => wrapped.Add(new Point3DDataPoint(p)));
 
-            var leader = new LEADER<Point3D>((float)ATTACKRANGE_AVERAGE_HURT, hit_hashtable.Keys.Cast<Point3D>().ToArray(), ordering);
+            var leader = new LEADER<Point3DDataPoint>((float)ATTACKRANGE_AVERAGE_HURT, wrapped.ToArray(), ordering);
             var attackerclusters = new List<EventPositionCluster>();
 
-            foreach (var cluster in leader.createClusters())
+            foreach (var cluster in leader.CreateClusters())
             {
-                var attackcluster = new EventPositionCluster(cluster.data.ToArray());
-                attackcluster.calculateClusterRanges(hit_hashtable);
+                var extractedpos = new List<Point3D>();
+                cluster.data.ForEach(data => extractedpos.Add(data.clusterPoint));
+                var attackcluster = new EventPositionCluster(extractedpos.ToArray());
+                attackcluster.CalculateClusterRanges(hit_hash);
                 attackerclusters.Add(attackcluster);
             }
             this.attacker_clusters = attackerclusters.ToArray();
+
+            edData = nedData;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Data.Gameevents
         /// Get positions tracked in the event
         /// </summary>
         /// <returns></returns>
-        public virtual Point3D[] getPositions() { return new Point3D[] { actor.position }; }
+        public virtual Point3D[] getPositions() { return new Point3D[] { actor.Position }; }
 
     }
 }

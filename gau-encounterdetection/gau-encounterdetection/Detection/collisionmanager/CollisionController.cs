@@ -18,7 +18,7 @@ namespace CollisionManager
         /// <param name="end"></param>
         /// <param name="level_cells"></param>
         /// <returns></returns>
-        public static Point3D? LOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
+        public static Point2D? LOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
         {
             //return BresenhamLineStepping(start, end, maplevel);
             if (maplevel == null) throw new Exception("Maplevel cannot be null");
@@ -26,7 +26,7 @@ namespace CollisionManager
             //Quadtree reduces cells to test depending on the rectangle formed by actorps and recieverpos -> players are close -> far less cells
             var searchrect = GridFunctions.GetRectFromPoints(start, end);
 
-            var queriedRects = maplevel.walls_tree.GetObjects(searchrect.getAsQuadTreeRect());
+            var queriedRects = maplevel.walls_tree.GetObjects(searchrect);
 
             foreach (var wallcell in queriedRects.OrderBy(cell => Math.Abs(cell.bounds.X - start.X)).ThenBy(cell => Math.Abs(cell.bounds.Y - start.Y))) //Order Rectangles by distance to the actor. 
             {

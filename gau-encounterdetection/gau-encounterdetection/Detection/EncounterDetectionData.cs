@@ -13,6 +13,9 @@ using Data.Utils;
 
 namespace Detection
 {
+    /// <summary>
+    /// Global accessed data storage for all relevant structures and objects 
+    /// </summary>
     public class EncounterDetectionData
     {
         /// <summary>

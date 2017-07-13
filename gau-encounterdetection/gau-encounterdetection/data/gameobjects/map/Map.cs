@@ -61,10 +61,10 @@ namespace Data.Gameobjects
         /// <returns></returns>
         public MapLevel findLevelFromPlayer(Player p)
         {
-            var vz = p.velocity.VZ;
-            double pz = p.position.Z;
+            var vz = p.Velocity.VZ;
+            double pz = p.Position.Z;
             if (vz != 0)
-                pz -= Player.PLAYERMODELL_JUMPHEIGHT; // Substract jumpheight to get real z coordinate(see process data)
+                pz -= Player.CSGO_PLAYERMODELL_JUMPHEIGHT; // Substract jumpheight to get real z coordinate(see process data)
             foreach (var level in maplevels)
             {
                 if (pz <= level.max_z && pz >= level.min_z || (pz == level.max_z || pz == level.min_z))
@@ -164,7 +164,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// Clusters containing the points describing this level
         /// </summary>
-        public HashSet<Point3D[]> clusters;
+        public List<Point3D> clusters;
 
         /// <summary>
         /// Array holding all grid cells 
@@ -179,7 +179,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// All cells representing walls in a quadtree
         /// </summary>
-        public QuadTreeRect<MapGridCell> walls_tree = new QuadTreeRect<MapGridCell>();
+        public RectQuadTree<MapGridCell> walls_tree = new RectQuadTree<MapGridCell>();
 
         /// <summary>
         /// Height of this level on the map - > 0 lowest level 

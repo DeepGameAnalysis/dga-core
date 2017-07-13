@@ -78,12 +78,12 @@ namespace Detection
 
         public bool isDamageEncounter()
         {
-            return cs.Any(component => component.links.Any( link => link.impact > 0));
+            return cs.Any(component => component.links.Any( link => link.Impact > 0));
         }
 
         public bool isKillEncounter()
         {
-            return cs.Any(component => component.links.Any(link => link.isKill));
+            return cs.Any(component => component.links.Any(link => link.IsKill));
         }
 
         public int getEncounterKillEvents()

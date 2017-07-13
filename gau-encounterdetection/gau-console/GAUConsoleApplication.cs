@@ -17,7 +17,6 @@ namespace GAUConsole
 {
     public class GAUConsoleApplication
     {
-        private static ILog LOG;
 
         private static List<string> invalidfiles = new List<string>();
 
@@ -25,13 +24,12 @@ namespace GAUConsole
         /// Read all supported replay files at the given path
         /// </summary>
         /// <param name="PATH"></param>
-        public static void readAllFiles(string PATH)
+        public static void ReadAllFiles(string PATH)
         {
             var filelist = Directory.EnumerateFiles(PATH, "*.dem");
-            LOG.Info("Files to handle: " + filelist.Count());
             Console.WriteLine("Files to handle: " + filelist.Count());
             foreach (string file in filelist)
-                readFile(file);
+                ReadDemoFile(file);
 
             foreach (string invalidfile in invalidfiles)
                 Console.WriteLine("Could not parse: " + invalidfile + "\nReplay not supported yet. Please use only dust2");
@@ -42,10 +40,10 @@ namespace GAUConsole
         /// Read all files given through the command line
         /// </summary>
         /// <param name="args"></param>
-        public static void readFilesFromCommandline(string[] args)
+        public static void ReadFilesFromCommandline(string[] args)
         {
             for (int i = 0; i < args.Length; i++)
-                readFile(args[i]);
+                ReadDemoFile(args[i]);
         }
 
         private static bool skipfile = false;
@@ -55,7 +53,7 @@ namespace GAUConsole
         /// Read a supported replay file
         /// </summary>
         /// <param name="demopath"></param>
-        private static void readFile(string demopath)
+        private static void ReadDemoFile(string demopath)
         {
             ParseTask ptask = new ParseTask
             {
@@ -69,7 +67,7 @@ namespace GAUConsole
                 settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
             };
 
-            LOG.Info("Reading: " + Path.GetFileName(demopath));
+            Console.WriteLine("Reading: " + Path.GetFileName(demopath));
             try
             {
                 var jsonpath = demopath.Replace(".dem", ".json");
@@ -77,30 +75,30 @@ namespace GAUConsole
                 {
                     if (new FileInfo(jsonpath).Length == 0)
                     {
-                        LOG.Info("File empty");
+                        Console.WriteLine("File empty");
                         return; //File was empty -> skipped parsing it but wrote json
                     }
-                    LOG.Info(".dem file already parsed");
-                    readDemoJSON(jsonpath, ptask);
+                    Console.WriteLine(".dem file already parsed");
+                    ReadDemoJSON(jsonpath, ptask);
                 }
                 else
                 {
                     using (var demoparser = new DemoParser(File.OpenRead(demopath)))
                     {
-                        skipfile = skipFile(demoparser, ptask);
+                        skipfile = SkipFile(demoparser, ptask);
                         if (!skipfile)
                         {
-                            LOG.Info("Parsing .dem file");
+                            Console.WriteLine("Parsing .dem file");
                             using (var newdemoparser = new DemoParser(File.OpenRead(demopath)))
                             {
                                 CSGOGameStateGenerator.GenerateJSONFile(newdemoparser, ptask);
-                                readDemoJSON(jsonpath, ptask);
+                                ReadDemoJSON(jsonpath, ptask);
                                 CSGOGameStateGenerator.cleanUp();
                             }
                         }
                         else
                         {
-                            LOG.Info("----- Not supported. Skip file: " + demopath + "-----");
+                            Console.WriteLine("----- Not supported. Skip file: " + demopath + "-----");
                             return;
                         }
                     }
@@ -109,13 +107,13 @@ namespace GAUConsole
             }
             catch (Exception e)
             {
-                LOG.Error(e.Message);
-                LOG.Error(e.StackTrace);
-                LOG.Info("----- Error occured. Skip file: " + demopath + "-----");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("----- Error occured. Skip file: " + demopath + "-----");
                 return;
             }
 
-            LOG.Info("----- Parsing and Encounter Detection was sucessful ----- ");
+            Console.WriteLine("----- Parsing and Encounter Detection was sucessful ----- ");
 
         }
 
@@ -124,20 +122,19 @@ namespace GAUConsole
         /// </summary>
         /// <param name="jsonpath"></param>
         /// <param name="ptask"></param>
-        private static void readDemoJSON(string jsonpath, ParseTask ptask)
+        private static void ReadDemoJSON(string jsonpath, ParseTask ptask)
         {
-            Console.WriteLine(jsonpath);
+            Console.WriteLine("Reading: "+jsonpath + " for Encounter Detection");
 
             using (var reader = new StreamReader(jsonpath))
             {
                 var deserializedGamestate = Newtonsoft.Json.JsonConvert.DeserializeObject<ReplayGamestate>(reader.ReadToEnd(), ptask.settings);
                 Console.WriteLine("Map: " + deserializedGamestate.meta.mapname);
 
-                string metapath = @"E:\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + deserializedGamestate.meta.mapname + ".txt";
-                //string path = @"C:\Users\Patrick\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + ".txt";
+                string metapath = @"D:\Ressources,Assets,Data\CS GO Demofiles\CS GO Mapmetadata\" + deserializedGamestate.meta.mapname + ".txt";
                 var mapmeta = MapMetaDataPropertyReader.readProperties(metapath);
-                LOG.Info("Detecting Encounters");
-                new EncounterDetection(deserializedGamestate, new CSGOPreprocessor()).detectEncounters();
+                Console.WriteLine("Detecting Encounters");
+                new EncounterDetection(deserializedGamestate, mapmeta, new CSGOPreprocessor()).DetectEncounters();
             }
         }
 
@@ -147,10 +144,10 @@ namespace GAUConsole
         /// <param name="demoparser"></param>
         /// <param name="ptask"></param>
         /// <returns></returns>
-        private static bool skipFile(DemoParser demoparser, ParseTask ptask)
+        private static bool SkipFile(DemoParser demoparser, ParseTask ptask)
         {
             var mapname = CSGOGameStateGenerator.peakMapname(demoparser, ptask);
-            LOG.Info("Map: " + mapname);
+            Console.WriteLine("Map: " + mapname);
             if (!Map.SUPPORTED_MAPS.Contains(mapname))
                 return true;
 

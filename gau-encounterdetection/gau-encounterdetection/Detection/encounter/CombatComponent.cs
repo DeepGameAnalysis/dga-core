@@ -56,8 +56,8 @@ namespace Detection
 
             foreach (var l in links)
             {
-                players.Add(l.getActor());
-                players.Add(l.getReciever());
+                players.Add(l.GetActor());
+                players.Add(l.GetReciever());
             }
             if (players.Count == 0) throw new Exception("No players assigned");
         }
@@ -69,8 +69,8 @@ namespace Detection
         /// <param name="combcomp"></param>
         public void assignComponentEventcount(Tick tick, Player[] players)
         {
-            foreach (var p in players.Where(p => !p.isDead())) //Count spotted"events" where combatlinks need to be created
-                if (p.isSpotted)
+            foreach (var p in players.Where(p => !p.IsDead())) //Count spotted"events" where combatlinks need to be created
+                if (p.IsSpotted)
                     contained_spotted_events++;
 
             foreach (var g in tick.getTickevents())

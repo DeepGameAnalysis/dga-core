@@ -91,29 +91,29 @@ namespace Data.Gameobjects
     }
 
 
-    public class Weapon
+    public class Item
     {
 
 
         /// <summary>
         /// Owner of this weapon
         /// </summary>
-        public Player owner { get; set; }
+        public Player Owner { get; set; }
 
         /// <summary>
         /// Name of this weapon
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Type of the weapon
         /// </summary>
-        public WeaponType weaponType { get; set; }
+        public WeaponType WeaponType { get; set; }
 
         /// <summary>
         /// Categorie of the weapon
         /// </summary>
-        public WeaponCategorie weaponCategorie { get; set; }
+        public WeaponCategorie WeaponCategorie { get; set; }
 
         /// <summary>
         /// Ammo left in the magazine.

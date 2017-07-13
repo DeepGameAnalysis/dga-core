@@ -5,15 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Spatial.Euclidean;
-using QuadTree.QTreeRect;
-
+using QuadTree.QTreeRectF;
 namespace Data.Gameobjects
 {
     public class MapGrid
     {
     }
 
-    public class MapGridCell : IRectQuadStorable
+    public class MapGridCell : IRectQuadTreeStorable
     {
         /// <summary>
         /// Index x of the mapcell in the map grid
@@ -36,11 +35,11 @@ namespace Data.Gameobjects
         public Rectangle2D bounds { get; set; }
 
         //TODO Change to own type rectangle
-        public Rectangle Rect
+        public Rectangle2D Rect
         {
             get
             {
-                return bounds.getAsQuadTreeRect();
+                return bounds;
             }
         }
 

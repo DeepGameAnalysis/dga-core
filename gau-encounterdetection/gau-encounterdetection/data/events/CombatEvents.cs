@@ -14,7 +14,7 @@ namespace Data.Gameevents
     /// </summary>
     public class WeaponFire : Event
     {
-        public Weapon weapon { get; set; }
+        public Item Weapon { get; set; }
 
         public override Player[] getPlayers()
         {
@@ -28,7 +28,7 @@ namespace Data.Gameevents
     /// </summary>
     public class PlayerSpotted : Event
     {
-        public Player spotter { get; set; } //TODO: how find out spotter? or do this in algorithm?
+        public Player Spotter { get; set; } //TODO: how find out spotter? or do this in algorithm?
 
         public override Player[] getPlayers()
         {
@@ -39,30 +39,28 @@ namespace Data.Gameevents
     /// <summary>
     /// Event describing dealt damage from a attacker to a vicitim
     /// </summary>
-    public class PlayerHurt : Event
+    public class PlayerHurt : WeaponFire
     {
-        public Player victim { get; set; }
+        public Player Victim { get; set; }
 
         public int HP { get; set; }
 
-        public int armor { get; set; }
+        public int Armor { get; set; }
 
-        public int armor_damage { get; set; }
+        public int Armor_damage { get; set; }
 
         public int HP_damage { get; set; }
 
-        public int hitgroup { get; set; }
-
-        public Weapon weapon { get; set; }
+        public int Hitgroup { get; set; }
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor, victim };
+            return new Player[] { actor, Victim };
         }
 
         public override Point3D[] getPositions()
         {
-            return new Point3D[] { actor.position, victim.position };
+            return new Point3D[] { actor.Position, Victim.Position };
         }
     }
 
@@ -72,26 +70,26 @@ namespace Data.Gameevents
     public class PlayerKilled : PlayerHurt
     {
 
-        public bool headshot { get; set; }
+        public bool Headshot { get; set; }
 
-        public int penetrated { get; set; }
+        public int Penetrated { get; set; }
 
-        public Player assister { get; set; }
+        public Player Assister { get; set; }
 
         public override Player[] getPlayers()
         {
-            if (assister != null)
-                return new Player[] { actor, victim, assister };
+            if (Assister != null)
+                return new Player[] { actor, Victim, Assister };
             else
                 return base.getPlayers();
         }
 
         public override Point3D[] getPositions()
         {
-            if(assister != null)
-                return new Point3D[] { actor.position, assister.position, victim.position };
+            if(Assister != null)
+                return new Point3D[] { actor.Position, Assister.Position, Victim.Position };
             else
-                return new Point3D[] { actor.position, victim.position };
+                return new Point3D[] { actor.Position, Victim.Position };
         }
     }
 }

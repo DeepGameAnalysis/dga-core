@@ -25,7 +25,7 @@ namespace Data.Gameevents
 
         public override Point3D[] getPositions()
         {
-            return new Point3D[] { actor.position };
+            return new Point3D[] { actor.Position };
         }
     }
 

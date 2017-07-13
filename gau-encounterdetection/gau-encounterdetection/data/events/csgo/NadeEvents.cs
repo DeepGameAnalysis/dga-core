@@ -54,7 +54,7 @@ namespace Data.Gameevents
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public bool isEndEventOf(NadeEvents n)
+        public bool IsEndEventOf(NadeEvents n)
         {
             switch (this.gameeventtype)
             {
@@ -75,7 +75,7 @@ namespace Data.Gameevents
             if (other == null)
                 return false;
 
-            if (this.isEndEventOf(other) && this.actor.Equals(other.actor) && this.nadetype == other.nadetype)
+            if (this.IsEndEventOf(other) && this.actor.Equals(other.actor) && this.nadetype == other.nadetype)
             {
                 var dx = Math.Abs(other.position.X - this.position.X);
                 var dy = Math.Abs(other.position.Y - this.position.Y);
@@ -99,7 +99,7 @@ namespace Data.Gameevents
 
     public class FlashNade : NadeEvents
     {
-        public IList<PlayerFlashed> flashedplayers { get; set; }
+        public IList<PlayerFlashed> Flashedplayers { get; set; }
 
         /// <summary>
         /// Returns true when the last flashed player from the opposing team is not flashed (time == 0) anymore
@@ -107,8 +107,8 @@ namespace Data.Gameevents
         /// <returns></returns>
         public bool hasFinished()
         {
-            foreach (var p in flashedplayers.Where(player => player.getTeam() != actor.getTeam() && !player.isDead()))
-            if (p.flashedduration > 0)
+            foreach (var p in Flashedplayers.Where(player => player.GetTeam() != actor.GetTeam() && !player.IsDead()))
+            if (p.Flashedduration > 0)
                     return true;
             Console.WriteLine("Flash finished");
             return true;

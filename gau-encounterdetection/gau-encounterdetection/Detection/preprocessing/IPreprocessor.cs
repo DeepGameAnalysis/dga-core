@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Data.Gamestate;
 using Data.Utils;
+using Detection;
 
 namespace Preprocessing
 {
@@ -17,6 +18,6 @@ namespace Preprocessing
         /// <summary>
         /// 
         /// </summary>
-        void preprocessData(ReplayGamestate gamestate, MapMetaData map);
+        void PreprocessData(ReplayGamestate gamestate, MapMetaData map, out EncounterDetectionData edData);
     }
 }
