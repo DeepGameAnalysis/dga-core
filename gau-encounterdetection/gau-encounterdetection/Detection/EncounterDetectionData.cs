@@ -18,15 +18,28 @@ namespace Detection
     /// </summary>
     public class EncounterDetectionData
     {
+
+
+        /// <summary>
+        /// All currently active - not timed out - encounters
+        /// </summary>
+        public List<Encounter> OpenEncounters = new List<Encounter>();
+
+        /// <summary>
+        /// Timed out encounters
+        /// </summary>
+        public List<Encounter> ClosedEncounters = new List<Encounter>();
+
+        /// <summary>
+        /// Currently detected predecessors of a encounter
+        /// </summary>
+        public List<Encounter> Predecessors = new List<Encounter>();
+
+
         /// <summary>
         /// Allow to export data
         /// </summary>
-        private bool exportingEnabled = true;
-
-        /// <summary>
-        /// Exporter for csv file format
-        /// </summary>
-        private CSVExporter exporter = new CSVExporter();
+        public bool ExportingEnabled = true;
 
 
 
@@ -37,11 +50,11 @@ namespace Detection
         //                          CSGO
         //
         // Timeouts in seconds.
-        private const float TAU = 20;                                   // Time after which a encounter is not a predecessor anymore
-        private const float ENCOUNTER_TIMEOUT = 20;                     // Time after which a Encounter ends if he is not extended before
-        private const float WEAPONFIRE_VICTIMSEARCH_TIMEOUT = 5;        // Time after which a vicitim is not suitable for a weapon fire event
-        private const float PLAYERHURT_WEAPONFIRESEARCH_TIMEOUT = 4;    // Time after which a a player hurt event is not suitable for a weapon fire event
-        private const float PLAYERHURT_DAMAGEASSIST_TIMEOUT = 4;        // Time after which a player hurt event is not suitable for a damage assist
+        public const float TAU = 20;                                   // Time after which a encounter is not a predecessor anymore
+        public const float ENCOUNTER_TIMEOUT = 20;                     // Time after which a Encounter ends if he is not extended before
+        public const float WEAPONFIRE_VICTIMSEARCH_TIMEOUT = 5;        // Time after which a vicitim is not suitable for a weapon fire event
+        public const float PLAYERHURT_WEAPONFIRESEARCH_TIMEOUT = 4;    // Time after which a a player hurt event is not suitable for a weapon fire event
+        public const float PLAYERHURT_DAMAGEASSIST_TIMEOUT = 4;        // Time after which a player hurt event is not suitable for a damage assist
 
 
 
@@ -53,22 +66,22 @@ namespace Detection
         /// <summary>
         /// Tickrate of the demo this algorithm runs on in Hz. 
         /// </summary>
-        public float tickrate;
+        public float Tickrate;
 
         /// <summary>
         /// Ticktime of the demo in ms. 
         /// </summary>
-        public float ticktime;
+        public float Ticktime;
 
         /// <summary>
         /// All players - communicated by the meta-data - which are participating in this match. Get updated every tick.
         /// </summary>
-        private Player[] players;
+        public Player[] Players;
 
         /// <summary>
         /// All entities controlled by players which are acting in this match. Get updated every tick.
         /// </summary>
-        private HashSet<Entity> entities;
+        public HashSet<Entity> Entities;
 
 
 
@@ -79,25 +92,27 @@ namespace Detection
         /// <summary>
         /// Holds every (attackerposition, victimposition) pair of a hitevent with the attackerposition as key
         /// </summary>
-        public Hashtable hit_hashtable = new Hashtable();
+        public Hashtable Hit_hashtable = new Hashtable();
 
         /// <summary>
         /// Holds every (assister, assisted) pair of a playerdeath event with a assister
         /// </summary>
-        public Hashtable direct_assist_hashtable = new Hashtable();
+        public Hashtable DirectAssist_hashtable = new Hashtable();
+        public Hashtable IndirectAssist_hashtable = new Hashtable();
 
         /// <summary>
         /// Holds every (assister, assisted) pair of a hurt events with assistance character
         /// </summary>
-        public Hashtable damage_assist_hashtable = new Hashtable();
+        public Hashtable DamageAssist_hashtable = new Hashtable();
 
         /// <summary>
         /// </summary>
-        public Hashtable heal_hashtable = new Hashtable();
+        public Hashtable Heal_hashtable = new Hashtable();
+        public Hashtable HealAssist_hashtable = new Hashtable();
 
         /// <summary>
         /// </summary>
-        public Hashtable resupply_hashtable = new Hashtable();
+        public Hashtable Resupply_hashtable = new Hashtable();
 
 
         //
@@ -107,35 +122,34 @@ namespace Detection
         /// <summary>
         /// All clusters of attackpositions
         /// </summary>
-        public EventPositionCluster[] attacker_clusters;
+        public EventPositionCluster[] PlayerHurt_clusters;
 
 
 
 
 
         //
-        // Variables for building links
+        // Variables for building distance based links
         //
-
         /// <summary>
         /// Average of all eventbased supports
         /// </summary>
-        private double SUPPORTRANGE_AVERAGE;
+        public double SUPPORTRANGE_AVERAGE;
 
         /// <summary>
         /// Average of all eventbased combats
         /// </summary>
-        private double ATTACKRANGE_AVERAGE;
+        public double ATTACKRANGE_AVERAGE;
 
         /// <summary>
         /// Average of all eventbased supports
         /// </summary>
-        private double SUPPORTRANGE_MEDIAN;
+        public double SUPPORTRANGE_MEDIAN;
 
         /// <summary>
         /// Average of all eventbased combats
         /// </summary>
-        private double ATTACKRANGE_MEDIAN;
+        public double ATTACKRANGE_MEDIAN;
 
 
 
@@ -146,17 +160,17 @@ namespace Detection
         /// <summary>
         /// Simple representation of the map to do basic sight calculations for players
         /// </summary>
-        public Map map;
+        public Map Map;
 
         /// <summary>
         /// Name of the map this encounter detection is running on
         /// </summary>
-        public string mapname;
+        public string Mapname;
 
         /// <summary>
         /// Metadata about map. Important for calculations
         /// </summary>
-        public MapMetaData mapmeta;
+        public MapMetaData Mapmeta;
 
 
 
@@ -167,7 +181,7 @@ namespace Detection
         /// <summary>
         /// All data we have from this match.
         /// </summary>
-        private Match match;
+        public Match Match;
 
 
 
@@ -178,6 +192,22 @@ namespace Detection
         /// <summary>
         /// Bit array for prunning of links - common use in RTS and MMOs
         /// </summary>
-        public BitArray links_table;
+        public BitArray Links_pruningtable;
+
+        /// <summary>
+        /// Tickrate of the demo this algorithm runs on in Hz. 
+        /// </summary>
+        public float Tickrate_pruningrate;
+
+
+        public Player[] GetPlayers()
+        {
+            return Players;
+        }
+
+        public List<Encounter> GetEncounters()
+        {
+            return ClosedEncounters;
+        }
     }
 }

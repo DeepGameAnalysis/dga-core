@@ -26,7 +26,7 @@ namespace Data.Gameevents
         
         public override Player[] getPlayers()
         {
-            return new Player[] { actor };
+            return new Player[] { Actor };
         }
 
 
@@ -56,14 +56,14 @@ namespace Data.Gameevents
         /// <returns></returns>
         public bool IsEndEventOf(NadeEvents n)
         {
-            switch (this.gameeventtype)
+            switch (this.GameeventType)
             {
                 case "smoke_exploded":
-                    return n.gameeventtype == "smoke_ended";
+                    return n.GameeventType == "smoke_ended";
                 case "fire_exploded":
-                    return n.gameeventtype == "firenade_ended";
+                    return n.GameeventType == "firenade_ended";
                 case "decoy_exploded":
-                    return n.gameeventtype == "decoy_ended";
+                    return n.GameeventType == "decoy_ended";
                 default:
                     return false;
             }
@@ -75,7 +75,7 @@ namespace Data.Gameevents
             if (other == null)
                 return false;
 
-            if (this.IsEndEventOf(other) && this.actor.Equals(other.actor) && this.nadetype == other.nadetype)
+            if (this.IsEndEventOf(other) && this.Actor.Equals(other.Actor) && this.nadetype == other.nadetype)
             {
                 var dx = Math.Abs(other.position.X - this.position.X);
                 var dy = Math.Abs(other.position.Y - this.position.Y);
@@ -107,7 +107,7 @@ namespace Data.Gameevents
         /// <returns></returns>
         public bool hasFinished()
         {
-            foreach (var p in Flashedplayers.Where(player => player.GetTeam() != actor.GetTeam() && !player.IsDead()))
+            foreach (var p in Flashedplayers.Where(player => player.GetTeam() != Actor.GetTeam() && !player.IsDead()))
             if (p.Flashedduration > 0)
                     return true;
             Console.WriteLine("Flash finished");

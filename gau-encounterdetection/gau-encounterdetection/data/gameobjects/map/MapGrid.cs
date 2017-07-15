@@ -17,29 +17,28 @@ namespace Data.Gameobjects
         /// <summary>
         /// Index x of the mapcell in the map grid
         /// </summary>
-        public int index_X { get; set; }
+        public int Index_X { get; set; }
 
         /// <summary>
         /// Index y of the mapcell in the map grid
         /// </summary>
-        public int index_Y { get; set; }
+        public int Index_Y { get; set; }
 
         /// <summary>
         /// Is this cell already occupied -> it has not been walked by a player
         /// </summary>
-        public bool blocked { get; set; }
+        public bool Blocked { get; set; }
 
         /// <summary>
         /// Rectangular respresentation of the cell
         /// </summary>
-        public Rectangle2D bounds { get; set; }
+        public Rectangle2D Bounds { get; set; }
 
-        //TODO Change to own type rectangle
         public Rectangle2D Rect
         {
             get
             {
-                return bounds;
+                return Bounds;
             }
         }
 
@@ -53,11 +52,11 @@ namespace Data.Gameobjects
         /// <summary>
         /// Queried cell 
         /// </summary>
-        public MapGridCell cell { get; set; }
+        public MapGridCell Cell { get; set; }
 
         /// <summary>
         /// Possible yaw for a FOV Query
         /// </summary>
-        public float yaw { get; set; }
+        public float Yaw { get; set; }
     }
 }

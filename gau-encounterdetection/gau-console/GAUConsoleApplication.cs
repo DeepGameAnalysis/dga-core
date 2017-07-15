@@ -17,7 +17,7 @@ namespace GAUConsole
 {
     public class GAUConsoleApplication
     {
-
+        private const string META_PATH = @"D:\Ressources\CS GO Demofiles\CS GO Mapmetadata\";
         private static List<string> invalidfiles = new List<string>();
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace GAUConsole
                 specialevents = true,
                 highdetailplayer = true,
                 positioninterval = 250,
-                settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
+                settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.Indented }
             };
 
             Console.WriteLine("Reading: " + Path.GetFileName(demopath));
@@ -124,14 +124,16 @@ namespace GAUConsole
         /// <param name="ptask"></param>
         private static void ReadDemoJSON(string jsonpath, ParseTask ptask)
         {
-            Console.WriteLine("Reading: "+jsonpath + " for Encounter Detection");
+            Console.WriteLine("Reading: " + jsonpath + " for Encounter Detection");
 
             using (var reader = new StreamReader(jsonpath))
             {
                 var deserializedGamestate = Newtonsoft.Json.JsonConvert.DeserializeObject<ReplayGamestate>(reader.ReadToEnd(), ptask.settings);
                 Console.WriteLine("Map: " + deserializedGamestate.meta.mapname);
+                if (deserializedGamestate == null)
+                    throw new Exception("Gamestate null");
 
-                string metapath = @"D:\Ressources,Assets,Data\CS GO Demofiles\CS GO Mapmetadata\" + deserializedGamestate.meta.mapname + ".txt";
+                string metapath = META_PATH + deserializedGamestate.meta.mapname + ".txt";
                 var mapmeta = MapMetaDataPropertyReader.readProperties(metapath);
                 Console.WriteLine("Detecting Encounters");
                 new EncounterDetection(deserializedGamestate, mapmeta, new CSGOPreprocessor()).DetectEncounters();

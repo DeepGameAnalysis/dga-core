@@ -38,21 +38,21 @@ namespace Clustering
         /// <summary>
         /// Boundings of this cluster as Rectangle
         /// </summary>
-        public Rectangle2D boundings { get; set; }
+        public Rectangle2D Boundings { get; set; }
 
         /// <summary>
         /// The two-dimensional bounding polygon of the datapoints
         /// </summary>
-        public Polygon2D boundingpolygon2D { get; set; }
+        public Polygon2D BoundingPolygon2D { get; set; }
 
         /// <summary>
         /// The convex hull of all datapoints
         /// </summary>
-        public Polygon2D convexhull
+        public Polygon2D ConvexHull
         {
             get {
-                if(boundingpolygon2D == null) 
-                    boundingpolygon2D = new Polygon2D(base.data.Cast<Point2D>()); //Save polygon in case for further use
+                if(BoundingPolygon2D == null) 
+                    BoundingPolygon2D = new Polygon2D(base.data.Cast<Point2D>()); //Save polygon in case for further use
 
                 return Polygon2D.GetConvexHullFromPoints(base.data.Cast<Point2D>());
             }
@@ -82,16 +82,22 @@ namespace Clustering
             }
 
             cluster_range_average = distances.Average();
-            cluster_range_median = DistanceFunctions.GetMedian(distances.Cast<float>());
+            cluster_range_median = DistanceFunctions.GetMedian(Convert(distances.ToArray()));
+
             max_range = distances.Max();
             min_range = distances.Min();
             Console.WriteLine("Attackrange for this cluster is: " + cluster_range_average);
-            boundings = getBoundings();
+            Boundings = GetBoundings();
         }
 
-        private Rectangle2D getBoundings()
+        public static float[] Convert(double[] mtx)
         {
-            throw new NotImplementedException();
+            return mtx.Select(j => (float)j).ToArray();
+        }
+
+        private Rectangle2D GetBoundings()
+        {
+            return new Rectangle2D(data.Max(point => point.X), data.Max(point => point.Y), data.Min(point => point.X), data.Min(point => point.Y), true);
         }
     }
 

@@ -35,7 +35,7 @@ namespace Data.Gamestate
 
         public int tickcount { get; set; }
 
-        public List<PlayerDetailed> players { get; set; }
+        public List<PlayerMeta> players { get; set; }
     }
 
     public class Match

@@ -16,24 +16,24 @@ namespace Data.Gameevents
         /// <summary>
         /// Identifier for events f.e. "player_hurt" "player_killed"
         /// </summary>
-        public string gameeventtype { get; set; }
+        public string GameeventType { get; set; }
 
         /// <summary>
         /// The actor is always the person causing this event(or being updated with a event)
         /// </summary>
-        public Player actor;
+        public Player Actor;
 
         /// <summary>
         /// Get players in this event
         /// </summary>
         /// <returns></returns>
-        public virtual Player[] getPlayers() { return new Player[] { actor }; }
+        public virtual Player[] getPlayers() { return new Player[] { Actor }; }
 
         /// <summary>
         /// Get positions tracked in the event
         /// </summary>
         /// <returns></returns>
-        public virtual Point3D[] getPositions() { return new Point3D[] { actor.Position }; }
+        public virtual Point3D[] getPositions() { return new Point3D[] { Actor.Position }; }
 
     }
 }

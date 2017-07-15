@@ -18,7 +18,7 @@ namespace Data.Gameevents
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor };
+            return new Player[] { Actor };
         }
 
     }
@@ -32,7 +32,7 @@ namespace Data.Gameevents
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor };
+            return new Player[] { Actor };
         }
     }
 
@@ -55,12 +55,12 @@ namespace Data.Gameevents
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor, Victim };
+            return new Player[] { Actor, Victim };
         }
 
         public override Point3D[] getPositions()
         {
-            return new Point3D[] { actor.Position, Victim.Position };
+            return new Point3D[] { Actor.Position, Victim.Position };
         }
     }
 
@@ -79,7 +79,7 @@ namespace Data.Gameevents
         public override Player[] getPlayers()
         {
             if (Assister != null)
-                return new Player[] { actor, Victim, Assister };
+                return new Player[] { Actor, Victim, Assister };
             else
                 return base.getPlayers();
         }
@@ -87,9 +87,9 @@ namespace Data.Gameevents
         public override Point3D[] getPositions()
         {
             if(Assister != null)
-                return new Point3D[] { actor.Position, Assister.Position, Victim.Position };
+                return new Point3D[] { Actor.Position, Assister.Position, Victim.Position };
             else
-                return new Point3D[] { actor.Position, Victim.Position };
+                return new Point3D[] { Actor.Position, Victim.Position };
         }
     }
 }

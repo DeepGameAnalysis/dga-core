@@ -30,22 +30,22 @@ namespace Data.Gamestate
 
         public List<NadeEvents> getNadeEvents()
         {
-            return tickevents.Where(t => t.gameeventtype == "smoke_exploded"  || t.gameeventtype == "fire_exploded" || t.gameeventtype == "hegrenade_exploded" || t.gameeventtype == "flash_exploded").Cast<NadeEvents>().ToList();
+            return tickevents.Where(t => t.GameeventType == "smoke_exploded"  || t.GameeventType == "fire_exploded" || t.GameeventType == "hegrenade_exploded" || t.GameeventType == "flash_exploded").Cast<NadeEvents>().ToList();
         }
 
         public List<NadeEvents> getNadeEndEvents()
         {
-            return tickevents.Where(t => t.gameeventtype == "smoke_ended" || t.gameeventtype == "firenade_ended" || t.gameeventtype == "hegrenade_exploded" || t.gameeventtype == "flash_exploded").Cast<NadeEvents>().ToList();
+            return tickevents.Where(t => t.GameeventType == "smoke_ended" || t.GameeventType == "firenade_ended" || t.GameeventType == "hegrenade_exploded" || t.GameeventType == "flash_exploded").Cast<NadeEvents>().ToList();
         }
 
         public List<ServerEvents> getServerEvents()
         {
-            return tickevents.Where(t => t.gameeventtype == "player_bind" || t.gameeventtype == "player_disconnected").Cast<ServerEvents>().ToList();
+            return tickevents.Where(t => t.GameeventType == "player_bind" || t.GameeventType == "player_disconnected").Cast<ServerEvents>().ToList();
         }
 
         public List<Event> getTickevents()
         {
-            return tickevents.Where(e => e.gameeventtype != "player_bind" || e.gameeventtype != "player_disconnected").ToList();
+            return tickevents.Where(e => e.GameeventType != "player_bind" || e.GameeventType != "player_disconnected").ToList();
         }
     }
 

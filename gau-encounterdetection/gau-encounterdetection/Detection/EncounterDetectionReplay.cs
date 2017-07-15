@@ -25,7 +25,7 @@ namespace Detection
         /// </summary>
         /// <param name="tick"></param>
         /// <param name="comp"></param>
-        public void insertReplaydata(Tick tick, CombatComponent comp) //@TODO: save encounters instead of components
+        public void InsertReplaydata(Tick tick, CombatComponent comp) //@TODO: save encounters instead of components
         {
             if (tick.tick_id != comp.tick_id) throw new Exception("Cannot save replaydata. Component and Tickdata are not matching");
             data.Add(tick, comp);

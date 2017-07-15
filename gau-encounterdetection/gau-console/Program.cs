@@ -7,7 +7,7 @@ namespace gau_console
     class Program
     {
 
-        private const string TEST_PATH = "D:/Ressources,Assets,Data/Test CSGO";
+        private const string TEST_PATH = "D:/Ressources/Test CSGO";
 
         private static ILog LOG;
 

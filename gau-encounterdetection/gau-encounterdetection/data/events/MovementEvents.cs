@@ -20,12 +20,12 @@ namespace Data.Gameevents
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor };
+            return new Player[] { Actor };
         }
 
         public override Point3D[] getPositions()
         {
-            return new Point3D[] { actor.Position };
+            return new Point3D[] { Actor.Position };
         }
     }
 

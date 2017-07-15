@@ -19,15 +19,9 @@ namespace Data.Gameobjects
         Eight
     }
 
-    public class PlayerMeta
+    public class PlayerMeta : Player
     {
-        public string playername { get; set; }
-
-        public long player_id { get; set; }
-
-        public string team { get; set; }
-
-        public string clanname { get; set; }
+        public string Clanname { get; set; }
     }
 
     public class Player

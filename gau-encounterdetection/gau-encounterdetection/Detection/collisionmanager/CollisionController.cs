@@ -20,17 +20,19 @@ namespace CollisionManager
         /// <returns></returns>
         public static Point2D? LOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
         {
+            //TODO: Not working because searchrect is empty
             //return BresenhamLineStepping(start, end, maplevel);
             if (maplevel == null) throw new Exception("Maplevel cannot be null");
 
             //Quadtree reduces cells to test depending on the rectangle formed by actorps and recieverpos -> players are close -> far less cells
+
             var searchrect = GridFunctions.GetRectFromPoints(start, end);
 
-            var queriedRects = maplevel.walls_tree.GetObjects(searchrect);
+            var queriedRects = maplevel.WallCells.GetObjects(searchrect);
 
-            foreach (var wallcell in queriedRects.OrderBy(cell => Math.Abs(cell.bounds.X - start.X)).ThenBy(cell => Math.Abs(cell.bounds.Y - start.Y))) //Order Rectangles by distance to the actor. 
+            foreach (var wallcell in queriedRects.OrderBy(cell => Math.Abs(cell.Bounds.X - start.X)).ThenBy(cell => Math.Abs(cell.Bounds.Y - start.Y))) //Order Rectangles by distance to the actor. 
             {
-                var intersection_point = wallcell.bounds.Rect2DIntersectsLine(start.SubstractZ(), end.SubstractZ());
+                var intersection_point = wallcell.Bounds.Rect2DIntersectsLine(start.SubstractZ(), end.SubstractZ());
                 if (intersection_point != null)
                     return intersection_point;
             }

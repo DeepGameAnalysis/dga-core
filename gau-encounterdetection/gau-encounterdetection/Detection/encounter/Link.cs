@@ -42,7 +42,7 @@ namespace Detection
         /// <summary>
         /// Position of a collision with an obstacle by this link
         /// </summary>
-        public Point3D coll;
+        public Point2D? coll;
 
         public Link()
         {
@@ -68,7 +68,7 @@ namespace Detection
             this.dir = dir;
         }
 
-        public Link(Player actor, Player reciever, LinkType type, Direction dir, Point3D coll)
+        public Link(Player actor, Player reciever, LinkType type, Direction dir, Point2D? coll)
         {
             if (actor == null || reciever == null) throw new Exception("Players cannot be null");
             if (actor.GetTeam() != reciever.GetTeam() && type == LinkType.SUPPORTLINK)

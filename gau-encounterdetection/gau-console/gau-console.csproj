@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -81,8 +81,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -110,6 +109,10 @@
     <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\gau-json.csproj">
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
       <Name>gau-json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
+      <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
+      <Name>Spatial</Name>
     </ProjectReference>
     <ProjectReference Include="..\gau-encounterdetection\gau-encounterdetection.csproj">
       <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>

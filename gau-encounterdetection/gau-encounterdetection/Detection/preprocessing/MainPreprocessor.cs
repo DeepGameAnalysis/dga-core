@@ -14,7 +14,8 @@ using Detection;
 namespace Preprocessing
 {
     /// <summary>
-    /// Preprocessing standards for all games are computed here. Let IPreprocessors inherit this class to take over its functionality.
+    /// Preprocessing standards for all games are computed here.
+    /// Let IPreprocessors inherit this class to take over its functionality and add extra special functionality to your own Preprocessor
     /// </summary>
     public class MainPreprocessor
     {
@@ -22,24 +23,24 @@ namespace Preprocessing
         static Hashtable gridsights_hash = new Hashtable();
 
 
-        public void preprocessMain(ReplayGamestate gamestate, MapMetaData mapmeta, out EncounterDetectionData newedData)
+        public void PreprocessMain(ReplayGamestate gamestate, MapMetaData mapmeta, EncounterDetectionData nedData)
         {
 
-            foreach (var round in gamestate.match.rounds)
-                foreach (var tick in round.ticks)
-                    foreach (var tevent in tick.tickevents)
-                        hashGridcells(tevent);
+            //foreach (var round in gamestate.match.rounds)
+            //    foreach (var tick in round.ticks)
+            //        foreach (var tevent in tick.tickevents)
+            //            HashGridcells(tevent);
         }
 
-        private static void hashGridcells(Event tevent)
+        private static void HashGridcells(Event tevent)
         {
-            if (tevent.gameeventtype == "PlayerKilled" || tevent.gameeventtype == "PlayerHurt")
+            if (tevent.GameeventType == "PlayerKilled" || tevent.GameeventType == "PlayerHurt")
             {
                 var kevent = tevent as PlayerHurt;
                 // Hash the start and end cell
-                var actor_grid_x = GridFunctions.GetGridPosX(kevent.actor.Position.X, 0, 0); // TODO: read from file origin and cellwidth
-                var actor_grid_y = GridFunctions.GetGridPosY(kevent.actor.Position.Y, 0, 0);
-                var actor_yaw = kevent.actor.Facing.Yaw;
+                var actor_grid_x = GridFunctions.GetGridPosX(kevent.Actor.Position.X, 0, 0); // TODO: read from file origin and cellwidth
+                var actor_grid_y = GridFunctions.GetGridPosY(kevent.Actor.Position.Y, 0, 0);
+                var actor_yaw = kevent.Actor.Facing.Yaw;
 
                 var target_grid_x = GridFunctions.GetGridPosX(kevent.Victim.Position.X,0,0);
                 var target_grid_y = GridFunctions.GetGridPosY(kevent.Victim.Position.Y,0,0);

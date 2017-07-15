@@ -20,12 +20,12 @@ namespace Data.Utils
     /// <summary>
     /// Rebuild the map by use of positional data.
     /// </summary>
-    public class SimpleMapConstructor
+    public class LeveldMapConstructur
     {
         /// <summary>
         /// Defines the height of a level aka granularity of rastering all height map levels.
         /// </summary>
-        private static int rastering_height;
+        private static int rastering_height = Player.CSGO_PLAYERMODELL_HEIGHT;
 
         /// <summary>
         /// Map width - width of the grid
@@ -66,9 +66,8 @@ namespace Data.Utils
         /// reconstruct a polygonal represenatation of the map with serveral levels
         /// </summary>
         /// <param name="ps"></param>
-        public static Map createMap(MapMetaData mapmeta, HashSet<Point3D> ps)
+        public static Map CreateMap(MapMetaData mapmeta, List<Point3D> ps)
         {
-            //TODO Assign right values!!
             pos_x = pos_x = (int)mapmeta.mapcenter_x;
             pos_y = pos_y = (int)mapmeta.mapcenter_y;
 
@@ -92,10 +91,10 @@ namespace Data.Utils
                 {
                     map_grid[k][l] = new MapGridCell
                     {
-                        index_X = k,
-                        index_Y = l,
-                        bounds = new Rectangle2D(new Point2D(currentx, currenty), celledge_length, celledge_length),
-                        blocked = false
+                        Index_X = k,
+                        Index_Y = l,
+                        Bounds = new Rectangle2D(new Point2D(currentx, currenty), celledge_length, celledge_length),
+                        Blocked = false
                     };
                     currentx += celledge_length;
 
@@ -106,7 +105,7 @@ namespace Data.Utils
 
 
             // Create the map levels 
-            MapLevel[] maplevels = createMapLevels(ps);
+            MapLevel[] maplevels = CreateMapLevels(ps);
             var map_width_x = ps.Max(point => point.X) - ps.Min(point => point.X);
             var map_width_y = ps.Max(point => point.Y) - ps.Min(point => point.Y);
             Console.WriteLine("Max x: " + ps.Max(point => point.X) + " Min x: " + ps.Min(point => point.X));
@@ -120,10 +119,9 @@ namespace Data.Utils
         /// </summary>
         /// <param name="ps"></param>
         /// <returns></returns>
-        private static MapLevel[] createMapLevels(HashSet<Point3D> ps)
+        private static MapLevel[] CreateMapLevels(List<Point3D> ps)
         {
             int levelamount = (int)Math.Ceiling((getZRange(ps) / rastering_height));
-
             MapLevel[] maplevels = new MapLevel[levelamount];
 
             Console.WriteLine("Levels to create: " + levelamount);
@@ -175,14 +173,14 @@ namespace Data.Utils
             ml.clusters = extractedpos;
             points = null; // Collect points for garbage
 
-            ml.level_grid = new MapGridCell[mapdata_height / celledge_length][];
-            for (int k = 0; k < ml.level_grid.Length; k++)
-                ml.level_grid[k] = new MapGridCell[mapdata_height / celledge_length];
+            ml.LevelGrid = new MapGridCell[mapdata_height / celledge_length][];
+            for (int k = 0; k < ml.LevelGrid.Length; k++)
+                ml.LevelGrid[k] = new MapGridCell[mapdata_height / celledge_length];
 
 
             PointQuadTree<Point3DDataPoint> qtree = new PointQuadTree<Point3DDataPoint>();
             foreach (var cl in ml.clusters)
-                    qtree.Add(new Point3DDataPoint(cl));
+                qtree.Add(new Point3DDataPoint(cl));
 
             for (int k = 0; k < map_grid.Length; k++)
                 for (int l = 0; l < map_grid[k].Length; l++)
@@ -191,22 +189,22 @@ namespace Data.Utils
                     var rectps = qtree.GetObjects(cell.Rect); //Get points in a cell
                     if (rectps.Count >= MIN_CELL_QUERY)
                     {
-                        cell.blocked = false;
+                        cell.Blocked = false;
                     }
                     else
                     {
-                        if (cell.blocked == true) continue; // Prevent already used cells from being assigned to multiple levels
-                        cell.blocked = true;
-                        map_grid[k][l].blocked = true;
-                        ml.walls_tree.Add(cell);
+                        if (cell.Blocked == true) continue; // Prevent already used cells from being assigned to multiple levels
+                        cell.Blocked = true;
+                        map_grid[k][l].Blocked = true;
+                        ml.WallCells.Add(cell);
                     }
 
-                    ml.cells_tree.Add(cell.bounds.Center.Data, cell);
-                    ml.level_grid[k][l] = cell;
+                    ml.FreeCells.Add(cell.Bounds.Center.GetData(), cell);
+                    ml.LevelGrid[k][l] = cell;
                     count++;
                 }
             qtree.Clear();
-            ml.cells_tree.Balance();
+            ml.FreeCells.Balance();
 
             Console.WriteLine("Occupied cells by this level: " + count);
             watch.Stop();
@@ -218,7 +216,7 @@ namespace Data.Utils
         /// Returns Range of Z for this set of points
         /// </summary>
         /// <returns></returns>
-        public static double getZRange(HashSet<Point3D> ps)
+        public static double getZRange(List<Point3D> ps)
         {
             return ps.Max(point => point.Z) - ps.Min(point => point.Z);
         }

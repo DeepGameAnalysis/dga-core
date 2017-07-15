@@ -18,7 +18,7 @@ namespace Data.Gameevents
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor };
+            return new Player[] { Actor };
         }
     }
 
@@ -30,7 +30,7 @@ namespace Data.Gameevents
 
         public override Player[] getPlayers()
         {
-            return new Player[] { actor };
+            return new Player[] { Actor };
         }
     }
 }

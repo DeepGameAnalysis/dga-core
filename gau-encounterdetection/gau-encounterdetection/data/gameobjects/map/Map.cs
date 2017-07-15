@@ -153,10 +153,9 @@ namespace Data.Gameobjects
 
     }
 
-
-
-
-
+    /// <summary>
+    /// Class representing all points of same height in a map thus describing the obstacles at this height
+    /// </summary>
     public class MapLevel
     {
 
@@ -169,38 +168,38 @@ namespace Data.Gameobjects
         /// <summary>
         /// Array holding all grid cells 
         /// </summary>
-        public MapGridCell[][] level_grid;
+        public MapGridCell[][] LevelGrid;
 
         /// <summary>
         /// All map cells representing obstacles and walls on this level - maybe use kdtree for nearest neighbors
         /// </summary>
-        public KDTree<double, MapGridCell> cells_tree = new KDTree<double, MapGridCell>(2, new DoubleMath());
+        public KDTree<double, MapGridCell> FreeCells = new KDTree<double, MapGridCell>(2, new DoubleMath());
 
         /// <summary>
         /// All cells representing walls in a quadtree
         /// </summary>
-        public RectQuadTree<MapGridCell> walls_tree = new RectQuadTree<MapGridCell>();
+        public RectQuadTree<MapGridCell> WallCells = new RectQuadTree<MapGridCell>();
 
         /// <summary>
         /// Height of this level on the map - > 0 lowest level 
         /// </summary>
-        public int height;
+        public int HeightIndex;
 
         /// <summary>
         /// Min and Max z-Koordinate occuring in walkable positions registered
         /// </summary>
         public double min_z, max_z;
 
-        public MapLevel(int height, double min_z, double max_z)
+        public MapLevel(int heightindex, double min_z, double max_z)
         {
             this.max_z = max_z;
             this.min_z = min_z;
-            this.height = height;
+            this.HeightIndex = heightindex;
         }
 
         public override string ToString()
         {
-            return "Level: " + height + " From: " + min_z + " To " + max_z;
+            return "Level: " + HeightIndex + " From: " + min_z + " To " + max_z;
         }
     }
 

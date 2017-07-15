@@ -75,7 +75,7 @@ namespace Detection
 
             foreach (var g in tick.getTickevents())
             {
-                switch (g.gameeventtype)
+                switch (g.GameeventType)
                 {
                     case "player_hurt":
                         contained_hurt_events++;

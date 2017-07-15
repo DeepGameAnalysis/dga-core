@@ -18,6 +18,6 @@ namespace Preprocessing
         /// <summary>
         /// 
         /// </summary>
-        void PreprocessData(ReplayGamestate gamestate, MapMetaData map, out EncounterDetectionData edData);
+        void PreprocessData(ReplayGamestate gamestate, MapMetaData map, EncounterDetectionData edData);
     }
 }
