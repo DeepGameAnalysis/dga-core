@@ -25,7 +25,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// Dictionary holding the maplevel of player (where he is located)
         /// </summary>
-        public Dictionary<long, MapLevel> playerlevels = new Dictionary<long, MapLevel>();
+        public Dictionary<long, MapLevel> Levels = new Dictionary<long, MapLevel>();
 
         /// <summary>
         /// Width in x range
@@ -59,7 +59,7 @@ namespace Data.Gameobjects
         /// Returns if this player is standing on the level
         /// </summary>
         /// <returns></returns>
-        public MapLevel findLevelFromPlayer(Player p)
+        public MapLevel FindLevelFromPlayer(Player p)
         {
             var vz = p.Velocity.VZ;
             double pz = p.Position.Z;

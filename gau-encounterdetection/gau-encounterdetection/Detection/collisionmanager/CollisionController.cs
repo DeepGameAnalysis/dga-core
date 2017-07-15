@@ -12,13 +12,13 @@ namespace CollisionManager
     public class CollisionController
     {
         /// <summary>
-        /// Test if a vetor from actor to reciever collides with a rect representing a wall or obstacle.
+        /// Test if a possible line of sight (PLOS) from actor to reciever collides with a rect representing a wall or obstacle.
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="level_cells"></param>
         /// <returns></returns>
-        public static Point2D? LOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
+        public static Point2D? PLOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
         {
             //TODO: Not working because searchrect is empty
             //return BresenhamLineStepping(start, end, maplevel);

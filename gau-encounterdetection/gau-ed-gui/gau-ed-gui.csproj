@@ -59,6 +59,9 @@
       <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -79,20 +82,51 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="StartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AnalyseDemosView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Impressum.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="StartView.xaml.cs">
+      <DependentUpon>StartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AnalyseDemosView.xaml.cs">
+      <DependentUpon>AnalyseDemosView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\Impressum.xaml.cs">
+      <DependentUpon>Impressum.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Shapes\LinkShape.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ManageDemosView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Views\ManageDemosView.xaml.cs">
+      <DependentUpon>ManageDemosView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Shapes\NadeShape.cs" />
+    <Compile Include="Shapes\PlayerShape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -119,6 +153,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\demoinfo\DemoInfo\DemoInfo.csproj">
+      <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
+      <Name>DemoInfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\gau-json.csproj">
+      <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
+      <Name>gau-json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
+      <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
+      <Name>Spatial</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\gau-encounterdetection\gau-encounterdetection.csproj">
+      <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>
+      <Name>gau-encounterdetection</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

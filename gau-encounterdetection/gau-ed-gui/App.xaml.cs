@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace gau_ed_gui
+namespace EDGui
 {
     /// <summary>
     /// Interaction logic for App.xaml
