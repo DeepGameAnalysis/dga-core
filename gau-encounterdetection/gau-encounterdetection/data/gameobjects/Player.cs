@@ -38,6 +38,21 @@ namespace Data.Gameobjects
         public string Team { get; set; }
 
         /// <summary>
+        /// Range this player can currently attack on if he is limited to this range
+        /// </summary>
+        public double Attackrange { get; set; }
+
+        /// <summary>
+        /// Range the player can currently support his teammates in any way.
+        /// </summary>
+        public double Supportrange { get; set; }
+
+        /// <summary>
+        /// Controlled entities by this player (nades, units, other AI or objects of this player which are networked)
+        /// </summary>
+        public HashSet<Entity> entities;
+
+        /// <summary>
         /// Defining a position of a player (if hes not controlling entities in the current game)
         /// Change in X means left or right movement on a minimap
         /// Change in Y means up or down movement on a minimap
@@ -45,6 +60,9 @@ namespace Data.Gameobjects
         /// </summary>
         public Point3D Position { get; set; }
 
+        /// <summary>
+        /// Holding Yaw and Pitch of a players current sight vector
+        /// </summary>
         public Facing Facing { get; set; }
 
         /// <summary>

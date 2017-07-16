@@ -767,7 +767,7 @@ namespace Detection
                     }
                     if (playercluster == null)
                     {
-                        no_clustered_distanceCount++;
+                        no_clustered_distanceCount++; //TODO: calculate most likely player cluster
                         continue; // No Cluster found
                     }
 
