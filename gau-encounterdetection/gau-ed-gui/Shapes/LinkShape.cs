@@ -9,7 +9,7 @@ using System.Windows;
 using Data.Gameobjects;
 using Detection;
 
-namespace EDGui.src.views
+namespace Shapes
 {
     class LinkShape : Shape
     {

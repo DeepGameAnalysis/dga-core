@@ -51,17 +51,17 @@ namespace Data.Utils
         /// <summary>
         /// The grid deployed over the map
         /// </summary>
-        private static MapGridCell[][] MapGrid;
+        public static MapGridCell[][] MapGrid;
 
         /// <summary>
         /// Lenght of the edges of a square in the mapgrid
         /// </summary>
-        private static int CellEdgeLength;
+        public static int CellEdgeLength;
 
         /// <summary>
         /// Amount of squares -> deploy a grid with cellamount X cellamount cells
         /// </summary>
-        private const int Cellamount = 75;
+        public const int Cellamount = 75;
 
         /// <summary>
         /// This function takes a list of all registered points on the map and tries to
@@ -108,7 +108,7 @@ namespace Data.Utils
 
             for (int k = 0; k < MapGrid.Length; k++)
             {
-                MapGrid[k] = new MapGridCell[MapHeight / CellEdgeLength];
+                MapGrid[k] = new MapGridCell[MapWidth / CellEdgeLength];
 
                 for (int l = 0; l < MapGrid[k].Length; l++)
                 {

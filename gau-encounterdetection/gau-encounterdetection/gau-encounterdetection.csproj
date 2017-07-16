@@ -78,7 +78,6 @@
     <Compile Include="Data\Gameobjects\Entity.cs" />
     <Compile Include="Detection\Preprocessing\Mapconstructors\LeveldMapConstructor.cs" />
     <Compile Include="Detection\Preprocessing\Mapconstructors\PolygonalMapConstructor.cs" />
-    <Compile Include="Data\Gameobjects\Map\MapGrid.cs" />
     <Compile Include="Data\ReplayGamestate\ReplayGamestate.cs" />
     <Compile Include="Detection\Clustertypes\EventCluster.cs" />
     <Compile Include="Detection\Clustertypes\EventPositionCluster.cs" />
@@ -86,7 +85,7 @@
     <Compile Include="Detection\EncounterDetectionData.cs" />
     <Compile Include="Detection\Linker.cs" />
     <Compile Include="Detection\Preprocessing\MainPreprocessor.cs" />
-    <Compile Include="Exceptions\InsufficientPlayersException - Copy.cs" />
+    <Compile Include="Exceptions\InsufficientPlayersException.cs" />
     <Compile Include="Exceptions\InvalidEntityException.cs" />
     <Compile Include="Exceptions\InvalidReplayDataException.cs" />
     <Compile Include="Data\Gameobjects\Map\Map.cs" />

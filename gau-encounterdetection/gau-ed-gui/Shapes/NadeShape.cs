@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows;
 
-namespace EDGui.src.views
+namespace Shapes
 {
     class NadeShape : Shape
     {

@@ -37,7 +37,15 @@ namespace Detection
 
         public void findLinks(Tick t)
         {
-
+            switch (csetting)
+            {
+                case CombatlinkSettings.SIGHT_BASED:
+                    break;
+                case CombatlinkSettings.EVENT_BASED:
+                    break;
+                case CombatlinkSettings.DISTANCE_BASED:
+                    break;
+            }
         }
 
 

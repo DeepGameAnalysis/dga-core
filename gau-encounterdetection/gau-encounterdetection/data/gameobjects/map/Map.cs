@@ -5,6 +5,7 @@ using QuadTree;
 using KDTree;
 using KDTree.Math;
 using MathNet.Spatial.Euclidean;
+using QuadTree.QTreeRectF;
 
 namespace Data.Gameobjects
 {
@@ -201,6 +202,38 @@ namespace Data.Gameobjects
         {
             return "Level: " + HeightIndex + " From: " + min_z + " To " + max_z;
         }
+    }
+
+    public class MapGridCell : IRectQuadTreeStorable
+    {
+        /// <summary>
+        /// Index x of the mapcell in the map grid
+        /// </summary>
+        public int Index_X { get; set; }
+
+        /// <summary>
+        /// Index y of the mapcell in the map grid
+        /// </summary>
+        public int Index_Y { get; set; }
+
+        /// <summary>
+        /// Is this cell already occupied -> it has not been walked by a player
+        /// </summary>
+        public bool Blocked { get; set; }
+
+        /// <summary>
+        /// Rectangular respresentation of the cell
+        /// </summary>
+        public Rectangle2D Bounds { get; set; }
+
+        public Rectangle2D Rect
+        {
+            get
+            {
+                return Bounds;
+            }
+        }
+
     }
 
     public class MapObstacle

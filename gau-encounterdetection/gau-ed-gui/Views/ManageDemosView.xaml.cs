@@ -13,7 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-namespace EDGui.src.views
+
+namespace Views
 {
     /// <summary>
     /// Interaction logic for ManageDemosView.xaml

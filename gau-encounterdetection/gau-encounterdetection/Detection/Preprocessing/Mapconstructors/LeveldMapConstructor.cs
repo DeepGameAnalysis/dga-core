@@ -18,49 +18,17 @@ using Clustering;
 namespace Data.Utils
 {
     /// <summary>
-    /// Rebuild the map by use of positional data.
+    /// Rebuild the map by use of positional data. Instead of one level, different levels are built by height of positional data the same way we built one level.
+    /// DBSCAN is used to remove outliers.
     /// </summary>
-    public class LeveldMapConstructur
+    public class LeveldMapConstructur : SimpleMapConstructor
     {
         /// <summary>
         /// Defines the height of a level aka granularity of rastering all height map levels.
         /// </summary>
-        private static int rastering_height = Player.CSGO_PLAYERMODELL_HEIGHT;
+        private static int RasteringStep = Player.CSGO_PLAYERMODELL_HEIGHT;
 
-        /// <summary>
-        /// Map width - width of the grid
-        /// </summary>
-        public static int mapdata_width;
-        /// <summary>
-        /// Map height - height of the grid
-        /// </summary>
-        public static int mapdata_height;
-
-        /// <summary>
-        /// Start Koordinate X from where to begin with grid cell deployment
-        /// </summary>
-        public static int pos_x;
-
-        /// <summary>
-        /// Start Koordinate X from where to begin with grid cell deployment
-        /// </summary>
-        public static int pos_y;
-
-        /// <summary>
-        /// The grid deployed over the map
-        /// </summary>
-        private static MapGridCell[][] map_grid;
-
-        /// <summary>
-        /// Lenght of the edges of a square in the mapgrid
-        /// </summary>
-        private static int celledge_length;
-
-        /// <summary>
-        /// Amount of squares -> deploy a grid with cellamount X cellamount cells
-        /// </summary>
-        private const int cellamount = 75;
-
+        
         /// <summary>
         /// This function takes a list of all registered points on the map and tries to
         /// reconstruct a polygonal represenatation of the map with serveral levels
@@ -68,39 +36,38 @@ namespace Data.Utils
         /// <param name="ps"></param>
         public static Map CreateMap(MapMetaData mapmeta, List<Point3D> ps)
         {
-            pos_x = pos_x = (int)mapmeta.mapcenter_x;
-            pos_y = pos_y = (int)mapmeta.mapcenter_y;
+            PosX = (int)mapmeta.mapcenter_x;
+            PosY = (int)mapmeta.mapcenter_y;
 
-            mapdata_width = (int)mapmeta.width;
-            mapdata_height = (int)mapmeta.height;
+            MapWidth = (int)mapmeta.width;
+            MapHeight = (int)mapmeta.height;
 
-            double length = mapdata_width / cellamount;
-            celledge_length = (int)Math.Ceiling(length);
+            CellEdgeLength = (int)Math.Ceiling((double)MapWidth / Cellamount);
 
-            var currentx = pos_x;
-            var currenty = pos_y;
-            var cells = (mapdata_height / celledge_length) * (mapdata_width / celledge_length);
+            var currentx = PosX;
+            var currenty = PosY;
+            var cells = (MapHeight / CellEdgeLength) * (MapWidth / CellEdgeLength);
 
-            map_grid = new MapGridCell[mapdata_height / celledge_length][];
+            MapGrid = new MapGridCell[MapHeight / CellEdgeLength][];
 
-            for (int k = 0; k < map_grid.Length; k++)
+            for (int k = 0; k < MapGrid.Length; k++)
             {
-                map_grid[k] = new MapGridCell[mapdata_height / celledge_length];
+                MapGrid[k] = new MapGridCell[MapWidth / CellEdgeLength];
 
-                for (int l = 0; l < map_grid[k].Length; l++)
+                for (int l = 0; l < MapGrid[k].Length; l++)
                 {
-                    map_grid[k][l] = new MapGridCell
+                    MapGrid[k][l] = new MapGridCell
                     {
                         Index_X = k,
                         Index_Y = l,
-                        Bounds = new Rectangle2D(new Point2D(currentx, currenty), celledge_length, celledge_length),
+                        Bounds = new Rectangle2D(new Point2D(currentx, currenty), CellEdgeLength, CellEdgeLength),
                         Blocked = false
                     };
-                    currentx += celledge_length;
+                    currentx += CellEdgeLength;
 
                 }
-                currentx = pos_x;
-                currenty -= celledge_length;
+                currentx = PosX;
+                currenty -= CellEdgeLength;
             }
 
 
@@ -121,7 +88,7 @@ namespace Data.Utils
         /// <returns></returns>
         private static MapLevel[] CreateMapLevels(List<Point3D> ps)
         {
-            int levelamount = (int)Math.Ceiling((getZRange(ps) / rastering_height));
+            int levelamount = (int)Math.Ceiling((getZRange(ps) / RasteringStep));
             MapLevel[] maplevels = new MapLevel[levelamount];
 
             Console.WriteLine("Levels to create: " + levelamount);
@@ -131,8 +98,8 @@ namespace Data.Utils
 
             for (int i = 0; i < levelamount; i++)
             {
-                var upperbound = min_z + (i + 1) * rastering_height;
-                var lowerbound = min_z + i * rastering_height;
+                var upperbound = min_z + (i + 1) * RasteringStep;
+                var lowerbound = min_z + i * RasteringStep;
                 var levelps = new HashSet<Point3D>(ps.Where(point => point.Z >= lowerbound && point.Z <= upperbound).OrderBy(point => point.Z));
                 Console.WriteLine("Z Range for Level " + i + " between " + lowerbound + " and " + upperbound);
 
@@ -144,7 +111,7 @@ namespace Data.Utils
                 AssignLevelcells(ml, levelps.ToArray());
                 maplevels[i] = ml;
             }
-            map_grid = null;
+            MapGrid = null;
             return maplevels;
         }
 
@@ -173,19 +140,19 @@ namespace Data.Utils
             ml.clusters = extractedpos;
             points = null; // Collect points for garbage
 
-            ml.LevelGrid = new MapGridCell[mapdata_height / celledge_length][];
+            ml.LevelGrid = new MapGridCell[MapHeight / CellEdgeLength][];
             for (int k = 0; k < ml.LevelGrid.Length; k++)
-                ml.LevelGrid[k] = new MapGridCell[mapdata_height / celledge_length];
+                ml.LevelGrid[k] = new MapGridCell[MapWidth / CellEdgeLength];
 
 
             PointQuadTree<Point3DDataPoint> qtree = new PointQuadTree<Point3DDataPoint>();
             foreach (var cl in ml.clusters)
                 qtree.Add(new Point3DDataPoint(cl));
 
-            for (int k = 0; k < map_grid.Length; k++)
-                for (int l = 0; l < map_grid[k].Length; l++)
+            for (int k = 0; k < MapGrid.Length; k++)
+                for (int l = 0; l < MapGrid[k].Length; l++)
                 {
-                    var cell = map_grid[k][l];
+                    var cell = MapGrid[k][l];
                     var rectps = qtree.GetObjects(cell.Rect); //Get points in a cell
                     if (rectps.Count >= MIN_CELL_QUERY)
                     {
@@ -195,7 +162,7 @@ namespace Data.Utils
                     {
                         if (cell.Blocked == true) continue; // Prevent already used cells from being assigned to multiple levels
                         cell.Blocked = true;
-                        map_grid[k][l].Blocked = true;
+                        MapGrid[k][l].Blocked = true;
                         ml.WallCells.Add(cell);
                     }
 

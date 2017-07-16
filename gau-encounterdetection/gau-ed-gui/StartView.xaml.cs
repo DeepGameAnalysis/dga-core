@@ -37,7 +37,7 @@ namespace EDGui
 
         private void GenerateVideoSelected(object sender, RoutedEventArgs e)
         {
-            _mainFrame.NavigationService.Navigate(new Uri("Views/AnalyseDemosView.xaml", UriKind.Relative));
+            _mainFrame.NavigationService.Navigate(new Uri("Views/CreateVideoView.xaml", UriKind.Relative));
         }
 
         private void ImpressumSelected(object sender, RoutedEventArgs e)

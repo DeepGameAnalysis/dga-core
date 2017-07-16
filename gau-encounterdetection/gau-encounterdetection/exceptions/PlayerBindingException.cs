@@ -13,7 +13,7 @@ namespace Data.Exceptions
         /// </summary>
         /// <param name="message">String message of exception.</param>
         public PlayerBindingException()
-        : base("New Player was binded but cannot be allocated to an existing player. Make sure your demos starts with 10 players. ")
+        : base("New Player was binded but cannot be allocated to an existing player. Make sure your demos starts with all players which are later playing. ")
         {
         }
 

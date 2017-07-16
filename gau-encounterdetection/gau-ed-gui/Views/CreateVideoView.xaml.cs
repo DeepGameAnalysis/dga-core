@@ -35,7 +35,7 @@ namespace Views
     /// <summary>
     /// Interaction logic for AnalyseDemosView.xaml
     /// </summary>
-    public partial class AnalyseDemosView : Page
+    public partial class CreateVideoView : Page
     {
 
         private EncounterDetection EDAlgorithm;
@@ -99,7 +99,7 @@ namespace Views
 
 
 
-        public AnalyseDemosView()
+        public CreateVideoView()
         {
             InitializeComponent();
 

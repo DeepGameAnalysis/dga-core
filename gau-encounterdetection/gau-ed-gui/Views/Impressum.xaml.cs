@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EDGui.src.views
+namespace Views
 {
     /// <summary>
     /// Interaction logic for Impressum.xaml
