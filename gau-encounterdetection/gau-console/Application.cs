@@ -13,9 +13,9 @@ using Data.Gameobjects;
 using Data.Utils;
 using Preprocessing;
 
-namespace GAUConsole
+namespace Application
 {
-    public class GAUConsoleApplication
+    public class FileWorker
     {
         private const string META_PATH = @"D:\Ressources\CS GO Demofiles\CS GO Mapmetadata\";
         private static List<string> invalidfiles = new List<string>();

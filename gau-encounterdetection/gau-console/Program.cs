@@ -1,6 +1,6 @@
 ﻿using System;
 using log4net;
-using GAUConsole;
+using Application;
 
 namespace gau_console
 {
@@ -17,7 +17,7 @@ namespace gau_console
             LOG = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
             //readFilesFromCommandline(args);
-            GAUConsoleApplication.ReadAllFiles(TEST_PATH);
+            Application.FileWorker.ReadAllFiles(TEST_PATH);
             LOG.Info("All files on this path parsed. Press enter to quit.");
             Console.WriteLine("All files on this path parsed. Press enter to quit.");
             Console.ReadLine();

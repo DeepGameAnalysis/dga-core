@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
-using System.Windows.Media;
-using System.Windows;
+﻿using Data.Gameobjects;
+using EDGUI.Utils;
+using MathNet.Spatial.Units;
+using System;
 using System.Globalization;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Shapes
 {
@@ -27,6 +26,25 @@ namespace Shapes
             set { SetValue(yawProperty, value); }
         }
 
+        public string Playerlevel
+        {
+            get { return (string)GetValue(plProperty); }
+            set { SetValue(plProperty, value); }
+        }
+
+        public double X
+        {
+            get { return (double)GetValue(xProperty); }
+            set { SetValue(xProperty, value); }
+        }
+
+        public double Y
+        {
+            get { return (double)GetValue(yProperty); }
+            set { SetValue(yProperty, value); }
+        }
+
+        #region Properties
         // DependencyProperty - Yaw
         private static FrameworkPropertyMetadata yawMetadata =
                 new FrameworkPropertyMetadata(
@@ -38,11 +56,7 @@ namespace Shapes
         public static readonly DependencyProperty yawProperty =
             DependencyProperty.Register("Yaw", typeof(double), typeof(PlayerShape), yawMetadata);
 
-        public string Playerlevel
-        {
-            get { return (string)GetValue(plProperty); }
-            set { SetValue(plProperty, value); }
-        }
+
 
         // DependencyProperty - Yaw
         private static FrameworkPropertyMetadata plMetadata =
@@ -56,12 +70,6 @@ namespace Shapes
             DependencyProperty.Register("Playerlevel", typeof(string), typeof(PlayerShape), plMetadata);
 
 
-        public double X
-        {
-            get { return (double)GetValue(xProperty); }
-            set { SetValue(xProperty, value); }
-        }
-
         // DependencyProperty - Position X
         private static FrameworkPropertyMetadata XMetadata =
                 new FrameworkPropertyMetadata(
@@ -73,11 +81,6 @@ namespace Shapes
         public static readonly DependencyProperty xProperty =
             DependencyProperty.Register("X", typeof(double), typeof(PlayerShape), XMetadata);
 
-        public double Y
-        {
-            get { return (double)GetValue(yProperty); }
-            set { SetValue(yProperty, value); }
-        }
 
         // DependencyProperty - Position Y
         private static FrameworkPropertyMetadata YMetadata =
@@ -90,6 +93,7 @@ namespace Shapes
         public static readonly DependencyProperty yProperty =
             DependencyProperty.Register("Y", typeof(double), typeof(PlayerShape), YMetadata);
 
+#endregion  
 
         private Point aimPoint = new Point(0, 0);
         protected override Geometry DefiningGeometry
@@ -116,6 +120,55 @@ namespace Shapes
                 combined.Children.Add(textg);
                 return combined;
             }
+        }
+
+        public void UpdatePlayer(Player p)
+        {
+            PlayerShape ps = this;
+            if (p.HP <= 0)
+                ps.Active = false;
+            if (p.HP > 0)
+                ps.Active = true;
+
+            if (!ps.Active)
+            {
+                ps.Fill = new SolidColorBrush(UIColors.DEAD_PLAYER);
+                ps.Stroke = new SolidColorBrush(UIColors.DEAD_PLAYER);
+                return;
+            }
+            else if (ps.Active)
+            {
+                Color color;
+                if (p.GetTeam() == Team.T)
+                    color = UIColors.TEAM_1;
+                else
+                    color = UIColors.TEAM_2;
+                ps.Fill = new SolidColorBrush(color);
+                ps.Stroke = new SolidColorBrush(color);
+            }
+
+            if (p.IsSpotted)
+            {
+                if (p.GetTeam() == Team.T)
+                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 225, 160, 160));
+                else
+                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 160, 160, 225));
+            }
+            else if (!p.IsSpotted)
+            {
+
+                if (p.GetTeam() == Team.T)
+                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
+                else
+                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
+            }
+            //ps.Playerlevel = "" + EDAlgorithm.playerlevels[p.player_id].height;
+
+            var vector = CSPositionToUIPosition(p.Position.SubstractZ());
+            ps.X = vector.X;
+            ps.Y = vector.Y;
+            ps.Yaw = Angle.FromDegrees(-p.Facing.Yaw).Radians;
+
         }
     }
 }

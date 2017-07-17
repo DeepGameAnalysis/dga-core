@@ -23,9 +23,9 @@ namespace Detection
         private CSVExporter exporter = new CSVExporter();
 
         /// <summary>
-        /// All data structures and tables and variables needed for encounter detection
+        /// All data structures, tables and variables needed for encounter detection
         /// </summary>
-        EncounterDetectionData EData = new EncounterDetectionData();
+        public EncounterDetectionData Data = new EncounterDetectionData();
 
 
         /// <summary>
@@ -35,18 +35,18 @@ namespace Detection
         /// <param name="preprocessor">The preprocessor that should be used to prepare all necessary data</param>
         public EncounterDetection(ReplayGamestate gamestate, MapMetaData mapmeta, IPreprocessor preprocessor)
         {
-            EData.Match = gamestate.match;
-            EData.Mapname = gamestate.meta.mapname;
-            EData.Mapmeta = mapmeta;
-            EData.Tickrate = gamestate.meta.tickrate;
-            EData.Ticktime = 1000 / EData.Tickrate;
-            EData.Players = gamestate.meta.players.ToArray();
+            Data.Match = gamestate.match;
+            Data.Mapname = gamestate.meta.mapname;
+            Data.Mapmeta = mapmeta;
+            Data.Tickrate = gamestate.meta.tickrate;
+            Data.Ticktime = 1000 / Data.Tickrate;
+            Data.Players = gamestate.meta.players.ToArray();
 
-            Console.WriteLine("Match starts with " + EData.Players.Count() + " players.");
+            Console.WriteLine("Match starts with " + Data.Players.Count() + " players.");
             PrintPlayers();
 
             // Gather and prepare data for later algorithms
-            preprocessor.PreprocessData(gamestate, mapmeta, EData);
+            preprocessor.PreprocessData(gamestate, mapmeta, Data);
 
         }
 
@@ -141,18 +141,18 @@ namespace Detection
             EncounterDetectionReplay replay = new EncounterDetectionReplay();
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            foreach (var round in EData.Match.rounds)
+            foreach (var round in Data.Match.rounds)
             {
                 //Total gametime -> measure time each round is running
-                totalgametime += (round.getRoundTickRange() * EData.Ticktime / 1000) * EData.Players.Length; // 10 = total playercount for csgo(if no one disconnected)
+                totalgametime += (round.getRoundTickRange() * Data.Ticktime / 1000) * Data.Players.Length; // 10 = total playercount for csgo(if no one disconnected)
 
                 foreach (var tick in new HashSet<Tick>(round.ticks))
                 {
                     tickCount++;
                     eventCount += tick.getTickevents().Count;
                     CountEventsInTick(tick);
-                    HandleServerEvents(tick); // Check if disconnects or reconnects happend in this tick
 
+                    HandleServerEvents(tick); // Check if disconnects or reconnects happend in this tick
                     HandleBindings();
 
                     foreach (var updatedPlayer in tick.getUpdatedPlayers()) // Update tables if player is alive
@@ -165,12 +165,12 @@ namespace Detection
 
                     CombatComponent component = BuildComponent(tick);
 
+                    replay.InsertReplaydata(tick, component); // Save the tick with its component for later replaying. -> or save empty comp 
+
                     if (component == null) // No component in this tick
                         continue;
 
-                    replay.InsertReplaydata(tick, component); // Save the tick with its component for later replaying. 
-
-                    //
+                                        //
                     // Everything after here is just sorting components into encounters (use component.parent to identify to which encounter it belongs)
                     //
                     predecessors = SearchPredecessors(component); // Check if this component has predecessors
@@ -201,7 +201,7 @@ namespace Detection
                     for (int i = open_encounters.Count - 1; i >= 0; i--)
                     {
                         Encounter e = open_encounters[i];
-                        if (Math.Abs(e.getLatestTick() - tick.tick_id) * (EData.Ticktime / 1000) > EncounterDetectionData.ENCOUNTER_TIMEOUT)
+                        if (Math.Abs(e.getLatestTick() - tick.tick_id) * (Data.Ticktime / 1000) > EncounterDetectionData.ENCOUNTER_TIMEOUT)
                         {
                             open_encounters.Remove(e);
                             closed_encounters.Add(e);
@@ -219,7 +219,7 @@ namespace Detection
             var sec = watch.ElapsedMilliseconds / 1000.0f;
 
             // Clear match data
-            EData.Match = null;
+            Data.Match = null;
 
             //We are done. -> move open encounters to closed encounters
             closed_encounters.AddRange(open_encounters);
@@ -229,7 +229,7 @@ namespace Detection
 
             foreach (var encounter in closed_encounters)
             {
-                totalencountertime += (encounter.getTickRange() * EData.Ticktime / 1000) * encounter.getParticipatingPlayerCount();
+                totalencountertime += (encounter.getTickRange() * Data.Ticktime / 1000) * encounter.getParticipatingPlayerCount();
                 if (encounter.isDamageEncounter())
                     damageencountercount++;
                 if (encounter.isKillEncounter())
@@ -243,9 +243,9 @@ namespace Detection
             // Dump stats to console
             #region Console ouput
             predecessorHandledCount = newEncounterCount + updateEncounterCount + mergeEncounterCount;
-            Console.WriteLine("Hashed Hurt Events: " + EData.Hit_hashtable.Count);
-            Console.WriteLine("Hashed Kill-Assist Events: " + EData.DirectAssist_hashtable.Count);
-            Console.WriteLine("Hashed Damage-Assist Events: " + EData.DamageAssist_hashtable.Count);
+            Console.WriteLine("Hashed Hurt Events: " + Data.Hit_hashtable.Count);
+            Console.WriteLine("Hashed Kill-Assist Events: " + Data.DirectAssist_hashtable.Count);
+            Console.WriteLine("Hashed Damage-Assist Events: " + Data.DamageAssist_hashtable.Count);
             Console.WriteLine("\nComponent Predecessors handled: " + predecessorHandledCount);
             Console.WriteLine("New Encounters occured: " + newEncounterCount);
             Console.WriteLine("Encounter Merges occured: " + mergeEncounterCount);
@@ -283,7 +283,7 @@ namespace Detection
             //
             // Export data to csv
             //
-            if (EData.ExportingEnabled)
+            if (Data.ExportingEnabled)
                 ExportEDDataToCSV(sec);
 
             return replay;
@@ -407,42 +407,47 @@ namespace Detection
         /// <summary>
         /// Update a players with his most recent version. Further keeps track of all living players
         /// </summary>
-        /// <param name="toUpdate"></param>
-        private void UpdatePlayer(Player toUpdate)
+        /// <param name="updatedPlayer"></param>
+        private void UpdatePlayer(Player updatedPlayer)
         {
             int idcount = 0;
 
-            foreach (var player in EData.Players)
+            foreach (var player in Data.Players)
             {
-                var updateid = toUpdate.player_id;
+                var updateid = updatedPlayer.player_id;
                 if (updateid == 0) // We want to update data from a bot in the name of a disconnected player
-                    botid_to_steamid.TryGetValue(toUpdate.Playername, out updateid);
+                    botid_to_steamid.TryGetValue(updatedPlayer.Playername, out updateid);
 
                 if (player.player_id == updateid) // We found the player with a matching id -> update all changeable values
                 {
                     idcount++;
-                    if (toUpdate.IsDead()) // && !deadplayers.Contains(player)) //This player is dead but not in removed from the living -> do so
+                    if (updatedPlayer.IsDead()) // && !deadplayers.Contains(player)) //This player is dead but not in removed from the living -> do so
                     {
-                        player.HP = toUpdate.HP;
+                        player.HP = updatedPlayer.HP;
                     }
                     else //Player is alive -> make sure hes in the living list and update him
                     {
-                        player.Facing = toUpdate.Facing;
-                        player.Position = toUpdate.Position;
-                        player.Velocity = toUpdate.Velocity;
-                        player.HP = toUpdate.HP;
-                        player.IsSpotted = toUpdate.IsSpotted;
+                        player.Facing = updatedPlayer.Facing;
+                        player.Position = updatedPlayer.Position;
+                        player.Velocity = updatedPlayer.Velocity;
+                        player.HP = updatedPlayer.HP;
+                        player.IsSpotted = updatedPlayer.IsSpotted;
                     }
                 }
 
                 if (idcount > 1)
                 {
                     PrintPlayers();
-                    throw new Exception("More than one player with id living or revive is invalid: " + toUpdate.player_id);
+                    throw new Exception("More than one player with id living or revive is invalid: " + updatedPlayer.player_id);
                 }
             }
 
-            if (idcount == 0) throw new Exception("No player with id: " + toUpdate.player_id + " found.");
+            if (idcount == 0)
+            {
+                PrintPlayers();
+                PrintRegisteredBots();
+                //throw new Exception("No player(" + updatedPlayer.Playername + ") with id: " + updatedPlayer.player_id + " found.");
+            }
 
         }
 
@@ -492,7 +497,7 @@ namespace Detection
         {
             var dt = tickid - eid;
             if (dt < 0) throw new Exception("Encounter cannot be newer than component");
-            if (dt * (EData.Ticktime / 1000) <= TAU)
+            if (dt * (Data.Ticktime / 1000) <= TAU)
                 return true;
             else
                 return false;
@@ -553,12 +558,12 @@ namespace Detection
             List<Link> links = new List<Link>();
 
             //searchEventbasedSightCombatLinks(tick, links);
-            SearchSightbasedSightCombatLinks(tick, links); //First update playerlevels
+            //SearchSightbasedSightCombatLinks(tick, links); //First update playerlevels
 
             //searchClusterDistancebasedLinks(links); // With clusterbased distance
             //searchDistancebasedLinks(links); // With average distance 
 
-            //searchEventbasedLinks(tick, links);
+            SearchEventbasedLinks(tick, links);
             //searchEventbasedNadeSupportlinks(tick, links);
 
             if (links.Count != 0) //If links have been found
@@ -568,7 +573,7 @@ namespace Detection
                 links.RemoveAll(link => link == null); //If illegal links have been built they are null -> remove them
                 combcomp.links = links;
                 combcomp.assignPlayers();
-                combcomp.assignComponentEventcount(tick, EData.Players);
+                combcomp.assignComponentEventcount(tick, Data.Players);
 
                 return combcomp;
             }
@@ -619,7 +624,7 @@ namespace Detection
         /// <param name="links"></param>
         private void SearchEventbasedSightCombatLinks(Tick tick, List<Link> links)
         {
-            foreach (var uplayer in EData.Players.Where(p => !p.IsDead() && p.IsSpotted)) // Search for all spotted players in this tick who spotted them
+            foreach (var uplayer in Data.Players.Where(p => !p.IsDead() && p.IsSpotted)) // Search for all spotted players in this tick who spotted them
             {
                 var potential_spotter = SearchSpotterCandidates(uplayer);
                 // This should not happend because spotted table is correct and somebody must have seen the player!!
@@ -645,18 +650,18 @@ namespace Detection
         private void SearchSightbasedSightCombatLinks(Tick tick, List<Link> links)
         {
             // Update playerlevels before we start using them to search links
-            foreach (var p in EData.Players.Where(counterplayer => !counterplayer.IsDead()))
+            foreach (var p in Data.Players.Where(counterplayer => !counterplayer.IsDead()))
             {
-                if (EData.Map.Levels.ContainsKey(p.player_id))
-                    EData.Map.Levels[p.player_id] = EData.Map.FindLevelFromPlayer(p);
+                if (Data.Map.Levels.ContainsKey(p.player_id))
+                    Data.Map.Levels[p.player_id] = Data.Map.FindLevelFromPlayer(p);
                 else
-                    EData.Map.Levels.Add(p.player_id, EData.Map.FindLevelFromPlayer(p));
+                    Data.Map.Levels.Add(p.player_id, Data.Map.FindLevelFromPlayer(p));
             }
 
             // Check for each team if a player can see a player of the other team
-            foreach (var player in EData.Players.Where(player => !player.IsDead() && player.GetTeam() == Team.CT))
+            foreach (var player in Data.Players.Where(player => !player.IsDead() && player.GetTeam() == Team.CT))
             {
-                foreach (var counterplayer in EData.Players.Where(counterplayer => !counterplayer.IsDead() && counterplayer.GetTeam() != Team.CT))
+                foreach (var counterplayer in Data.Players.Where(counterplayer => !counterplayer.IsDead() && counterplayer.GetTeam() != Team.CT))
                 {
                     CheckVisibilityBetween(player, counterplayer, links);
                 }
@@ -680,10 +685,10 @@ namespace Detection
             if (!p1FOVp2 && !p2FOVp1) return false; // If both false -> no sight from p1 to p2 possible because p2 is not even in the fov of p1  and vice versa -> no links
 
             //Level height of p1 and p2
-            var p1Height = EData.Map.Levels[p1.player_id].HeightIndex;
-            var p2Height = EData.Map.Levels[p2.player_id].HeightIndex;
+            var p1Height = Data.Map.Levels[p1.player_id].HeightIndex;
+            var p2Height = Data.Map.Levels[p2.player_id].HeightIndex;
 
-            var current_maplevel = EData.Map.Levels[p1.player_id];
+            var current_maplevel = Data.Map.Levels[p1.player_id];
 
             var p1PLOSp2 = CollisionController.PLOSIntersectsObstacle2D(p1.Position, p2.Position, current_maplevel); // Check if the p1`s view is blocked on his level
             var p2PLOSp1 = CollisionController.PLOSIntersectsObstacle2D(p2.Position, p1.Position, current_maplevel); // Check if the p1`s view is blocked on his level
@@ -724,13 +729,13 @@ namespace Detection
         /// <param name="links"></param>
         private void SearchDistancebasedLinks(List<Link> links)
         {
-            foreach (var player in EData.Players.Where(p => !p.IsDead()))
+            foreach (var player in Data.Players.Where(p => !p.IsDead()))
             {
-                foreach (var other in EData.Players.Where(p => !p.Equals(player) && !p.IsDead()))
+                foreach (var other in Data.Players.Where(p => !p.Equals(player) && !p.IsDead()))
                 {
                     var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
 
-                    if (distance <= EData.ATTACKRANGE_AVERAGE && other.GetTeam() != player.GetTeam())
+                    if (distance <= Data.ATTACKRANGE_AVERAGE && other.GetTeam() != player.GetTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
                         distancetestCLinksCount++;
@@ -750,15 +755,15 @@ namespace Detection
         /// <param name="links"></param>
         private void SearchClusterDistancebasedLinks(List<Link> links)
         {
-            foreach (var player in EData.Players.Where(p => !p.IsDead()))
+            foreach (var player in Data.Players.Where(p => !p.IsDead()))
             {
-                foreach (var other in EData.Players.Where(p => !p.Equals(player) && !p.IsDead()))
+                foreach (var other in Data.Players.Where(p => !p.Equals(player) && !p.IsDead()))
                 {
                     var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
                     EventPositionCluster playercluster = null;
-                    for (int i = 0; i < EData.PlayerHurt_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
+                    for (int i = 0; i < Data.PlayerHurt_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
-                        var cluster = EData.PlayerHurt_clusters[i];
+                        var cluster = Data.PlayerHurt_clusters[i];
                         if (cluster.Boundings.Contains(player.Position.SubstractZ()))
                         {
                             playercluster = cluster;
@@ -855,7 +860,7 @@ namespace Detection
                 var htick_id = item.Value;
                 int tick_dt = Math.Abs(htick_id - tick_id);
 
-                if (tick_dt * (EData.Ticktime / 1000) > EncounterDetectionData.PLAYERHURT_DAMAGEASSIST_TIMEOUT)
+                if (tick_dt * (Data.Ticktime / 1000) > EncounterDetectionData.PLAYERHURT_DAMAGEASSIST_TIMEOUT)
                 {
                     registeredHEQueue.Remove(hurtevent); // Check timeout
                     continue;
@@ -865,14 +870,14 @@ namespace Detection
                 if (ph.Victim.Equals(hurtevent.Victim) && !ph.Actor.Equals(hurtevent.Actor) && ph.Actor.GetTeam() == hurtevent.Actor.GetTeam())
                 {
                     links.Add(new Link(ph.Actor, hurtevent.Actor, LinkType.SUPPORTLINK, Direction.DEFAULT));
-                    if (!EData.DamageAssist_hashtable.ContainsKey(ph.Actor.Position)) EData.DamageAssist_hashtable.Add(ph.Actor.Position, hurtevent.Actor.Position);
+                    if (!Data.DamageAssist_hashtable.ContainsKey(ph.Actor.Position)) Data.DamageAssist_hashtable.Add(ph.Actor.Position, hurtevent.Actor.Position);
                     damageAssistCount++;
                 }
                 // If ph.actor hits an enemy while this enemy has hit somebody from p.actors team
                 if (ph.Victim.Equals(hurtevent.Actor) && hurtevent.Victim.GetTeam() == ph.Actor.GetTeam())
                 {
                     links.Add(new Link(ph.Actor, hurtevent.Victim, LinkType.SUPPORTLINK, Direction.DEFAULT));
-                    if (!EData.DirectAssist_hashtable.ContainsKey(ph.Actor.Position)) EData.DirectAssist_hashtable.Add(ph.Actor.Position, hurtevent.Victim.Position);
+                    if (!Data.DirectAssist_hashtable.ContainsKey(ph.Actor.Position)) Data.DirectAssist_hashtable.Add(ph.Actor.Position, hurtevent.Victim.Position);
                     damageAssistCount++;
                 }
             }
@@ -886,13 +891,13 @@ namespace Detection
                 var wftick_id = item.Value;
 
                 int tick_dt = Math.Abs(wftick_id - tick_id);
-                if (tick_dt * (EData.Ticktime / 1000) > EncounterDetectionData.PLAYERHURT_WEAPONFIRESEARCH_TIMEOUT)
+                if (tick_dt * (Data.Ticktime / 1000) > EncounterDetectionData.PLAYERHURT_WEAPONFIRESEARCH_TIMEOUT)
                 {
                     pendingWFEQueue.Remove(weaponfireevent); //Check timeout
                     continue;
                 }
 
-                if (ph.Actor.Equals(weaponfireevent.Actor) && !ph.Actor.IsDead() && EData.Players.Where(p => !p.IsDead()).Contains(weaponfireevent.Actor)) // We found a weaponfire event that matches the new playerhurt event
+                if (ph.Actor.Equals(weaponfireevent.Actor) && !ph.Actor.IsDead() && Data.Players.Where(p => !p.IsDead()).Contains(weaponfireevent.Actor)) // We found a weaponfire event that matches the new playerhurt event
                 {
                     Link insertlink = new Link(weaponfireevent.Actor, ph.Victim, LinkType.COMBATLINK, Direction.DEFAULT);
                     eventtestCLinksCount++;
@@ -966,7 +971,7 @@ namespace Detection
                 {
                     if (player.Flashedduration >= 0)
                     {
-                        float dtime = tickdt * (EData.Ticktime / 1000);
+                        float dtime = tickdt * (Data.Ticktime / 1000);
                         player.Flashedduration -= dtime; // Count down time
                     }
                     else
@@ -999,7 +1004,7 @@ namespace Detection
                     eventtestCLinksCount++;
                     flashCLinkCount++;
 
-                    foreach (var teammate in EData.Players.Where(teamate => !teamate.IsDead() && teamate.GetTeam() == flash.Actor.GetTeam() && flash.Actor != teamate))
+                    foreach (var teammate in Data.Players.Where(teamate => !teamate.IsDead() && teamate.GetTeam() == flash.Actor.GetTeam() && flash.Actor != teamate))
                     {
                         if (CheckVisibilityBetween(GetLivingPlayer(flashedEnemyplayer), teammate, null))
                         {
@@ -1021,14 +1026,14 @@ namespace Detection
         {
             foreach (var smokeitem in activeNades.Where(item => item.Key.GameeventType == "smoke_exploded"))
             {
-                foreach (var counterplayer in EData.Players.Where(player => !player.IsDead() && player.GetTeam() != smokeitem.Key.Actor.GetTeam()))
+                foreach (var counterplayer in Data.Players.Where(player => !player.IsDead() && player.GetTeam() != smokeitem.Key.Actor.GetTeam()))
                 {
                     //If a player from the opposing team of the smoke thrower saw into the smoke
                     var nadecircle = new Circle2D(new Point2D(smokeitem.Key.position.X, smokeitem.Key.position.Y), 250);
                     if (nadecircle.IntersectsVector2D(counterplayer.Position.SubstractZ(), counterplayer.Facing.Yaw))
                     {
                         // Check if he could have seen a player from the thrower team
-                        foreach (var teammate in EData.Players.Where(teammate => !teammate.IsDead() && teammate.GetTeam() == smokeitem.Key.Actor.GetTeam()))
+                        foreach (var teammate in Data.Players.Where(teammate => !teammate.IsDead() && teammate.GetTeam() == smokeitem.Key.Actor.GetTeam()))
                         {
                             if (CheckVisibilityBetween(counterplayer, teammate, null))
                             {
@@ -1062,13 +1067,13 @@ namespace Detection
                 var htick_id = item.Value;
 
                 int tick_dt = Math.Abs(htick_id - tick_id);
-                if (tick_dt * (EData.Ticktime / 1000) > EncounterDetectionData.WEAPONFIRE_VICTIMSEARCH_TIMEOUT) // 20 second timeout for hurt events
+                if (tick_dt * (Data.Ticktime / 1000) > EncounterDetectionData.WEAPONFIRE_VICTIMSEARCH_TIMEOUT) // 20 second timeout for hurt events
                 {
                     registeredHEQueue.Remove(hurtevent);
                     continue;
                 }
                 // If we find a actor that hurt somebody. this weaponfireevent is likely to be a part of his burst and is therefore a combatlink
-                var aliveplayers = EData.Players.Where(player => !player.IsDead());
+                var aliveplayers = Data.Players.Where(player => !player.IsDead());
                 if (wf.Actor.Equals(hurtevent.Actor) && hurtevent.Victim.GetTeam() != wf.Actor.GetTeam() && aliveplayers.Contains(hurtevent.Victim) && aliveplayers.Contains(wf.Actor))
                 {
                     // Roughly test if an enemy can see our actor
@@ -1108,7 +1113,7 @@ namespace Detection
         {
             if (actor.IsDead()) return null;
 
-            foreach (var counterplayer in EData.Players.Where(player => !player.IsDead() && player.GetTeam() != actor.GetTeam()))
+            foreach (var counterplayer in Data.Players.Where(player => !player.IsDead() && player.GetTeam() != actor.GetTeam()))
             {
                 // Test if an enemy can see our actor
                 if (FOVFunctions.IsInHVFOV(counterplayer.Position, counterplayer.Facing.Yaw, actor.Position, 106.0f))
@@ -1150,8 +1155,8 @@ namespace Detection
                 exporter.AddRow();
                 rowset = true;
             }
-            exporter["Map"] = EData.Mapname;
-            exporter["Tickrate"] = EData.Tickrate;
+            exporter["Map"] = Data.Mapname;
+            exporter["Tickrate"] = Data.Tickrate;
             exporter["Gametime"] = totalgametime;
             exporter["Encountertime"] = totalencountertime;
             var qe = totalencountertime / (double)totalgametime;
@@ -1210,23 +1215,29 @@ namespace Detection
         /// <returns></returns>
         private Player GetLivingPlayer(Player p)
         {
-            var players = this.EData.Players.Where(player => player.player_id == p.player_id);
+            var players = this.Data.Players.Where(player => player.player_id == p.player_id);
 
             if (players.Count() == 1)
                 return players.First();
             else
                 return null;
         }
-
+        
         private void PrintPlayers()
         {
-            foreach (var p in EData.Players)
+            foreach (var p in Data.Players)
                 Console.WriteLine(p);
+        }
+
+        private void PrintRegisteredBots()
+        {
+            foreach (var p in botid_to_steamid)
+                Console.WriteLine(p.Key +" "+p.Value);
         }
 
         public Player[] GetPlayers()
         {
-            return EData.Players;
+            return Data.Players;
         }
 
         public List<Encounter> GetEncounters()

@@ -100,7 +100,7 @@ namespace Preprocessing
             foreach (var cluster in leader.CreateClusters())
             {
                 var extractedpos = new List<Point3D>();
-                cluster.data.ForEach(data => extractedpos.Add(data.clusterPoint));
+                cluster.ClusterData.ForEach(data => extractedpos.Add(data.clusterPoint));
                 var attackcluster = new EventPositionCluster(extractedpos.ToArray());
                 attackcluster.CalculateClusterRanges(edData.Hit_hashtable);
                 attackerclusters.Add(attackcluster);

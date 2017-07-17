@@ -126,7 +126,7 @@ namespace Data.Utils
         /// <param name="ml"></param>
         public static void AssignLevelcells(MapLevel ml, Point3D[] points)
         {
-            var count = 0;
+            /*var count = 0;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             //var dbscan = new DBSCAN<Point3D>((x, y) => Math.Sqrt(((x.X - y.X) * (x.X - y.X)) + ((x.Y - y.Y) * (x.Y - y.Y))));
@@ -137,7 +137,7 @@ namespace Data.Utils
             var extractedpos = new List<Point3D>();
             dbscan.CreateClusters(true).ToList().ForEach(data => data.ToList().ForEach(pos => extractedpos.Add(pos.clusterPoint)));
 
-            ml.clusters = extractedpos;
+            ml.Cluster = extractedpos;
             points = null; // Collect points for garbage
 
             ml.LevelGrid = new MapGridCell[MapHeight / CellEdgeLength][];
@@ -146,7 +146,7 @@ namespace Data.Utils
 
 
             PointQuadTree<Point3DDataPoint> qtree = new PointQuadTree<Point3DDataPoint>();
-            foreach (var cl in ml.clusters)
+            foreach (var cl in ml.Cluster)
                 qtree.Add(new Point3DDataPoint(cl));
 
             for (int k = 0; k < MapGrid.Length; k++)
@@ -177,6 +177,7 @@ namespace Data.Utils
             watch.Stop();
             var sec = watch.ElapsedMilliseconds / 1000.0f;
             Console.WriteLine("Time to assign cells: " + sec);
+            */
         }
 
         /// <summary>

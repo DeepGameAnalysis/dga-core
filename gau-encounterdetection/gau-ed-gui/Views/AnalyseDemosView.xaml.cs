@@ -29,6 +29,7 @@ using DemoInfo;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using Shapes;
+using MathNet.Spatial.Functions;
 
 namespace Views
 {
@@ -37,8 +38,10 @@ namespace Views
     /// </summary>
     public partial class AnalyseDemosView : Page
     {
+        private const string META_PATH = @"D:\Ressources\CS GO Demofiles\CS GO Mapmetadata\";
 
-        private EncounterDetection EDAlgorithm;
+
+        private EncounterDetection EncounterDetection;
 
         /// <summary>
         /// The gamestate to apply the encounter detection on
@@ -64,7 +67,7 @@ namespace Views
         //
         // UI Variables
         //
-        private float tickrate;
+        private float Tickrate;
 
 
         //
@@ -74,27 +77,32 @@ namespace Views
         /// <summary>
         /// Panel where all players and links are being drawn on with the corresponding map as background
         /// </summary>
-        private Canvas mapPanel = new Canvas();
+        private Canvas MapPanel = new Canvas();
 
         /// <summary>
         /// Component (holding mapPanel) used to drag around and zoom in
         /// </summary>
-        private Viewbox map = new Viewbox();
+        private Viewbox MapView = new Viewbox();
 
         /// <summary>
-        /// All players drawn on the minimap
+        /// All players drawn on the minimap - adress players by key given through the game/steam etc
         /// </summary>
-        private Dictionary<long, PlayerShape> playershapes = new Dictionary<long, PlayerShape>();
+        private Dictionary<long, PlayerShape> PlayerShapes = new Dictionary<long, PlayerShape>();
+
+        /// <summary>
+        /// Entities on the field(RTS etc)
+        /// </summary>
+        private Dictionary<long, PlayerShape> Entities = new Dictionary<long, PlayerShape>();
 
         /// <summary>
         /// All links between players that are currently drawn
         /// </summary>
-        private List<LinkShape> links = new List<LinkShape>();
+        private List<LinkShape> Links = new List<LinkShape>();
 
         /// <summary>
-        /// Circles representing active nades(smoke=grey, fire=orange, henade=red, flash=white, decoy=outline only)
+        /// Other important events displayed as a radial shape with radius of the event
         /// </summary>
-        private List<NadeShape> activeNades = new List<NadeShape>();
+        private List<RadialEffectShape> ActiveEntities = new List<RadialEffectShape>();
 
 
 
@@ -150,33 +158,35 @@ namespace Views
         private void ReadDemofiledata()
         {
             var path = "match_0.dem";
-            using (var demoparser = new DemoParser(File.OpenRead(path)))
-            {
-                ParseTask ptask = new ParseTask
+            var jsonpath = path.Replace(".dem", ".json");
+            if (!File.Exists(jsonpath)) //Already parsed
+                using (var demoparser = new DemoParser(File.OpenRead(path)))
                 {
-                    destpath = path,
-                    srcpath = path,
-                    usepretty = true,
-                    showsteps = true,
-                    specialevents = true,
-                    highdetailplayer = true,
-                    positioninterval = 240,
-                    settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
-                };
-                CSGOGameStateGenerator.GenerateJSONFile(demoparser, ptask);
-            }
+                    ParseTask ptask = new ParseTask
+                    {
+                        destpath = path,
+                        srcpath = path,
+                        usepretty = true,
+                        showsteps = true,
+                        specialevents = true,
+                        highdetailplayer = true,
+                        positioninterval = 240,
+                        settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
+                    };
+                    CSGOGameStateGenerator.GenerateJSONFile(demoparser, ptask);
+                }
 
             using (var reader = new StreamReader(path.Replace(".dem", ".json")))
             {
                 this.gamestate = Newtonsoft.Json.JsonConvert.DeserializeObject<ReplayGamestate>(reader.ReadToEnd(), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None });
 
                 this.mapname = gamestate.meta.mapname;
-                string metapath = @"E:\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + ".txt";
+                string metapath = META_PATH + mapname + ".txt";
                 //string path = @"C:\Users\Patrick\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + ".txt";
                 Console.WriteLine("Loaded Mapdata");
                 this.mapmeta = MapMetaDataPropertyReader.readProperties(metapath);
 
-                this.EDAlgorithm = new EncounterDetection(gamestate, mapmeta, new CSGOPreprocessor());
+                this.EncounterDetection = new EncounterDetection(gamestate, mapmeta, new CSGOPreprocessor());
             }
         }
 
@@ -184,7 +194,7 @@ namespace Views
         private void InitializeGUIData()
         {
 
-            this.tickrate = gamestate.meta.tickrate;
+            this.Tickrate = gamestate.meta.tickrate;
             //Jump out of Background to update UI
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
@@ -212,23 +222,23 @@ namespace Views
             // Jump out of Background to update UI
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                BitmapImage bi = new BitmapImage(new Uri(@"E:\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + "_radar.jpg", UriKind.Relative));
+                BitmapImage bi = new BitmapImage(new Uri(META_PATH + mapname + "_radar.jpg", UriKind.Relative));
                 //BitmapImage bi = new BitmapImage(new Uri(@"C:\Users\Patrick\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + "_radar.jpg", UriKind.Relative));
                 mapimage_width = bi.Width; // Save original size to apply scaling
                 mapimage_height = bi.Height;
-                mapPanel.Background = new ImageBrush(bi);
+                MapPanel.Background = new ImageBrush(bi);
 
                 scalefactor_map = canvas.Height / mapimage_height;
-                map.StretchDirection = StretchDirection.Both;
-                map.Stretch = Stretch.Fill;
-                map.Child = mapPanel;
+                MapView.StretchDirection = StretchDirection.Both;
+                MapView.Stretch = Stretch.Fill;
+                MapView.Child = MapPanel;
 
-                mapPanel.Width = map.Width = bi.Width * scalefactor_map;
-                mapPanel.Height = map.Height = bi.Height * scalefactor_map;
+                MapPanel.Width = MapView.Width = bi.Width * scalefactor_map;
+                MapPanel.Height = MapView.Height = bi.Height * scalefactor_map;
 
-                Canvas.SetLeft(map, (canvas.Width - map.Width) / 2);
-                Canvas.SetTop(map, (canvas.Height - map.Height) / 2);
-                canvas.Children.Add(map);
+                Canvas.SetLeft(MapView, (canvas.Width - MapView.Width) / 2);
+                Canvas.SetTop(MapView, (canvas.Height - MapView.Height) / 2);
+                canvas.Children.Add(MapView);
 
                 // Initalize all graphical player representations default/start
                 foreach (var p in gamestate.meta.players) // TODO: old data loaded here -> players are drawn where they stood when freeze began
@@ -240,7 +250,7 @@ namespace Views
 
         public void InitializeEncounterDetection()
         {
-            this.matchreplay = this.EDAlgorithm.DetectEncounters(); // Run the algorithm
+            this.matchreplay = this.EncounterDetection.DetectEncounters(); // Run the algorithm
 
             Console.WriteLine("Initialized ED");
         }
@@ -251,7 +261,7 @@ namespace Views
         /// </summary>
         private BackgroundWorker _replaybw = new BackgroundWorker();
 
-        private void playMatch()
+        private void PlayMatch()
         {
             Console.WriteLine("Play Match");
 
@@ -274,12 +284,12 @@ namespace Views
                         last_tickid = tick.tick_id;
                     int dt = tick.tick_id - last_tickid;
 
-                    int passedTime = (int)(dt * 1000 / tickrate);// + 2000;
+                    int passedTime = (int)(dt * 1000 / Tickrate);// + 2000;
 
                     //Jump out of background to update UI
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
-                        renderTick(tick, comp);
+                        RenderTick(tick, comp);
                     }));
 
                     Thread.Sleep(passedTime);
@@ -297,21 +307,21 @@ namespace Views
             };
         }
 
-        private void renderTick(Tick tick, CombatComponent comp)
+        private void RenderTick(Tick tick, CombatComponent comp)
         {
-            if (links.Count != 0)
+            if (Links.Count != 0)
             {
-                links.ForEach(l => mapPanel.Children.Remove(l)); //TODO: das muss weg. stattdessen sollen links sterben wenn sie nicht mehr gebraucht werden. wann ist das?
-                links.Clear();
+                Links.ForEach(l => MapPanel.Children.Remove(l)); //TODO: das muss weg. stattdessen sollen links sterben wenn sie nicht mehr gebraucht werden. wann ist das?
+                Links.Clear();
             }
 
             // Update UI: timers, labels etc
-            updateUI(tick);
+            UpdateUI(tick);
 
             // Update map with all active components, player etc 
             foreach (var p in tick.getUpdatedPlayers())
             {
-                updatePlayer(p);
+                PlayerShapes[p.player_id].UpdatePlayer(p);
             }
 
 
@@ -322,9 +332,9 @@ namespace Views
                     if (link.coll != null)
                     {
                         if (link.GetActor().GetTeam() == Data.Gameobjects.Team.T)
-                            drawPos(link.coll, Color.FromRgb(255, 0, 0));
+                            drawPos(link.coll.Value, Color.FromRgb(255, 0, 0));
                         else
-                            drawPos(link.coll, Color.FromRgb(0, 0, 255));
+                            drawPos(link.coll.Value, Color.FromRgb(0, 0, 255));
                         continue;
                     }
                     if (hasActiveLinkShape(link)) // Old link -> update else draw new
@@ -362,25 +372,25 @@ namespace Views
         //
         #region Rendering additional visuals
         private BackgroundWorker _renderbw = new BackgroundWorker();
-        /*
-        public void renderHurtClusters()
+
+        public void RenderHurtClusters()
         {
             Console.WriteLine("Render Hurteventclusters Levels");
             _renderbw.DoWork += (sender, args) =>
             {
 
-                for (int i = 0; i < this.EDAlgorithm.EDData.Length; i++)
+                for (int i = 0; i < this.EncounterDetection.Data.PlayerHurt_clusters.Length; i++)
                 {
                     //var r = this.EDAlgorithm.attacker_clusters[i].getBoundings();
-                    var c = this.EDAlgorithm.attacker_clusters[i];
-                    var victimpos = new List<EDM.EDVector3D>();
-                    foreach (var p in c.data)
+                    var c = this.EncounterDetection.Data.PlayerHurt_clusters[i];
+                    var victimpos = new List<Point2D>();
+                    foreach (var p in c.ClusterData)
                     {
-                        var vp = (math.EDVector3D)this.EDAlgorithm.hit_hashtable[p];
+                        var vp = (Point2D)this.EncounterDetection.Data.Hit_hashtable[p];
                         victimpos.Add(vp);
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                         {
-                            drawPos(p, Color.FromRgb(255, 0, 0));
+                            drawPos(p.SubstractZ(), Color.FromRgb(255, 0, 0));
                             drawPos(vp, Color.FromRgb(0, 255, 0));
                         }));
                     }
@@ -388,7 +398,7 @@ namespace Views
                     {
                         //drawHollowRect(c.getBoundings(), Color.FromRgb(255, 0, 0));
                     }));
-                    var vr = EDM.EDMathLibrary.getPointCloudBoundings(victimpos);
+                    var vr = GridFunctions.GetPointCloudBoundings(victimpos);
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
                         drawHollowRect(vr, Color.FromRgb(0, 255, 0));
@@ -407,15 +417,15 @@ namespace Views
             };
         }
 
-        public void renderHurtEvents()
+        public void RenderHurtEvents()
         {
             Console.WriteLine("Render Hurtevents");
             _renderbw.DoWork += (sender, args) =>
             {
-                foreach (var key in this.EDAlgorithm.hit_hashtable.Keys)
+                foreach (var key in this.EncounterDetection.Data.Hit_hashtable.Keys)
                 {
-                    var vic = (math.EDVector3D)this.EDAlgorithm.hit_hashtable[key];
-                    var att = (math.EDVector3D)key;
+                    var vic = (Point2D)this.EncounterDetection.Data.Hit_hashtable[key];
+                    var att = (Point2D)key;
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
                         drawPos(att, Color.FromRgb(255, 0, 0));
@@ -432,13 +442,13 @@ namespace Views
             };
         }
 
-        public void renderMapLevelClusters()
+        public void RenderMapLevelClusters()
         {
             Console.WriteLine("Render Map Level Cluster");
             _renderbw.DoWork += (sender, args) =>
             {
 
-                for (int i = 0; i < this.EDAlgorithm.map.maplevels.Count(); i++)
+                for (int i = 0; i < this.EncounterDetection.Data.Map.maplevels.Count(); i++)
                 {
                     Console.WriteLine("Level: " + i);
                     Color color = Color.FromArgb(255, 0, 0, 0);
@@ -469,16 +479,15 @@ namespace Views
                     }
 
 
-                    foreach (var cl in this.EDAlgorithm.map.maplevels[i].clusters)
+
+                    foreach (var p in this.EncounterDetection.Data.Map.maplevels[i].Cluster.ClusterData)
                     {
-                        foreach (var p in cl)
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                         {
-                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-                            {
-                                drawPos(p, color);
-                            }));
-                        }
+                            drawPos(p, color);
+                        }));
                     }
+
                     Thread.Sleep(4000);
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
@@ -503,7 +512,7 @@ namespace Views
             _renderbw.DoWork += (sender, args) =>
             {
 
-                for (int i = 0; i < this.EDAlgorithm.map.maplevels.Count(); i++)
+                for (int i = 0; i < this.EncounterDetection.Data.Map.maplevels.Count(); i++)
                 {
                     Console.WriteLine("Level: " + i);
                     Color color = Color.FromArgb(255, 0, 0, 0);
@@ -534,14 +543,14 @@ namespace Views
                     }
 
 
-                    foreach (var r in this.EDAlgorithm.map.maplevels[i].cells_tree.ToList())
+                    foreach (var r in this.EncounterDetection.Data.Map.maplevels[i].FreeCells.ToList())
                     {
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                         {
-                            if (r.Value.blocked == true)
+                            if (r.Value.Blocked == true)
                                 //drawRect(r.Value, color);
-                            //else
-                                drawRect(r.Value, Color.FromRgb(255, 255, 255));
+                                //else
+                                drawRect(r.Value.Bounds, Color.FromRgb(255, 255, 255));
 
                         }));
                     }
@@ -563,7 +572,7 @@ namespace Views
                     MessageBox.Show(args.Error.ToString());
             };
         }
-        */
+
         #endregion
 
 
@@ -576,12 +585,12 @@ namespace Views
         //
         #region Drawing and Updating graphics and UI
 
-        private void updateUI(Tick tick)
+        private void UpdateUI(Tick tick)
         {
             time_slider.Value = tick.tick_id;
             tick_label.Content = "Tick: " + tick.tick_id;
 
-            double ticks = (double)(tick.tick_id * 1000 / tickrate);
+            double ticks = (double)(tick.tick_id * 1000 / Tickrate);
             TimeSpan time = TimeSpan.FromMilliseconds(ticks);
             DateTime startdate = new DateTime(1970, 1, 1) + time;
             time_label.Content = startdate.Minute + ":" + startdate.Second + ":" + startdate.Millisecond;
@@ -590,7 +599,7 @@ namespace Views
         private void drawNade(NadeEvents n)
         {
             Point2D nadepos = CSPositionToUIPosition(n.position.SubstractZ());
-            NadeShape ns = new NadeShape();
+            RadialEffectShape ns = new RadialEffectShape();
             ns.X = nadepos.X;
             ns.Y = nadepos.Y;
             ns.Radius = 20;
@@ -612,20 +621,20 @@ namespace Views
             }
             ns.Fill = new SolidColorBrush(color);
 
-            activeNades.Add(ns);
-            mapPanel.Children.Add(ns);
+            ActiveEntities.Add(ns);
+            MapPanel.Children.Add(ns);
         }
 
         private void updateNades(NadeEvents n)
         {
             Point2D nadepos = CSPositionToUIPosition(n.position.SubstractZ());
 
-            foreach (var ns in activeNades)
+            foreach (var ns in ActiveEntities)
             {
                 if (ns.X == nadepos.X && ns.Y == nadepos.Y)
                 {
-                    activeNades.Remove(ns);
-                    mapPanel.Children.Remove(ns);
+                    ActiveEntities.Remove(ns);
+                    MapPanel.Children.Remove(ns);
                     break;
                 }
             }
@@ -636,11 +645,11 @@ namespace Views
         {
             LinkShape ls = new LinkShape(actor, reciever);
 
-            PlayerShape aps = playershapes[actor.player_id];
+            PlayerShape aps = PlayerShapes[actor.player_id];
             ls.X1 = aps.X;
             ls.Y1 = aps.Y;
 
-            PlayerShape rps = playershapes[reciever.player_id];
+            PlayerShape rps = PlayerShapes[reciever.player_id];
             ls.X2 = rps.X;
             ls.Y2 = rps.Y;
 
@@ -651,8 +660,8 @@ namespace Views
             else if (type == LinkType.SUPPORTLINK)
                 ls.Stroke = System.Windows.Media.Brushes.DarkGreen;
 
-            links.Add(ls);
-            mapPanel.Children.Add(ls);
+            Links.Add(ls);
+            MapPanel.Children.Add(ls);
 
         }
 
@@ -660,10 +669,10 @@ namespace Views
         {
             Data.Gameobjects.Player actor = link.GetActor();
             Data.Gameobjects.Player reciever = link.GetReciever();
-            PlayerShape rps = playershapes[reciever.player_id];
-            PlayerShape aps = playershapes[actor.player_id];
+            PlayerShape rps = PlayerShapes[reciever.player_id];
+            PlayerShape aps = PlayerShapes[actor.player_id];
 
-            foreach (var ls in links)
+            foreach (var ls in Links)
             {
                 if (ls.actor.Equals(actor))
                 {
@@ -689,7 +698,7 @@ namespace Views
             }
         }
 
-        private void drawPos(Point2D? position, Color color)
+        private void drawPos(Point2D position, Color color)
         {
             var ps = new System.Windows.Shapes.Ellipse();
             var vector = CSPositionToUIPosition(position);
@@ -701,7 +710,7 @@ namespace Views
             ps.Stroke = new SolidColorBrush(color);
             ps.StrokeThickness = 0.5;
 
-            mapPanel.Children.Add(ps);
+            MapPanel.Children.Add(ps);
         }
 
         private void drawRect(Rectangle2D rect, Color color)
@@ -716,7 +725,7 @@ namespace Views
             ps.Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
             ps.StrokeThickness = 0.5;
 
-            mapPanel.Children.Add(ps);
+            MapPanel.Children.Add(ps);
         }
 
         private void drawHollowRect(Rectangle2D rect, Color color)
@@ -730,7 +739,7 @@ namespace Views
             ps.Stroke = new SolidColorBrush(color);
             ps.StrokeThickness = 0.5;
 
-            mapPanel.Children.Add(ps);
+            MapPanel.Children.Add(ps);
         }
 
         private void drawPlayer(Data.Gameobjects.Player p)
@@ -754,15 +763,15 @@ namespace Views
             ps.StrokeThickness = 0.5;
             ps.Active = true;
 
-            playershapes[p.player_id] = ps;
-            mapPanel.Children.Add(ps);
+            PlayerShapes[p.player_id] = ps;
+            MapPanel.Children.Add(ps);
         }
 
         private Color deadcolor = Color.FromArgb(255, 0, 0, 0);
 
         private void updatePlayer(Data.Gameobjects.Player p)
         {
-            PlayerShape ps = playershapes[p.player_id];
+            PlayerShape ps = PlayerShapes[p.player_id];
             if (p.HP <= 0)
                 ps.Active = false;
             if (p.HP > 0)
@@ -898,7 +907,7 @@ namespace Views
             if (paused)
                 _busy.Set();
             else
-                playMatch();
+                PlayMatch();
         }
 
         private void Button_stop(object sender, RoutedEventArgs e)
@@ -920,14 +929,14 @@ namespace Views
                 scalefactor_map = newscale;
             else return;
 
-            map.Width = mapimage_width * scalefactor_map;
-            map.Height = mapimage_height * scalefactor_map;
+            MapView.Width = mapimage_width * scalefactor_map;
+            MapView.Height = mapimage_height * scalefactor_map;
             var mx = current.X;
             var my = current.Y;
-            double x = (canvas.Width - map.Width) / 2.0;
-            double y = (canvas.Height - map.Height) / 2.0;
-            Canvas.SetLeft(map, x);
-            Canvas.SetTop(map, y);
+            double x = (canvas.Width - MapView.Width) / 2.0;
+            double y = (canvas.Height - MapView.Height) / 2.0;
+            Canvas.SetLeft(MapView, x);
+            Canvas.SetTop(MapView, y);
 
         }
 
@@ -941,7 +950,7 @@ namespace Views
         private void Canvas_OnLeftMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
             isdragging = true;
-            start = e.GetPosition(map);
+            start = e.GetPosition(MapView);
 
         }
 
@@ -952,7 +961,7 @@ namespace Views
 
         private void Canvas_OnMouseMove(object sender, MouseEventArgs e)
         {
-            current = e.GetPosition(map);
+            current = e.GetPosition(MapView);
 
             if (!isdragging)
                 return;
@@ -965,14 +974,14 @@ namespace Views
 
         private void moveMapBy(double dx, double dy)
         {
-            var x = Canvas.GetLeft(map);
-            var y = Canvas.GetTop(map);
+            var x = Canvas.GetLeft(MapView);
+            var y = Canvas.GetTop(MapView);
 
             var newx = x + dx * 0.3;
             var newy = y + dy * 0.3;
 
-            Canvas.SetLeft(map, newx);
-            Canvas.SetTop(map, newy);
+            Canvas.SetLeft(MapView, newx);
+            Canvas.SetTop(MapView, newy);
         }
 
         private void Canvas_OnMouseLeave(object sender, MouseEventArgs e)
@@ -1013,7 +1022,7 @@ namespace Views
 
         private bool hasActiveLinkShape(Link link)
         {
-            foreach (var l in links)
+            foreach (var l in Links)
             {
                 if (l.actor.Equals(link.GetActor()) || l.actor.Equals(link.GetReciever()) && l.reciever.Equals(link.GetActor()) || l.reciever.Equals(link.GetReciever()))
                 {

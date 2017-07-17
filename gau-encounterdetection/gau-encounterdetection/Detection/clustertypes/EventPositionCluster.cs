@@ -52,9 +52,9 @@ namespace Clustering
         {
             get {
                 if(BoundingPolygon2D == null) 
-                    BoundingPolygon2D = new Polygon2D(base.data.Cast<Point2D>()); //Save polygon in case for further use
+                    BoundingPolygon2D = new Polygon2D(base.ClusterData.Cast<Point2D>()); //Save polygon in case for further use
 
-                return Polygon2D.GetConvexHullFromPoints(base.data.Cast<Point2D>());
+                return Polygon2D.GetConvexHullFromPoints(base.ClusterData.Cast<Point2D>());
             }
         }
 
@@ -71,10 +71,10 @@ namespace Clustering
         /// <param name="hit_hashtable"></param>
         public void CalculateClusterRanges(Hashtable hit_hashtable)
         {
-            double[] distances = new double[data.Count];
+            double[] distances = new double[ClusterData.Count];
             int arr_ptr = 0;
-            if (data.Count == 0) return;
-            foreach (var pos in data)
+            if (ClusterData.Count == 0) return;
+            foreach (var pos in ClusterData)
             {
                 Point3D value = (Point3D)hit_hashtable[pos]; // No suitable Z variable no hashtable entry -> null -.-
                 distances[arr_ptr] = value.DistanceTo(pos); // Euclidean Distance
@@ -97,7 +97,7 @@ namespace Clustering
 
         private Rectangle2D GetBoundings()
         {
-            return new Rectangle2D(data.Max(point => point.X), data.Max(point => point.Y), data.Min(point => point.X), data.Min(point => point.Y), true);
+            return new Rectangle2D(ClusterData.Max(point => point.X), ClusterData.Max(point => point.Y), ClusterData.Min(point => point.X), ClusterData.Min(point => point.Y), true);
         }
     }
 

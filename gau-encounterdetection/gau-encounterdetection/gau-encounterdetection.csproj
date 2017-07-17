@@ -85,6 +85,7 @@
     <Compile Include="Detection\EncounterDetectionData.cs" />
     <Compile Include="Detection\Linker.cs" />
     <Compile Include="Detection\Preprocessing\MainPreprocessor.cs" />
+    <Compile Include="Detection\Preprocessing\Preprocessors\AOE2Preprocessor.cs" />
     <Compile Include="Exceptions\InsufficientPlayersException.cs" />
     <Compile Include="Exceptions\InvalidEntityException.cs" />
     <Compile Include="Exceptions\InvalidReplayDataException.cs" />
@@ -104,7 +105,7 @@
     <Compile Include="Detection\EncounterDetection.cs" />
     <Compile Include="Detection\Encounter\Link.cs" />
     <Compile Include="Detection\EncounterDetectionReplay.cs" />
-    <Compile Include="Detection\Preprocessing\CSGOPreprocessor.cs" />
+    <Compile Include="Detection\Preprocessing\Preprocessors\CSGOPreprocessor.cs" />
     <Compile Include="Detection\Preprocessing\IPreprocessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -94,7 +94,7 @@ namespace Views
         /// <summary>
         /// Circles representing active nades(smoke=grey, fire=orange, henade=red, flash=white, decoy=outline only)
         /// </summary>
-        private List<NadeShape> activeNades = new List<NadeShape>();
+        private List<RadialEffectShape> activeNades = new List<RadialEffectShape>();
 
 
 
@@ -590,7 +590,7 @@ namespace Views
         private void drawNade(NadeEvents n)
         {
             Point2D nadepos = CSPositionToUIPosition(n.position.SubstractZ());
-            NadeShape ns = new NadeShape();
+            RadialEffectShape ns = new RadialEffectShape();
             ns.X = nadepos.X;
             ns.Y = nadepos.Y;
             ns.Radius = 20;

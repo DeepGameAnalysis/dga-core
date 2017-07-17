@@ -93,7 +93,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GAUConsoleApplication.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -109,6 +109,10 @@
     <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\gau-json.csproj">
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
       <Name>gau-json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis.csproj">
+      <Project>{6b5b8f00-f0ba-4ac2-af69-6c851628ef59}</Project>
+      <Name>gau-spatialanalysis</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
       <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>

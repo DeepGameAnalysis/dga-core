@@ -50,7 +50,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// Controlled entities by this player (nades, units, other AI or objects of this player which are networked)
         /// </summary>
-        public HashSet<Entity> entities;
+        public HashSet<Entity> Entities;
 
         /// <summary>
         /// Defining a position of a player (if hes not controlling entities in the current game)

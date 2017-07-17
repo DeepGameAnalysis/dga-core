@@ -98,9 +98,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Elements\UIHeatMap.cs" />
+    <Compile Include="Elements\UIInteractiveMap.cs" />
+    <Compile Include="Elements\UIMultiMap.cs" />
     <Compile Include="StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\UIColors.cs" />
+    <Compile Include="Utils\CoordinateConverter.cs" />
     <Compile Include="Views\CreateVideoView.xaml.cs">
       <DependentUpon>CreateVideoView.xaml</DependentUpon>
     </Compile>
@@ -124,7 +129,7 @@
     <Compile Include="Views\ManageDemosView.xaml.cs">
       <DependentUpon>ManageDemosView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Shapes\NadeShape.cs" />
+    <Compile Include="Shapes\RadialEffectShape.cs" />
     <Compile Include="Shapes\PlayerShape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -162,6 +167,10 @@
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
       <Name>gau-json</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis.csproj">
+      <Project>{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}</Project>
+      <Name>gau-spatialanalysis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
       <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
       <Name>Spatial</Name>
@@ -170,6 +179,10 @@
       <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>
       <Name>gau-encounterdetection</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

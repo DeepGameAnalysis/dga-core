@@ -6,6 +6,7 @@ using KDTree;
 using KDTree.Math;
 using MathNet.Spatial.Euclidean;
 using QuadTree.QTreeRectF;
+using Clustering;
 
 namespace Data.Gameobjects
 {
@@ -164,7 +165,7 @@ namespace Data.Gameobjects
         /// <summary>
         /// Clusters containing the points describing this level
         /// </summary>
-        public List<Point3D> clusters;
+        public Cluster<Point2D> Cluster;
 
         /// <summary>
         /// Array holding all grid cells 

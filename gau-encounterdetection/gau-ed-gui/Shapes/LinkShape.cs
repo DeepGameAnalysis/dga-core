@@ -131,5 +131,10 @@ namespace Shapes
                 return combined;
             }
         }
+
+        private void UpdateLink(PlayerShape aps, PlayerShape rps)
+        {
+
+        }
     }
 }

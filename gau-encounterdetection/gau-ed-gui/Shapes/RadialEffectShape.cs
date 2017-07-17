@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Shapes
 {
-    class NadeShape : Shape
+    class RadialEffectShape : Shape
     {
 
         public double Radius { get; set; }
@@ -22,6 +22,13 @@ namespace Shapes
             set { SetValue(XProperty, value); }
         }
 
+        public double Y
+        {
+            get { return (double)GetValue(YProperty); }
+            set { SetValue(YProperty, value); }
+        }
+
+        #region Properties
         private static FrameworkPropertyMetadata XMetadata =
                 new FrameworkPropertyMetadata(
                     90.0,     // Default value
@@ -30,14 +37,8 @@ namespace Shapes
                     null);   // Coerce value callback
 
         public static readonly DependencyProperty XProperty =
-            DependencyProperty.Register("X", typeof(double), typeof(NadeShape), XMetadata);
+            DependencyProperty.Register("X", typeof(double), typeof(RadialEffectShape), XMetadata);
 
-
-        public double Y
-        {
-            get { return (double)GetValue(YProperty); }
-            set { SetValue(YProperty, value); }
-        }
 
         private static FrameworkPropertyMetadata YMetadata =
                 new FrameworkPropertyMetadata(
@@ -47,9 +48,10 @@ namespace Shapes
                     null);   // Coerce value callback
 
         public static readonly DependencyProperty YProperty =
-            DependencyProperty.Register("Y", typeof(double), typeof(NadeShape), YMetadata);
+            DependencyProperty.Register("Y", typeof(double), typeof(RadialEffectShape), YMetadata);
 
-      
+        #endregion
+
         protected override Geometry DefiningGeometry
         {
             get
