@@ -136,7 +136,7 @@ namespace Shapes
                 ps.Stroke = new SolidColorBrush(UIColors.DEAD_PLAYER);
                 return;
             }
-            else if (ps.Active)
+            else
             {
                 Color color;
                 if (p.GetTeam() == Team.T)
@@ -164,9 +164,9 @@ namespace Shapes
             }
             //ps.Playerlevel = "" + EDAlgorithm.playerlevels[p.player_id].height;
 
-            var vector = CSPositionToUIPosition(p.Position.SubstractZ());
+            /*var vector = CoordinateConverter.GameToUIPosition(p.Position.SubstractZ());
             ps.X = vector.X;
-            ps.Y = vector.Y;
+            ps.Y = vector.Y;*/
             ps.Yaw = Angle.FromDegrees(-p.Facing.Yaw).Radians;
 
         }

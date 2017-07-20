@@ -82,7 +82,7 @@ namespace Clustering
             }
 
             cluster_range_average = distances.Average();
-            cluster_range_median = DistanceFunctions.GetMedian(Convert(distances.ToArray()));
+            cluster_range_median = StatisticalFunctions.Median(Convert(distances.ToArray()));
 
             max_range = distances.Max();
             min_range = distances.Min();

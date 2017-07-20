@@ -109,6 +109,8 @@ namespace Views
 
         public AnalyseDemosView()
         {
+            MessageBox.Show("A handled exception just occurred: ", "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+
             InitializeComponent();
 
             main_panel.IsEnabled = false; //Block panel while initializaiton is running
@@ -491,7 +493,7 @@ namespace Views
                     Thread.Sleep(4000);
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
-                        captureScreenshot();
+                        CaptureScreenshot();
                     }));
                     Thread.Sleep(4000);
 
@@ -559,7 +561,7 @@ namespace Views
                     Thread.Sleep(4000);
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
-                        captureScreenshot();
+                        CaptureScreenshot();
                     }));
                     Thread.Sleep(4000);
                 }
@@ -834,7 +836,7 @@ namespace Views
         //
         #region Functionality
         private bool screenshotcooldown = false;
-        private void captureScreenshot()
+        private void CaptureScreenshot()
         {
             if (screenshotcooldown)
             {
@@ -998,7 +1000,7 @@ namespace Views
         {
             if (e.Key == Key.S)
             {
-                captureScreenshot();
+                CaptureScreenshot();
             }
         }
         #endregion

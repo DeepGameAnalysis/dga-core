@@ -72,7 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Events\csgo\BombEvents.cs" />
+    <Compile Include="Data\Events\CSGO\BombEvents.cs" />
     <Compile Include="Data\Events\CombatEvents.cs" />
     <Compile Include="Data\Events\Event.cs" />
     <Compile Include="Data\Gameobjects\Entity.cs" />
@@ -82,7 +82,7 @@
     <Compile Include="Detection\Clustertypes\EventCluster.cs" />
     <Compile Include="Detection\Clustertypes\EventPositionCluster.cs" />
     <Compile Include="Detection\Collisionmanager\CollisionController.cs" />
-    <Compile Include="Detection\EncounterDetectionData.cs" />
+    <Compile Include="Data\EncounterDetectionData.cs" />
     <Compile Include="Detection\Linker.cs" />
     <Compile Include="Detection\Preprocessing\MainPreprocessor.cs" />
     <Compile Include="Detection\Preprocessing\Preprocessors\AOE2Preprocessor.cs" />
@@ -93,17 +93,17 @@
     <Compile Include="Detection\Preprocessing\Mapconstructors\SimpleMapConstructor.cs" />
     <Compile Include="Data\Gameobjects\Map\MapMetaReader.cs" />
     <Compile Include="Data\Events\MovementEvents.cs" />
-    <Compile Include="Data\Events\csgo\NadeEvents.cs" />
+    <Compile Include="Data\Events\CSGO\NadeEvents.cs" />
     <Compile Include="Data\Gameobjects\Player.cs" />
     <Compile Include="Exceptions\PlayerBindingException.cs" />
     <Compile Include="Exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="Data\Events\csgo\ServerEvents.cs" />
+    <Compile Include="Data\Events\CSGO\ServerEvents.cs" />
     <Compile Include="Data\ReplayGamestate\Tick.cs" />
     <Compile Include="Data\Gameobjects\Item.cs" />
-    <Compile Include="Detection\Encounter\CombatComponent.cs" />
-    <Compile Include="Detection\Encounter\Encounter.cs" />
+    <Compile Include="Data\Encounter\CombatComponent.cs" />
+    <Compile Include="Data\Encounter\Encounter.cs" />
     <Compile Include="Detection\EncounterDetection.cs" />
-    <Compile Include="Detection\Encounter\Link.cs" />
+    <Compile Include="Data\Encounter\Link.cs" />
     <Compile Include="Detection\EncounterDetectionReplay.cs" />
     <Compile Include="Detection\Preprocessing\Preprocessors\CSGOPreprocessor.cs" />
     <Compile Include="Detection\Preprocessing\IPreprocessor.cs" />

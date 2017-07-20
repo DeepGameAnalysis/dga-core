@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
-namespace gau_ed_gui.Elements
+namespace EDGui.Elements
 {
-    class UIHeatMap
+    class UIHeatMap : Canvas
     {
     }
 }

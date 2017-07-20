@@ -11,9 +11,14 @@ namespace Shapes
 {
     class RadialEffectShape : Shape
     {
-
+        /// <summary>
+        /// Radius of the effect area that has to be displayed
+        /// </summary>
         public double Radius { get; set; }
 
+        /// <summary>
+        /// Duration how long this effect is active until it deletes itself
+        /// </summary>
         public float Duration { get; set; }
 
         public double X

@@ -12,37 +12,29 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
+using Xceed.Wpf.Toolkit;
 
 namespace EDGui
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class StartView : Window
+    public partial class StartView
     {
         public StartView()
         {
             InitializeComponent();
         }
 
-        private void ManageDemosSelected(object sender, RoutedEventArgs e)
+        private void InteractiveMapClicked(object sender, MouseButtonEventArgs e)
         {
-            _mainFrame.NavigationService.Navigate(new Uri("Views/ManageDemosView.xaml", UriKind.Relative));
+
         }
 
-        private void AnalyseDemosSelected(object sender, RoutedEventArgs e)
+        private void PlayClicked(object sender, MouseButtonEventArgs e)
         {
-            _mainFrame.NavigationService.Navigate(new Uri("Views/AnalyseDemosView.xaml", UriKind.Relative));
-        }
 
-        private void GenerateVideoSelected(object sender, RoutedEventArgs e)
-        {
-            _mainFrame.NavigationService.Navigate(new Uri("Views/CreateVideoView.xaml", UriKind.Relative));
-        }
-
-        private void ImpressumSelected(object sender, RoutedEventArgs e)
-        {
-            _mainFrame.NavigationService.Navigate(new Uri("Views/Impressum.xaml", UriKind.Relative));
         }
     }
 }
