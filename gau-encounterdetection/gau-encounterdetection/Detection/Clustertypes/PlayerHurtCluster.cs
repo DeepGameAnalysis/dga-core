@@ -11,29 +11,34 @@ namespace Clustering
 {
 
     /// <summary>
-    /// Cluster a pointcloud of three dimensional event position(for example attacks, heals etc)
+    /// Cluster player hurt events(and their children events) with their specific data
     /// </summary>
-    public class EventPositionCluster : Cluster<Point3D>
+    public class PlayerHurtCluster : Cluster<Point3D>
     {
         /// <summary>
         /// Range average of all positions registered in this cluster
         /// </summary>
-        public double cluster_range_average { get; set; }
+        public double AttackRangeAverage { get; set; }
 
         /// <summary>
         /// Median of all ranges registered in this cluster
         /// </summary>
-        public double cluster_range_median { get; set; }
+        public double AttackRangeMedian { get; set; }
 
         /// <summary>
         /// Maximal attackrange registered in this cluster
         /// </summary>
-        public double max_range { get; set; }
+        public double MaxRange { get; set; }
 
         /// <summary>
         /// Minimal attackrange registered in this cluster
         /// </summary>
-        public double min_range { get; set; }
+        public double MinRange { get; set; }
+
+        /// <summary>
+        /// If true. Cluster was built with attacker positions. If false cluster was built with victimpositions.
+        /// </summary>
+        public bool IsAttackerCluster { get; set; }
 
         /// <summary>
         /// Boundings of this cluster as Rectangle
@@ -50,8 +55,9 @@ namespace Clustering
         /// </summary>
         public Polygon2D ConvexHull
         {
-            get {
-                if(BoundingPolygon2D == null) 
+            get
+            {
+                if (BoundingPolygon2D == null)
                     BoundingPolygon2D = new Polygon2D(base.ClusterData.Cast<Point2D>()); //Save polygon in case for further use
 
                 return Polygon2D.GetConvexHullFromPoints(base.ClusterData.Cast<Point2D>());
@@ -62,7 +68,7 @@ namespace Clustering
         /// Constructor delegate to base
         /// </summary>
         /// <param name="data"></param>
-        public EventPositionCluster(Point3D[] data) : base(data){ }
+        public PlayerHurtCluster(Point3D[] data) : base(data) { }
 
 
         /// <summary>
@@ -81,12 +87,12 @@ namespace Clustering
                 arr_ptr++;
             }
 
-            cluster_range_average = distances.Average();
-            cluster_range_median = StatisticalFunctions.Median(Convert(distances.ToArray()));
+            AttackRangeAverage = distances.Average();
+            AttackRangeMedian = StatisticalFunctions.Median(Convert(distances.ToArray()));
 
-            max_range = distances.Max();
-            min_range = distances.Min();
-            Console.WriteLine("Attackrange for this cluster is: " + cluster_range_average);
+            MaxRange = distances.Max();
+            MinRange = distances.Min();
+            Console.WriteLine("Attackrange for this cluster is: " + AttackRangeAverage);
             Boundings = GetBoundings();
         }
 

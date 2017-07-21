@@ -122,7 +122,7 @@ namespace Detection
         /// <summary>
         /// All clusters of attackpositions
         /// </summary>
-        public EventPositionCluster[] PlayerHurt_clusters;
+        public PlayerHurtCluster[] PlayerHurt_clusters;
 
 
 

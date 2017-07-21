@@ -18,7 +18,10 @@ namespace Application
     public class FileWorker
     {
         private const string META_PATH = @"D:\Ressources\CS GO Demofiles\CS GO Mapmetadata\";
+
         private static List<string> invalidfiles = new List<string>();
+
+        static CSGOGameStateGenerator gsg;
 
         /// <summary>
         /// Read all supported replay files at the given path
@@ -91,9 +94,10 @@ namespace Application
                             Console.WriteLine("Parsing .dem file");
                             using (var newdemoparser = new DemoParser(File.OpenRead(demopath)))
                             {
-                                CSGOGameStateGenerator.GenerateJSONFile(newdemoparser, ptask);
+                                gsg = new CSGOGameStateGenerator();
+                                gsg.GenerateJSONFile(newdemoparser, ptask);
                                 ReadDemoJSON(jsonpath, ptask);
-                                CSGOGameStateGenerator.cleanUp();
+                                gsg.CleanUp();
                             }
                         }
                         else
@@ -148,12 +152,12 @@ namespace Application
         /// <returns></returns>
         private static bool SkipFile(DemoParser demoparser, ParseTask ptask)
         {
-            var mapname = CSGOGameStateGenerator.peakMapname(demoparser, ptask);
+            var mapname = gsg.PeakMapname(demoparser, ptask);
             Console.WriteLine("Map: " + mapname);
             if (!Map.SUPPORTED_MAPS.Contains(mapname))
                 return true;
 
-            CSGOGameStateGenerator.cleanUp();
+            gsg.CleanUp();
             return false;
         }
     }

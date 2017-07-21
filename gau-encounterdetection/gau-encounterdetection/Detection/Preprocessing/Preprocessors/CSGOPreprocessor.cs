@@ -30,7 +30,7 @@ namespace Preprocessing
 
             #region Collect positions for preprocessing and build hashtables of events
 
-            var ps = new HashSet<Point3D>();
+            var positions = new HashSet<Point3D>();
             List<double> hurt_ranges = new List<double>();
             List<double> support_ranges = new List<double>();
 
@@ -66,9 +66,9 @@ namespace Preprocessing
                         {
                             var vz = player.Velocity.VZ;
                             if (vz == 0) //If player is standing thus not experiencing an acceleration on z-achsis -> TRACK POSITION
-                                ps.Add(player.Position);
+                                positions.Add(player.Position);
                             else
-                                ps.Add(player.Position.ChangeZ(-Player.CSGO_PLAYERMODELL_JUMPHEIGHT)); // Player jumped -> Z-Value is false -> correct with jumpheight
+                                positions.Add(player.Position.ChangeZ(-Player.CSGO_PLAYERMODELL_JUMPHEIGHT)); // Player jumped -> Z-Value is false -> correct with jumpheight
                         }
 
                     }
@@ -76,11 +76,11 @@ namespace Preprocessing
             }
             #endregion
 
-            Console.WriteLine("\nRegistered Positions for Sightgraph: " + ps.Count);
+            Console.WriteLine("\nRegistered Positions for Sightgraph: " + positions.Count);
             Console.WriteLine("\nRegistered Hits: " + edData.Hit_hashtable.Count);
 
             // Generate Map with a constructor
-            edData.Map = SimpleMapConstructor.CreateMap(mapmeta, ps.ToList());
+            edData.Map = SimpleMapConstructor.CreateMap(mapmeta, positions.ToList());
 
             if (support_ranges.Count != 0)
                 edData.ATTACKRANGE_AVERAGE = hurt_ranges.Average();
@@ -90,18 +90,18 @@ namespace Preprocessing
             // Generate Hurteventclusters
             // Keys of the hashtable are attacker positions, ordering defines a function on how to order the data before performing LEADER
             Func<Point3DDataPoint[], Point3DDataPoint[]> ordering = ops => ops.OrderBy(p => p.clusterPoint.X).ThenBy(p => p.clusterPoint.Y).ToArray();
-            var clusterpos = edData.Hit_hashtable.Keys.Cast<Point3D>();
-            var wrapped = new List<Point3DDataPoint>(); // Wrapp Point3D to execute Clustering
-            clusterpos.ToList().ForEach(p => wrapped.Add(new Point3DDataPoint(p)));
+            var playerhurtattackerpositions = edData.Hit_hashtable.Keys.Cast<Point3D>();
+            var wrappedphpositions = new List<Point3DDataPoint>(); // Wrapp Point3D to execute Clustering
+            playerhurtattackerpositions.ToList().ForEach(p => wrappedphpositions.Add(new Point3DDataPoint(p)));
 
-            var leader = new LEADER<Point3DDataPoint>((float)edData.ATTACKRANGE_AVERAGE, wrapped.ToArray(), ordering);
-            var attackerclusters = new List<EventPositionCluster>();
+            var leader = new LEADER<Point3DDataPoint>((float)edData.ATTACKRANGE_AVERAGE, wrappedphpositions.ToArray(), ordering);
+            var attackerclusters = new List<PlayerHurtCluster>();
 
             foreach (var cluster in leader.CreateClusters())
             {
                 var extractedpos = new List<Point3D>();
                 cluster.ClusterData.ForEach(data => extractedpos.Add(data.clusterPoint));
-                var attackcluster = new EventPositionCluster(extractedpos.ToArray());
+                var attackcluster = new PlayerHurtCluster(extractedpos.ToArray());
                 attackcluster.CalculateClusterRanges(edData.Hit_hashtable);
                 attackerclusters.Add(attackcluster);
             }

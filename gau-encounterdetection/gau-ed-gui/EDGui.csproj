@@ -65,8 +65,14 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="ReachFramework" />
+    <Reference Include="Syncfusion.SfHeatMap.WPF, Version=15.2460.0.40, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Shared.WPF, Version=15.2460.0.40, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -79,6 +85,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -188,21 +196,21 @@
       <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
       <Name>DemoInfo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\gau-json.csproj">
+    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\EDJson.csproj">
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
-      <Name>gau-json</Name>
+      <Name>EDJson</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis.csproj">
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\EDSpatialAnalysis.csproj">
       <Project>{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}</Project>
-      <Name>gau-spatialanalysis</Name>
+      <Name>EDSpatialAnalysis</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
       <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
       <Name>Spatial</Name>
     </ProjectReference>
-    <ProjectReference Include="..\gau-encounterdetection\gau-encounterdetection.csproj">
+    <ProjectReference Include="..\gau-encounterdetection\EncounterDetection.csproj">
       <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>
-      <Name>gau-encounterdetection</Name>
+      <Name>EncounterDetection</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

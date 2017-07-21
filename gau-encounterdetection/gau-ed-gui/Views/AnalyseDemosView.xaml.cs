@@ -104,8 +104,8 @@ namespace Views
         /// </summary>
         private List<RadialEffectShape> ActiveEntities = new List<RadialEffectShape>();
 
-
-
+        static CSGOGameStateGenerator gsg;
+        
 
         public AnalyseDemosView()
         {
@@ -175,7 +175,7 @@ namespace Views
                         positioninterval = 240,
                         settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
                     };
-                    CSGOGameStateGenerator.GenerateJSONFile(demoparser, ptask);
+                    gsg.GenerateJSONFile(demoparser, ptask);
                 }
 
             using (var reader = new StreamReader(path.Replace(".dem", ".json")))

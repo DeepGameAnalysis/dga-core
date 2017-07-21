@@ -18,7 +18,7 @@ namespace CollisionManager
         /// <param name="end"></param>
         /// <param name="level_cells"></param>
         /// <returns></returns>
-        public static Point2D? PLOSIntersectsObstacle2D(Point3D start, Point3D end, MapLevel maplevel)
+        public static Point2D? PLOSIntersectsMap2D(Point2D start, Point2D end, MapLevel maplevel)
         {
             //TODO: Not working because searchrect is empty
             //return BresenhamLineStepping(start, end, maplevel);
@@ -32,7 +32,7 @@ namespace CollisionManager
 
             foreach (var wallcell in queriedRects.OrderBy(cell => Math.Abs(cell.Bounds.X - start.X)).ThenBy(cell => Math.Abs(cell.Bounds.Y - start.Y))) //Order Rectangles by distance to the actor. 
             {
-                var intersection_point = wallcell.Bounds.Rect2DIntersectsLine(start.SubstractZ(), end.SubstractZ());
+                var intersection_point = wallcell.Bounds.Rect2DIntersectsLine(start, end);
                 if (intersection_point != null)
                     return intersection_point;
             }

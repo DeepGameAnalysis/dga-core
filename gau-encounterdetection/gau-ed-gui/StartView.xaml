@@ -1,4 +1,4 @@
-﻿<Controls:MetroWindow x:Class="EDGui.StartView"
+﻿<Controls:MetroWindow
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -7,6 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EDGui"
         xmlns:elements="clr-namespace:EDGui.Elements"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="EDGui.StartView"
         mc:Ignorable="d"
         Title="CS:GO Analytics" WindowState="Maximized" Height="1080" Width="1920" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" >
     <Grid>
@@ -32,7 +33,11 @@
 
             <TabItem Header="Manage Demos">
                 <Grid Background="#FFE5E5E5">
-                    <Button Content="Choose Demo" HorizontalAlignment="Center" VerticalAlignment="Center" Height="80" Width="200"/>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Button Content="Choose Demofile" HorizontalAlignment="Center" VerticalAlignment="Center" Height="80" Width="200" Margin="5"/>
+                        <Button Content="Choose Encounter Detection file" HorizontalAlignment="Center" VerticalAlignment="Center" Height="80" Width="200"/>
+                    </StackPanel>
+
                 </Grid>
             </TabItem>
 

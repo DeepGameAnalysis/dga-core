@@ -690,8 +690,8 @@ namespace Detection
 
             var current_maplevel = Data.Map.Levels[p1.player_id];
 
-            var p1PLOSp2 = CollisionController.PLOSIntersectsObstacle2D(p1.Position, p2.Position, current_maplevel); // Check if the p1`s view is blocked on his level
-            var p2PLOSp1 = CollisionController.PLOSIntersectsObstacle2D(p2.Position, p1.Position, current_maplevel); // Check if the p1`s view is blocked on his level
+            var p1PLOSp2 = CollisionController.PLOSIntersectsMap2D(p1.Position.SubstractZ(), p2.Position.SubstractZ(), current_maplevel); // Check if the p1`s view is blocked on his level
+            var p2PLOSp1 = CollisionController.PLOSIntersectsMap2D(p2.Position.SubstractZ(), p1.Position.SubstractZ(), current_maplevel); // Check if the p1`s view is blocked on his level
             //if(coll_pos == null)Console.WriteLine("Start coll: " + coll_pos);
             if (p1Height != p2Height) throw new Exception("Wrong level height. Not possible");
             //If p2 was in FOV of p1 -> check if a collision with obstacle occured
@@ -760,7 +760,7 @@ namespace Detection
                 foreach (var other in Data.Players.Where(p => !p.Equals(player) && !p.IsDead()))
                 {
                     var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
-                    EventPositionCluster playercluster = null;
+                    PlayerHurtCluster playercluster = null;
                     for (int i = 0; i < Data.PlayerHurt_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
                         var cluster = Data.PlayerHurt_clusters[i];
@@ -776,7 +776,7 @@ namespace Detection
                         continue; // No Cluster found
                     }
 
-                    var attackrange = playercluster.cluster_range_average;
+                    var attackrange = playercluster.AttackRangeAverage;
                     if (distance <= attackrange && other.GetTeam() != player.GetTeam())
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));

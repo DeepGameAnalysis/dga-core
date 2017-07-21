@@ -50,7 +50,7 @@ namespace Views
         /// </summary>
         private EncounterDetectionReplay matchreplay;
 
-
+        static CSGOGameStateGenerator gsg;
 
         //
         // VARIABLES FOR GAMEVISUALS
@@ -163,7 +163,7 @@ namespace Views
                     positioninterval = 240,
                     settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
                 };
-                CSGOGameStateGenerator.GenerateJSONFile(demoparser, ptask);
+                gsg.GenerateJSONFile(demoparser, ptask);
             }
 
             using (var reader = new StreamReader(path.Replace(".dem", ".json")))

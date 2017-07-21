@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3969E612-08B9-406B-9F71-65B761135733}</ProjectGuid>
+    <ProjectGuid>{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>gau_console</RootNamespace>
-    <AssemblyName>gau-console</AssemblyName>
+    <RootNamespace>gau_encounterdetection</RootNamespace>
+    <AssemblyName>gau-encounterdetection</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,28 +31,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -67,7 +45,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -80,11 +57,13 @@
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,36 +72,65 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
+    <Compile Include="Data\Events\CSGO\BombEvents.cs" />
+    <Compile Include="Data\Events\CombatEvents.cs" />
+    <Compile Include="Data\Events\Event.cs" />
+    <Compile Include="Data\Gameobjects\Entity.cs" />
+    <Compile Include="Detection\Controllers\ConnectionController.cs" />
+    <Compile Include="Detection\Preprocessing\Mapconstructors\LeveldMapConstructor.cs" />
+    <Compile Include="Detection\Preprocessing\Mapconstructors\PolygonalMapConstructor.cs" />
+    <Compile Include="Data\ReplayGamestate\ReplayGamestate.cs" />
+    <Compile Include="Detection\Clustertypes\EventCluster.cs" />
+    <Compile Include="Detection\Clustertypes\PlayerHurtCluster.cs" />
+    <Compile Include="Detection\Controllers\CollisionController.cs" />
+    <Compile Include="Data\EncounterDetectionData.cs" />
+    <Compile Include="Detection\Controllers\Linker.cs" />
+    <Compile Include="Detection\Preprocessing\MainPreprocessor.cs" />
+    <Compile Include="Detection\Preprocessing\Preprocessors\AOE2Preprocessor.cs" />
+    <Compile Include="Exceptions\InsufficientPlayersException.cs" />
+    <Compile Include="Exceptions\InvalidEntityException.cs" />
+    <Compile Include="Exceptions\InvalidReplayDataException.cs" />
+    <Compile Include="Data\Gameobjects\Map\Map.cs" />
+    <Compile Include="Detection\Preprocessing\Mapconstructors\SimpleMapConstructor.cs" />
+    <Compile Include="Data\Gameobjects\Map\MapMetaReader.cs" />
+    <Compile Include="Data\Events\MovementEvents.cs" />
+    <Compile Include="Data\Events\CSGO\NadeEvents.cs" />
+    <Compile Include="Data\Gameobjects\Player.cs" />
+    <Compile Include="Exceptions\PlayerBindingException.cs" />
+    <Compile Include="Exceptions\PlayerDisconnectException.cs" />
+    <Compile Include="Data\Events\CSGO\ServerEvents.cs" />
+    <Compile Include="Data\ReplayGamestate\Tick.cs" />
+    <Compile Include="Data\Gameobjects\Item.cs" />
+    <Compile Include="Data\Encounter\CombatComponent.cs" />
+    <Compile Include="Data\Encounter\Encounter.cs" />
+    <Compile Include="Detection\EncounterDetection.cs" />
+    <Compile Include="Data\Encounter\Link.cs" />
+    <Compile Include="Detection\EncounterDetectionReplay.cs" />
+    <Compile Include="Detection\Preprocessing\Preprocessors\CSGOPreprocessor.cs" />
+    <Compile Include="Detection\Preprocessing\IPreprocessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\PropertyReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\demoinfo\DemoInfo\DemoInfo.csproj">
-      <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
-      <Name>DemoInfo</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\gau-json.csproj">
-      <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
-      <Name>gau-json</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis.csproj">
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\EDSpatialAnalysis.csproj">
       <Project>{6b5b8f00-f0ba-4ac2-af69-6c851628ef59}</Project>
-      <Name>gau-spatialanalysis</Name>
+      <Name>EDSpatialAnalysis</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
-      <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
+      <Project>{1f3364c6-9da3-4006-b83f-6d1335099895}</Project>
       <Name>Spatial</Name>
     </ProjectReference>
-    <ProjectReference Include="..\gau-encounterdetection\gau-encounterdetection.csproj">
-      <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>
-      <Name>gau-encounterdetection</Name>
+    <ProjectReference Include="..\gau-exporter\EDExporter.csproj">
+      <Project>{e44b7cf6-cf39-439d-9119-801aed161cf0}</Project>
+      <Name>EDExporter</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
