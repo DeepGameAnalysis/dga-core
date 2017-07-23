@@ -17,7 +17,7 @@
         
         <Label Grid.Row="0" Content="Analyse" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="Black"/>
 
-        <elements:UIInteractiveMap x:Name="interactiveMap" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MouseUp="InteractiveMapClicked"/>
+        <elements:UIInteractiveMap x:Name="interactiveMap" Background="Black"  Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MouseUp="InteractiveMapClicked"/>
 
         <Grid Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
             <Grid.RowDefinitions>
@@ -36,7 +36,7 @@
             </DockPanel>
 
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" Background="LightGray" >
-                <Label x:Name="optionsLabel" Content="Options:" FontSize="15" Width="Auto" Foreground="Black" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
+                <GroupBox x:Name="optionsGroup" Header="Options:" FontSize="15" Width="Auto" Foreground="Black" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" />
             </DockPanel>
         </Grid>
 
