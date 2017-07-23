@@ -175,6 +175,7 @@ namespace Views
                         positioninterval = 240,
                         settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
                     };
+                    gsg = new CSGOGameStateGenerator();
                     gsg.GenerateJSONFile(demoparser, ptask);
                 }
 
@@ -1071,6 +1072,7 @@ namespace Views
             var y = Math.Abs(map_origin.Y - p.Value.Y) * (Math.Min(mappanel_height, mapdata_height) / Math.Max(mappanel_height, mapdata_height));
             return new Point2D(x, y);
         }
+
         #endregion
     }
 }

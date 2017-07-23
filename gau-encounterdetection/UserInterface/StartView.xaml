@@ -1,0 +1,58 @@
+﻿<Controls:MetroWindow
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EDGui"
+        xmlns:elements="clr-namespace:EDGui.Elements"
+        xmlns:Views="clr-namespace:EDGui.Views"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        x:Class="EDGui.StartView"
+        mc:Ignorable="d"
+        Title="CS:GO Analytics" WindowState="Maximized" Height="1080" Width="1920" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" >
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="90*"/>
+            <ColumnDefinition Width="0*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0*"/>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" x:Name="impressumandmore" HorizontalAlignment="Center" VerticalAlignment="Stretch" Orientation="Horizontal" >
+            <Label Content="Impressum" Width="100" Height="Auto"  HorizontalContentAlignment="Center" FontSize="10" Padding="0" Margin="0" />
+            <Label Content="Contact" Width="100" Height="Auto" HorizontalContentAlignment="Center" FontSize="10" Padding="0" Margin="0"/>
+        </StackPanel>
+
+        <TabControl Grid.Column="1" Grid.Row="1" x:Name="mainTab" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabItem Header="Manage Demos">
+                <Views:ManageDemosTab/>
+            </TabItem>
+
+            <TabItem Header="Live View">
+                <Views:AnalyseTab/>
+            </TabItem>
+
+            <TabItem Header="Statistics">
+                <Views:StatisticsTab/>
+            </TabItem>
+            
+            <TabItem Header="Heat Maps">
+                <Views:HeatMapsTab/>
+            </TabItem>
+
+            <TabItem Header="Impressum and Contact" Margin="1040,0,-1040,0">
+                <Views:ImpressumTab/>
+            </TabItem>
+        </TabControl>
+
+
+    </Grid>
+</Controls:MetroWindow>

@@ -12,28 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MahApps.Metro.Controls;
-using Xceed.Wpf.Toolkit;
+using Shapes;
+using MathNet.Spatial.Units;
+using MathNet.Spatial.Euclidean;
 
-namespace EDGui
+namespace EDGui.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for AnalyseTab.xaml
     /// </summary>
-    public partial class StartView
+    public partial class StatisticsTab : UserControl
     {
-        public StartView()
+        public StatisticsTab()
         {
             InitializeComponent();
-        }
-
-        private void InteractiveMapClicked(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void PlayClicked(object sender, MouseButtonEventArgs e)
-        {
 
         }
     }

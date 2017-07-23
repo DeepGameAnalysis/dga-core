@@ -9,6 +9,9 @@ using Data.Gameobjects;
 
 namespace CollisionManager
 {
+    /// <summary>
+    /// Manages all collisions which need testing and are not performed within geometry classes in the math library
+    /// </summary>
     public class CollisionController
     {
         /// <summary>

@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="EDGui.Views.HeatMapsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EDGui.Views"
+             xmlns:elements="clr-namespace:EDGui.Elements"
+             mc:Ignorable="d" 
+             d:DesignHeight="1080" d:DesignWidth="1920">
+    <Grid Background="#FFE5E5E5">
+        <Label Content="HeatMaps" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="Black"/>
+
+    </Grid>
+</UserControl>

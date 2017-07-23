@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncounterDetection", "gau-encounterdetection\EncounterDetection.csproj", "{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncounterDetection", "EncounterDetection\EncounterDetection.csproj", "{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDExporter", "gau-exporter\EDExporter.csproj", "{E44B7CF6-CF39-439D-9119-801AED161CF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exporter", "Exporter\Exporter.csproj", "{E44B7CF6-CF39-439D-9119-801AED161CF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDGui", "gau-ed-gui\EDGui.csproj", "{F997D531-CDAC-473B-956E-E73FF5B824DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterface\UserInterface.csproj", "{F997D531-CDAC-473B-956E-E73FF5B824DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "gau-testing\Testing.csproj", "{A610B179-882F-4DE5-AF4D-92799B1ECB41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{A610B179-882F-4DE5-AF4D-92799B1ECB41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDSpatialAnalysis", "..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\EDSpatialAnalysis.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnalysis", "..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spatial", "..\..\mathnet-spatial\src\Spatial\Spatial.csproj", "{1F3364C6-9DA3-4006-B83F-6D1335099895}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialMath", "..\..\mathnet-spatial\src\Spatial\SpatialMath.csproj", "{1F3364C6-9DA3-4006-B83F-6D1335099895}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDJson", "..\..\gau-json\gau-json\gau-json\EDJson.csproj", "{09043B53-0BC3-44CC-AE5D-1BB3BD446D20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonParsing", "..\..\gau-json\gau-json\gau-json\JsonParsing.csproj", "{09043B53-0BC3-44CC-AE5D-1BB3BD446D20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDConsole", "gau-console\EDConsole.csproj", "{3969E612-08B9-406B-9F71-65B761135733}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{3969E612-08B9-406B-9F71-65B761135733}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInfo", "..\..\..\demoinfo\DemoInfo\DemoInfo.csproj", "{22D4CFC7-6810-4C18-A353-71A49782394F}"
 EndProject

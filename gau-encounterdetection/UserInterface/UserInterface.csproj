@@ -118,15 +118,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\CreateVideoView.xaml">
+    <Page Include="Views\HeatMapsTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\AnalyseDemosView.xaml">
+    <Page Include="Views\StatisticsTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Impressum.xaml">
+    <Page Include="Views\ImpressumTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AnalyseTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ManageDemosTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\old\CreateVideoView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\old\AnalyseDemosView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\old\Impressum.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -139,27 +159,42 @@
     <Compile Include="Utils\UIColors.cs" />
     <Compile Include="Utils\CoordinateConverter.cs" />
     <Compile Include="Utils\UIObjectRenderer.cs" />
-    <Compile Include="Views\CreateVideoView.xaml.cs">
+    <Compile Include="Views\HeatMapsTab.xaml.cs">
+      <DependentUpon>HeatMapsTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StatisticsTab.xaml.cs">
+      <DependentUpon>StatisticsTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImpressumTab.xaml.cs">
+      <DependentUpon>ImpressumTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AnalyseTab.xaml.cs">
+      <DependentUpon>AnalyseTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ManageDemosTab.xaml.cs">
+      <DependentUpon>ManageDemosTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\old\CreateVideoView.xaml.cs">
       <DependentUpon>CreateVideoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AnalyseDemosView.xaml.cs">
+    <Compile Include="Views\old\AnalyseDemosView.xaml.cs">
       <DependentUpon>AnalyseDemosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\Impressum.xaml.cs">
+    <Compile Include="Views\old\Impressum.xaml.cs">
       <DependentUpon>Impressum.xaml</DependentUpon>
     </Compile>
     <Compile Include="Shapes\LinkShape.cs" />
-    <Page Include="Views\ManageDemosView.xaml">
+    <Page Include="Views\old\ManageDemosView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Views\ManageDemosView.xaml.cs">
+    <Compile Include="Views\old\ManageDemosView.xaml.cs">
       <DependentUpon>ManageDemosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Shapes\RadialEffectShape.cs" />
@@ -196,19 +231,19 @@
       <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
       <Name>DemoInfo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\EDJson.csproj">
+    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\JsonParsing.csproj">
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
-      <Name>EDJson</Name>
+      <Name>JsonParsing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\EDSpatialAnalysis.csproj">
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis.csproj">
       <Project>{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}</Project>
-      <Name>EDSpatialAnalysis</Name>
+      <Name>SpatialAnalysis</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\Spatial.csproj">
+    <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\SpatialMath.csproj">
       <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
-      <Name>Spatial</Name>
+      <Name>SpatialMath</Name>
     </ProjectReference>
-    <ProjectReference Include="..\gau-encounterdetection\EncounterDetection.csproj">
+    <ProjectReference Include="..\EncounterDetection\EncounterDetection.csproj">
       <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>
       <Name>EncounterDetection</Name>
     </ProjectReference>

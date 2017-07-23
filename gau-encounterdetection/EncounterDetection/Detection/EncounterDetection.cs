@@ -29,6 +29,11 @@ namespace Detection
 
 
         /// <summary>
+        /// The Linker is performing a link search, the way the user defined it. (f.e. Eventbased, Sightbased, Distancebased)
+        /// </summary>
+        private Linker Linker;
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="gamestate">The gamestate to work on</param>
@@ -41,6 +46,8 @@ namespace Detection
             Data.Tickrate = gamestate.meta.tickrate;
             Data.Ticktime = 1000 / Data.Tickrate;
             Data.Players = gamestate.meta.players.ToArray();
+
+            Linker = new Linker(CombatlinkSettings.EVENT_BASED);
 
             Console.WriteLine("Match starts with " + Data.Players.Count() + " players.");
             PrintPlayers();
@@ -76,13 +83,12 @@ namespace Detection
         private List<Encounter> predecessors = new List<Encounter>();
 
 
-
         //
         // Encounter Detection Stats - For later analysis. Export to CSV
         //
         #region Stats
-        int tickCount = 0;
-        int eventCount = 0;
+        int TickCount = 0;
+        int AllEventsCount = 0;
 
         int killeventCount = 0;
         int hurteventCount = 0;
@@ -140,7 +146,7 @@ namespace Detection
         {
             EncounterDetectionReplay replay = new EncounterDetectionReplay();
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var DetectionWatch = System.Diagnostics.Stopwatch.StartNew();
             foreach (var round in Data.Match.rounds)
             {
                 //Total gametime -> measure time each round is running
@@ -148,9 +154,9 @@ namespace Detection
 
                 foreach (var tick in new HashSet<Tick>(round.ticks))
                 {
-                    tickCount++;
-                    eventCount += tick.getTickevents().Count;
-                    CountEventsInTick(tick);
+                    TickCount++;
+                    AllEventsCount += tick.getTickevents().Count;
+                    CountSpecialEventsInTick(tick);
 
                     HandleServerEvents(tick); // Check if disconnects or reconnects happend in this tick
                     HandleBindings();
@@ -215,8 +221,8 @@ namespace Detection
                 ClearRoundData();
             }
 
-            watch.Stop();
-            var sec = watch.ElapsedMilliseconds / 1000.0f;
+            DetectionWatch.Stop();
+            var sec = DetectionWatch.ElapsedMilliseconds / 1000.0f;
 
             // Clear match data
             Data.Match = null;
@@ -382,7 +388,7 @@ namespace Detection
         #region Methods for mainloop - keep updates/data consistent
 
 
-        private void CountEventsInTick(Tick tick)
+        private void CountSpecialEventsInTick(Tick tick)
         {
             foreach (var g in tick.getTickevents())
             {
@@ -1135,7 +1141,10 @@ namespace Detection
         #endregion
 
 
-
+        public void SetLinkerSetting(CombatlinkSettings settings)
+        {
+            Linker.SetCSetting(settings);
+        }
 
         //
         //
@@ -1162,8 +1171,8 @@ namespace Detection
             var qe = totalencountertime / (double)totalgametime;
             exporter["Anteil Encountertime and Gametime"] = qe;
             exporter["Runtime in sec"] = sec;
-            exporter["Observed ticks"] = tickCount;
-            exporter["Observed events"] = eventCount;
+            exporter["Observed ticks"] = TickCount;
+            exporter["Observed events"] = AllEventsCount;
             exporter["Hurt-Events"] = hurteventCount;
             exporter["Killed-Events"] = killeventCount;
             exporter["Players spotted in ticks"] = isSpotted_playersCount;

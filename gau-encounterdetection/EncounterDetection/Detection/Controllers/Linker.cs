@@ -28,16 +28,16 @@ namespace Detection
     /// </summary>
     public class Linker
     {
-        private CombatlinkSettings csetting;
-
+        private CombatlinkSettings Csetting;
+        
         public Linker(CombatlinkSettings csetting)
         {
-            this.csetting = csetting;
+            this.Csetting = csetting;
         }
 
         public void findLinks(Tick t)
         {
-            switch (csetting)
+            switch (Csetting)
             {
                 case CombatlinkSettings.SIGHT_BASED:
                     break;
@@ -48,6 +48,14 @@ namespace Detection
             }
         }
 
+        public void SetCSetting(CombatlinkSettings csetting)
+        {
+            this.Csetting = csetting;
+        }
 
+        public CombatlinkSettings GetCSetting()
+        {
+            return Csetting;
+        }
     }
 }
