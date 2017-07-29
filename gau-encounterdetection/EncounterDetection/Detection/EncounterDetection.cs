@@ -40,14 +40,14 @@ namespace Detection
         /// <param name="preprocessor">The preprocessor that should be used to prepare all necessary data</param>
         public EncounterDetection(ReplayGamestate gamestate, MapMetaData mapmeta, IPreprocessor preprocessor)
         {
-            Data.Match = gamestate.match;
-            Data.Mapname = gamestate.meta.mapname;
+            Data.Match = gamestate.Match;
+            Data.Mapname = gamestate.Meta.mapname;
             Data.Mapmeta = mapmeta;
-            Data.Tickrate = gamestate.meta.tickrate;
+            Data.Tickrate = gamestate.Meta.tickrate;
             Data.Ticktime = 1000 / Data.Tickrate;
-            Data.Players = gamestate.meta.players.ToArray();
+            Data.Players = gamestate.Meta.players.ToArray();
 
-            Linker = new Linker(CombatlinkSettings.EVENT_BASED);
+            Linker = new Linker(CombatlinkSettings.DIRECT_EVENT_BASED);
 
             Console.WriteLine("Match starts with " + Data.Players.Count() + " players.");
             PrintPlayers();
@@ -562,7 +562,7 @@ namespace Detection
         private CombatComponent BuildComponent(Tick tick)
         {
             List<Link> links = new List<Link>();
-
+            //Linker.FindLinks(tick);
             //searchEventbasedSightCombatLinks(tick, links);
             //SearchSightbasedSightCombatLinks(tick, links); //First update playerlevels
 
@@ -578,7 +578,7 @@ namespace Detection
                 combcomp.tick_id = tick.tick_id;
                 links.RemoveAll(link => link == null); //If illegal links have been built they are null -> remove them
                 combcomp.links = links;
-                combcomp.assignPlayers();
+                combcomp.assignPlayers(); //TODO: remove or replace with something better 
                 combcomp.assignComponentEventcount(tick, Data.Players);
 
                 return combcomp;
@@ -1141,7 +1141,7 @@ namespace Detection
         #endregion
 
 
-        public void SetLinkerSetting(CombatlinkSettings settings)
+        public void SetLinkerSettings(CombatlinkSettings settings)
         {
             Linker.SetCSetting(settings);
         }

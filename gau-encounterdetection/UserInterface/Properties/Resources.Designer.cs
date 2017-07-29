@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace gau_ed_gui.Properties
+namespace EDGui.Properties
 {
 
 

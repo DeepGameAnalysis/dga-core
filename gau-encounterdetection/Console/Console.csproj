@@ -106,11 +106,11 @@
       <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
       <Name>DemoInfo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-json\gau-json\gau-json\JsonParsing.csproj">
+    <ProjectReference Include="..\..\..\gau-json\gau-json\JsonParsing\JsonParsing.csproj">
       <Project>{09043b53-0bc3-44cc-ae5d-1bb3bd446d20}</Project>
       <Name>JsonParsing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis.csproj">
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis\SpatialAnalysis.csproj">
       <Project>{6b5b8f00-f0ba-4ac2-af69-6c851628ef59}</Project>
       <Name>SpatialAnalysis</Name>
     </ProjectReference>

@@ -13,10 +13,10 @@ namespace Shapes
 {
     class LinkShape : Shape
     {
-        public Player actor;
-        public Player reciever;
+        public Player Actor;
+        public Player Reciever;
 
-        private Direction linkdirection;
+        private Direction LinkDirection;
 
         public double Length { get; set; }
 
@@ -89,8 +89,8 @@ namespace Shapes
 
         public LinkShape(Player actor, Player reciever)
         {
-            this.actor = actor;
-            this.reciever = reciever;
+            this.Actor = actor;
+            this.Reciever = reciever;
         }
 
         protected override Geometry DefiningGeometry
@@ -132,6 +132,12 @@ namespace Shapes
             }
         }
 
+
+        /// <summary>
+        /// Updates the Link between two playershapes
+        /// </summary>
+        /// <param name="aps"></param>
+        /// <param name="rps"></param>
         private void UpdateLink(PlayerShape aps, PlayerShape rps)
         {
 

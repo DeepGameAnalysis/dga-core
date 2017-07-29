@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using Xceed.Wpf.Toolkit;
+using System.ComponentModel;
 
 namespace EDGui
 {
@@ -27,18 +28,5 @@ namespace EDGui
             InitializeComponent();
 
         }
-
-    }
-
-    internal class DemoEntry
-    {
-        public DemoEntry()
-        {
-        }
-
-        public string GameName { get; set; }
-        public string DemofileName { get; set; }
-        public int DemoSize { get; set; }
-        public string FileAccessed { get; set; }
     }
 }

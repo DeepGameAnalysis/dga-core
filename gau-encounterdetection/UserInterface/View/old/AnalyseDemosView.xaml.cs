@@ -183,7 +183,7 @@ namespace Views
             {
                 this.gamestate = Newtonsoft.Json.JsonConvert.DeserializeObject<ReplayGamestate>(reader.ReadToEnd(), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None });
 
-                this.mapname = gamestate.meta.mapname;
+                this.mapname = gamestate.Meta.mapname;
                 string metapath = META_PATH + mapname + ".txt";
                 //string path = @"C:\Users\Patrick\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + ".txt";
                 Console.WriteLine("Loaded Mapdata");
@@ -197,15 +197,15 @@ namespace Views
         private void InitializeGUIData()
         {
 
-            this.Tickrate = gamestate.meta.tickrate;
+            this.Tickrate = gamestate.Meta.tickrate;
             //Jump out of Background to update UI
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 time_slider.Minimum = 0;
-                time_slider.Maximum = gamestate.match.rounds.Last().ticks.Last().tick_id;
+                time_slider.Maximum = gamestate.Match.rounds.Last().ticks.Last().tick_id;
             }));
 
-            foreach (var p in gamestate.meta.players)
+            foreach (var p in gamestate.Meta.players)
             {
                 if (p.GetTeam() == Data.Gameobjects.Team.CT)
                 {
@@ -244,7 +244,7 @@ namespace Views
                 canvas.Children.Add(MapView);
 
                 // Initalize all graphical player representations default/start
-                foreach (var p in gamestate.meta.players) // TODO: old data loaded here -> players are drawn where they stood when freeze began
+                foreach (var p in gamestate.Meta.players) // TODO: old data loaded here -> players are drawn where they stood when freeze began
                     drawPlayer(p);
 
                 Console.WriteLine("Initialized Map Graphics");
@@ -324,7 +324,7 @@ namespace Views
             // Update map with all active components, player etc 
             foreach (var p in tick.getUpdatedPlayers())
             {
-                PlayerShapes[p.player_id].UpdatePlayer(p);
+                PlayerShapes[p.player_id].UpdatePlayerWith(p);
             }
 
 
@@ -677,23 +677,23 @@ namespace Views
 
             foreach (var ls in Links)
             {
-                if (ls.actor.Equals(actor))
+                if (ls.Actor.Equals(actor))
                 {
                     ls.X1 = aps.X;
                     ls.Y1 = aps.Y;
                 }
-                else if (ls.actor.Equals(reciever))
+                else if (ls.Actor.Equals(reciever))
                 {
                     ls.X1 = rps.X;
                     ls.Y1 = rps.Y;
                 }
 
-                if (ls.reciever.Equals(actor))
+                if (ls.Reciever.Equals(actor))
                 {
                     ls.X2 = aps.X;
                     ls.Y2 = aps.Y;
                 }
-                else if (ls.reciever.Equals(reciever))
+                else if (ls.Reciever.Equals(reciever))
                 {
                     ls.X2 = rps.X;
                     ls.Y2 = rps.Y;
@@ -1027,7 +1027,7 @@ namespace Views
         {
             foreach (var l in Links)
             {
-                if (l.actor.Equals(link.GetActor()) || l.actor.Equals(link.GetReciever()) && l.reciever.Equals(link.GetActor()) || l.reciever.Equals(link.GetReciever()))
+                if (l.Actor.Equals(link.GetActor()) || l.Actor.Equals(link.GetReciever()) && l.Reciever.Equals(link.GetActor()) || l.Reciever.Equals(link.GetReciever()))
                 {
                     return true;
                 }

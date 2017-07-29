@@ -133,11 +133,11 @@ namespace Application
             using (var reader = new StreamReader(jsonpath))
             {
                 var deserializedGamestate = Newtonsoft.Json.JsonConvert.DeserializeObject<ReplayGamestate>(reader.ReadToEnd(), ptask.settings);
-                Console.WriteLine("Map: " + deserializedGamestate.meta.mapname);
+                Console.WriteLine("Map: " + deserializedGamestate.Meta.mapname);
                 if (deserializedGamestate == null)
                     throw new Exception("Gamestate null");
 
-                string metapath = META_PATH + deserializedGamestate.meta.mapname + ".txt";
+                string metapath = META_PATH + deserializedGamestate.Meta.mapname + ".txt";
                 var mapmeta = MapMetaDataPropertyReader.readProperties(metapath);
                 Console.WriteLine("Detecting Encounters");
                 new EncounterDetection(deserializedGamestate, mapmeta, new CSGOPreprocessor()).DetectEncounters();

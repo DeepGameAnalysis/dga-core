@@ -7,38 +7,49 @@
              xmlns:elements="clr-namespace:EDGui.Elements"
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
-    <Grid Background="#FFE5E5E5">
+    <Grid Background="#FFE5E5E5" IsEnabled="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="80*"/>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="80*"/>
             <RowDefinition Height="20*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
-        
-        <Label Grid.Row="0" Content="Analyse" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="Black"/>
 
-        <elements:UIInteractiveMap x:Name="interactiveMap" Background="Black"  Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MouseUp="InteractiveMapClicked"/>
+        <elements:DeactivatedMessage x:Name="deactivatedMsg" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="5" Grid.RowSpan="4" Panel.ZIndex="2" />
 
-        <Grid Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" >
+        <Label Grid.Row="0" Content="Analyse" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="25" Background="DeepSkyBlue" Foreground="Black" Grid.ColumnSpan="5"/>
+        <elements:UIInteractiveMap x:Name="interactiveMap" Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black" MouseUp="InteractiveMapClicked"/>
+
+        <Grid Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20*"/>
+                <RowDefinition Height="15*"/>
                 <RowDefinition Height="80*"/>
             </Grid.RowDefinitions>
 
             <Label Content="Statistics" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="Black"/>
 
-            
+
             <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Background="#576573" >
-                <Button x:Name="playButton" Content="Play" FontSize="10" Height="Auto" Width="70"  Background="#252525" Foreground="#95C8FC" HorizontalAlignment="Left" BorderThickness="0" MouseUp="PlayClicked"/>
-                <Label x:Name="timeLabel" Content="Time: 0:00 / 0:00" FontSize="10" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
-                <Label x:Name="tickLabel" Content="Tick: 0" FontSize="10" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Right" />
+                <Button x:Name="playButton" Content="Play" FontSize="10" Height="31" Width="80"  Background="#252525" Foreground="#95C8FC" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding PlayReplayCommand}"/>
+                <Label x:Name="timeLabel" Content="Time: 0:00 / 0:00" FontSize="11" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
+                <Label x:Name="tickLabel" Content="Tick: 0" FontSize="11" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Right" />
                 <Slider x:Name="silder" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="BottomRight" TickFrequency="2" Margin="0,0,5,0"/>
             </DockPanel>
 
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" Background="LightGray" >
-                <GroupBox x:Name="optionsGroup" Header="Options:" FontSize="15" Width="Auto" Foreground="Black" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" />
+                <GroupBox x:Name="optionsGroup" Header="General Options:" FontSize="15" Width="Auto" Foreground="Black" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" />
             </DockPanel>
         </Grid>
-
+        <GroupBox Grid.Column="1" Header="GroupBox" HorizontalAlignment="Stretch" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Stretch">
+        </GroupBox>
+        <GroupBox Grid.Column="3" Header="GroupBox" HorizontalAlignment="Stretch" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Stretch"/>
     </Grid>
 </UserControl>

@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EDGui.Views"
              xmlns:elements="clr-namespace:EDGui.Elements"
+             xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid Background="#FFE5E5E5">
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="90*"/>
@@ -20,33 +21,60 @@
             <RowDefinition Height="90*"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
-        
-        <Label Content="Statistics" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="Black" Grid.ColumnSpan="2"/>
+        <elements:DeactivatedMessage x:Name="deactivatedMsg"  Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="5" Grid.RowSpan="4" Panel.ZIndex="2" />
+        <Label Content="Statistics" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="25" Background="Crimson" Foreground="Black" Grid.ColumnSpan="3"/>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Overall Game Statistics" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70*"/>
-                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="55*"/>
+                    <ColumnDefinition Width="45*"/>
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="70*"/>
                     <RowDefinition Height="30*"/>
                 </Grid.RowDefinitions>
-                <DockPanel>
+                
+                <DockPanel Grid.Column="0" Grid.Row="0">
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                         <Label Content="Choose round:" VerticalAlignment="Center" Foreground="Black"/>
                         <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center"  Width="120" Margin="5">
                             <ComboBoxItem>Round 1</ComboBoxItem>
                             <ComboBoxItem>Round 2</ComboBoxItem>
                         </ComboBox>
+
+                        <Label Content="Choose player:" VerticalAlignment="Center" Foreground="Black"/>
+                        <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center"  Width="120" Margin="5">
+                            <ComboBoxItem>Player 1</ComboBoxItem>
+                            <ComboBoxItem>Player 2</ComboBoxItem>
+                        </ComboBox>
                     </StackPanel>
 
-                    <ListView Height="800">
+                    <ListView >
 
                     </ListView>
                 </DockPanel>
 
+                <DockPanel Grid.Column="1" Grid.Row="0">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Content="Choose Target:" VerticalAlignment="Center" Foreground="Black"/>
+                        <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center"  Width="120" Margin="5">
+                            <ComboBoxItem>Money</ComboBoxItem>
+                            <ComboBoxItem>Kills</ComboBoxItem>
+                        </ComboBox>
+
+                        <Label Content="Choose player:" VerticalAlignment="Center" Foreground="Black"/>
+                        <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center"  Width="120" Margin="5">
+                            <ComboBoxItem>Player 1</ComboBoxItem>
+                            <ComboBoxItem>Player 2</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <oxy:Plot >
+
+                    </oxy:Plot>
+                </DockPanel>
+                
             </Grid>
         </GroupBox>
 

@@ -84,7 +84,7 @@
     <Compile Include="Detection\Clustertypes\PlayerHurtCluster.cs" />
     <Compile Include="Detection\Controllers\CollisionController.cs" />
     <Compile Include="Data\EncounterDetectionData.cs" />
-    <Compile Include="Detection\Controllers\Linker.cs" />
+    <Compile Include="Detection\Linker.cs" />
     <Compile Include="Detection\Preprocessing\MainPreprocessor.cs" />
     <Compile Include="Detection\Preprocessing\Preprocessors\AOE2Preprocessor.cs" />
     <Compile Include="Exceptions\InsufficientPlayersException.cs" />
@@ -117,7 +117,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis.csproj">
+    <ProjectReference Include="..\..\..\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis\SpatialAnalysis.csproj">
       <Project>{6b5b8f00-f0ba-4ac2-af69-6c851628ef59}</Project>
       <Name>SpatialAnalysis</Name>
     </ProjectReference>

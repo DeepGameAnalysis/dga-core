@@ -14,6 +14,8 @@
             <Label Content="Assist and Main Algorithm : Prof. Dr. Matthias Schubert LMU Munich" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
             <Label Content="Demo parsing by StatsHelix : https://github.com/StatsHelix/demoinfo" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
             <Label Content="JSON Serialisation performed by Newtonsoft.JSON: http://www.newtonsoft.com/json" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+            <Label Content="Contact" Height="50" VerticalAlignment="Top" FontSize="28" HorizontalAlignment="Center"/>
+            <Label Content="pmd.matthaei@campus.lmu.de or pmd.matthaei@gmail.com" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -14,24 +14,16 @@
         Title="CS:GO Analytics" WindowState="Maximized" Height="1080" Width="1920" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" >
     <Grid>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition Width="90*"/>
-            <ColumnDefinition Width="0*"/>
-        </Grid.ColumnDefinitions>
-
         <Grid.RowDefinitions>
-            <RowDefinition Height="0*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="90*"/>
-            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="3" Grid.Column="1" x:Name="impressumandmore" HorizontalAlignment="Center" VerticalAlignment="Stretch" Orientation="Horizontal" >
-            <Label Content="Impressum" Width="100" Height="Auto"  HorizontalContentAlignment="Center" FontSize="10" Padding="0" Margin="0" />
-            <Label Content="Contact" Width="100" Height="Auto" HorizontalContentAlignment="Center" FontSize="10" Padding="0" Margin="0"/>
+        
+        <StackPanel Grid.Row="0">
+            <Label Content="Currently working on demo: " FontSize="15"/>
         </StackPanel>
 
-        <TabControl Grid.Column="1" Grid.Row="1" x:Name="mainTab" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TabControl x:Name="MainTabControl" x:FieldModifier="public" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TabItem Header="Manage Demos">
                 <Views:ManageDemosTab/>
             </TabItem>

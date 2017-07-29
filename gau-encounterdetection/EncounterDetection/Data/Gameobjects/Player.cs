@@ -24,7 +24,7 @@ namespace Data.Gameobjects
         public string Clanname { get; set; }
     }
 
-    public class Player
+    public class Player : Entity
     {
         public const int CSGO_PLAYERMODELL_HEIGHT = 72;
         public const int CSGO_PLAYERMODELL_CROUCH_HEIGHT = 54;

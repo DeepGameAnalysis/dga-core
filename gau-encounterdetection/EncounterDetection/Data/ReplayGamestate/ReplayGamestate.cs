@@ -9,7 +9,7 @@ namespace Data.Gamestate
 {
     /// <summary>
     /// !! DO NOT CONFUSE THIS WITH THE TERM "GAMESTATE" IN VIDEO GAME DEVELOPMENT FOR THE CURRENT STATE OF THE GAME. !!
-    /// !! THIS IS EVERY GAMESTATE CHANGE IN ON BIG REPLAYGAMESTATE OBJECT !!
+    /// !! THIS IS EVERY GAMESTATE CHANGE IN ONE BIG REPLAYGAMESTATE OBJECT !!
     /// This holds our entire game from tick 1 till end. 
     /// </summary>
     public class ReplayGamestate
@@ -17,12 +17,12 @@ namespace Data.Gamestate
         /// <summary>
         /// Meta data about this match`s gamestate
         /// </summary>
-        public ReplayGamstateMeta meta { get; set; }
+        public ReplayGamstateMeta Meta { get; set; }
 
         /// <summary>
         /// The data about the match itself
         /// </summary>
-        public Match match { get; set; }
+        public Match Match { get; set; }
     }
 
     public class ReplayGamstateMeta

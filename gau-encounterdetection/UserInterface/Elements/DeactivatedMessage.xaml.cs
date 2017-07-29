@@ -1,6 +1,4 @@
-﻿using EDGui.ViewModel;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,18 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EDGui.Views
+namespace EDGui.Elements
 {
     /// <summary>
-    /// Interaction logic for ManageDemosTab.xaml
+    /// Interaction logic for DeactivatedMessage.xaml
     /// </summary>
-    public partial class ManageDemosTab : UserControl
+    public partial class DeactivatedMessage : UserControl
     {
-        public ManageDemosTab()
+        public DeactivatedMessage()
         {
             InitializeComponent();
-            DataContext = new ManageDemosTabModel();
         }
-
     }
 }

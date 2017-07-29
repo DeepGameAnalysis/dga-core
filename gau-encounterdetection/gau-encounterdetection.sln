@@ -11,11 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{A610B179-882F-4DE5-AF4D-92799B1ECB41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnalysis", "..\..\gau-spatialanalysis\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnalysis", "..\..\gau-spatialanalysis\gau-spatialanalysis\SpatialAnalysis\SpatialAnalysis.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialMath", "..\..\mathnet-spatial\src\Spatial\SpatialMath.csproj", "{1F3364C6-9DA3-4006-B83F-6D1335099895}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonParsing", "..\..\gau-json\gau-json\gau-json\JsonParsing.csproj", "{09043B53-0BC3-44CC-AE5D-1BB3BD446D20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonParsing", "..\..\gau-json\gau-json\JsonParsing\JsonParsing.csproj", "{09043B53-0BC3-44CC-AE5D-1BB3BD446D20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{3969E612-08B9-406B-9F71-65B761135733}"
 EndProject

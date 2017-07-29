@@ -15,38 +15,53 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="10*"/>
-            <RowDefinition Height="90*"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="75*"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Manage Demos" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Foreground="Black" Grid.ColumnSpan="2"/>
+        <Label Grid.Row="0" Grid.Column="0" Content="Manage Demos" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="25" Background="SkyBlue" Foreground="Black" Grid.ColumnSpan="3"/>
 
-        <DockPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button Content="Add a new demo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <DockPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="15">
+            <StackPanel DockPanel.Dock="Left" Width="250"  VerticalAlignment="Center">
+                <Button x:Name="AnalyseNewDemo" Content="Add and analyse new demo" HorizontalAlignment="Stretch" Height="60" Command="{Binding AddDemosCommand}"/>
+                <Button x:Name="AnalyseAll" Content="Analyse all listed" HorizontalAlignment="Stretch" Height="60" Command="{Binding AnalyseDemosCommand}" Background="#576573"/>
+                <Button x:Name="AddExistingDemo" Content="Add analysed demo" HorizontalAlignment="Stretch" Height="60" Command="{Binding AddExistingDemosCommand}"/>
+
+            </StackPanel>
+
+            <ListView DockPanel.Dock="Right" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Background="#576573">
+                <ListView.View >
+                    <GridView >
+                        <GridViewColumn Header="Game" Width="Auto" DisplayMemberBinding="{Binding GameName}" />
+                        <GridViewColumn Header="Demo" Width="Auto" DisplayMemberBinding="{Binding DemofileName}" />
+                        <GridViewColumn Header="Size" Width="Auto" DisplayMemberBinding="{Binding DemoSize}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </DockPanel>
 
-        <DockPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-            <GroupBox Header="Available Demos" Grid.Row="0" HorizontalAlignment="Stretch" >
+        <DockPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" >
+            <GroupBox DockPanel.Dock="Bottom" Header="Available Demos" Grid.Row="0" HorizontalAlignment="Stretch" >
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="4*"/>
-                        <RowDefinition Height="96*"/>
+                        <RowDefinition Height="5*"/>
+                        <RowDefinition Height="95*"/>
                     </Grid.RowDefinitions>
-                    
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Only show game:" FontSize="15" Foreground="Black" Margin="0,0,5,0"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Label Content="Only show game:" Foreground="Black" Margin="0,0,5,0" Width="Auto" Height="Auto"/>
                         <ComboBox Width="120" Margin="0,0,5,0">
                             <ComboBoxItem>Test</ComboBoxItem>
                         </ComboBox>
                         <Button Content="Show"  Height="Auto" Width="Auto"/>
 
-                        <Button Content="Delete Demo" DockPanel.Dock="Right" Height="Auto" Width="Auto" Margin="0,0,10,0"/>
-                        <Button Content="Export Results" HorizontalAlignment="Right"  Height="Auto" Width="Auto" Margin="0,0,10,0"/>
+                        <Button Content="Delete Demo(Entf)" Height="Auto" Width="Auto" Margin="0,0,5,0"/>
+                        <Button Content="Export Results(Strg + E)" HorizontalAlignment="Right"  Height="Auto" Width="Auto"/>
                     </StackPanel>
 
 
-                    <ListView Grid.Row="1" Margin="10" x:Name="demos" Width="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                    <ListView Grid.Row="1" Margin="10" x:Name="demos" Width="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" >
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Game" Width="Auto" DisplayMemberBinding="{Binding GameName}" />
@@ -60,6 +75,6 @@
                 </Grid>
             </GroupBox>
         </DockPanel>
-        
+
     </Grid>
 </UserControl>

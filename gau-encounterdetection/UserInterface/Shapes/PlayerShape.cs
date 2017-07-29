@@ -1,5 +1,5 @@
 ﻿using Data.Gameobjects;
-using EDGUI.Utils;
+using EDGui.Utils;
 using MathNet.Spatial.Units;
 using System;
 using System.Globalization;
@@ -122,7 +122,11 @@ namespace Shapes
             }
         }
 
-        public void UpdatePlayer(Player p)
+        /// <summary>
+        /// Update the appearance of a playershape by the data provided by a player
+        /// </summary>
+        /// <param name="p"></param>
+        public void UpdatePlayerWith(Player p)
         {
             PlayerShape ps = this;
             if (p.HP <= 0)
@@ -132,37 +136,34 @@ namespace Shapes
 
             if (!ps.Active)
             {
-                ps.Fill = new SolidColorBrush(UIColors.DEAD_PLAYER);
-                ps.Stroke = new SolidColorBrush(UIColors.DEAD_PLAYER);
+                ps.Fill = new SolidColorBrush(UIColoring.DEAD_PLAYER);
+                ps.Stroke = new SolidColorBrush(UIColoring.DEAD_PLAYER);
                 return;
             }
             else
             {
-                Color color;
+                Color color; //TODO: Choose Color by game and team. at the moment just csgo
                 if (p.GetTeam() == Team.T)
-                    color = UIColors.TEAM_1;
+                    color = UIColoring.TEAM_1;
                 else
-                    color = UIColors.TEAM_2;
+                    color = UIColoring.TEAM_2;
                 ps.Fill = new SolidColorBrush(color);
                 ps.Stroke = new SolidColorBrush(color);
             }
 
             if (p.IsSpotted)
             {
-                if (p.GetTeam() == Team.T)
-                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 225, 160, 160));
-                else
-                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 160, 160, 225));
+                var colorps = ((SolidColorBrush)ps.Fill);
+                colorps.Color = UIColoring.ChangeColorBrightness(colorps.Color, 0.2f);
+                ps.Fill = colorps;
+                
             }
             else if (!p.IsSpotted)
             {
-
-                if (p.GetTeam() == Team.T)
-                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
-                else
-                    ps.Fill = new SolidColorBrush(Color.FromArgb(255, 0, 0, 255));
+                var colorps = ((SolidColorBrush)ps.Fill);
+                colorps.Color = UIColoring.ChangeColorBrightness(colorps.Color, -0.2f);
+                ps.Fill = colorps;
             }
-            //ps.Playerlevel = "" + EDAlgorithm.playerlevels[p.player_id].height;
 
             /*var vector = CoordinateConverter.GameToUIPosition(p.Position.SubstractZ());
             ps.X = vector.X;
