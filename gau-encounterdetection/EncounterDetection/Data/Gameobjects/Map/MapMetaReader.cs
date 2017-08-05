@@ -14,22 +14,29 @@ namespace Data.Utils
     /// </summary>
     public class MapMetaData
     {
-        public string mapname { get; set; }
+        public string Mapname { get; set; }
 
-        public double mapcenter_x { get; set; }
+        public double CoordOriginX { get; set; }
 
-        public double mapcenter_y { get; set; }
+        public double CoordOriginY { get; set; }
 
-        public double width { get; set; }
+        public double Width { get; set; }
 
-        public double height { get; set; }
+        public double Height { get; set; }
 
         public double scale;
 
         public int rotate { get; set; }
 
         public double zoom { get; set; }
+
+        public override string ToString()
+        {
+            return "Mapname: " + Mapname + " Center: " + CoordOriginX +","+CoordOriginY+ " Dimension: " +Width +","+Height ;
+        }
+
     }
+
 
     public class MapMetaDataPropertyReader
     {
@@ -37,7 +44,7 @@ namespace Data.Utils
         /// Reads a map info file "<mapname>".txt and extracts the relevant data about the map
         /// </summary>
         /// <param name="path"></param>
-        public static MapMetaData readProperties(string path)
+        public static MapMetaData ReadProperties(string path)
         {
             string line;
 
@@ -53,11 +60,11 @@ namespace Data.Utils
 
                     if (line.Contains("pos_x"))
                     {
-                        metadata.mapcenter_x = double.Parse(resultString, fmt);
+                        metadata.CoordOriginX = double.Parse(resultString, fmt);
                     }
                     else if (line.Contains("pos_y"))
                     {
-                        metadata.mapcenter_y = double.Parse(resultString, fmt);
+                        metadata.CoordOriginY = double.Parse(resultString, fmt);
                     }
                     else if (line.Contains("scale"))
                     {
@@ -73,11 +80,11 @@ namespace Data.Utils
                     }
                     else if (line.Contains("width"))
                     {
-                        metadata.width = double.Parse(resultString, fmt);
+                        metadata.Width = double.Parse(resultString, fmt);
                     }
                     else if (line.Contains("height"))
                     {
-                        metadata.height = double.Parse(resultString, fmt);
+                        metadata.Height = double.Parse(resultString, fmt);
                     }
                 }
 

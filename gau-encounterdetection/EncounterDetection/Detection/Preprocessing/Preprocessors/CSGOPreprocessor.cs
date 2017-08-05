@@ -34,7 +34,7 @@ namespace Preprocessing
             List<double> hurt_ranges = new List<double>();
             List<double> support_ranges = new List<double>();
 
-            foreach (var round in gamestate.Match.rounds)
+            foreach (var round in gamestate.Match.Rounds)
             {
                 foreach (var tick in round.ticks)
                 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Data;
 using System.Windows.Controls;
 
-namespace EDGui.Utils
+namespace EDGui.Utils.Converters
 {
     public class SelectedItemToItemsSource : IValueConverter
     {

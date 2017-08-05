@@ -16,6 +16,7 @@ using Shapes;
 using MathNet.Spatial.Units;
 using MathNet.Spatial.Euclidean;
 using EDGui.ViewModel;
+using EDGui.Utils;
 
 namespace EDGui.Views
 {
@@ -27,17 +28,18 @@ namespace EDGui.Views
         public AnalyseTab()
         {
             InitializeComponent();
-            DataContext = new AnalyseTabModel();
+            this.SetBinding(BoundDataContextProperty, new Binding());
         }
 
+        public static readonly DependencyProperty BoundDataContextProperty = DependencyProperty.Register("BoundDataContext", typeof(object), typeof(AnalyseTab), new PropertyMetadata(null, OnBoundDataContextChanged));
 
-
-        private void InteractiveMapClicked(object sender, MouseButtonEventArgs e)
+        private static void OnBoundDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if(e.Source is PlayerShape)
+            // Data Context is set when a parsed demo provides an replay through managetab
+            if(e.NewValue != null && e.OldValue == null)
             {
-                PlayerShape s = e.Source as PlayerShape;
-                Console.WriteLine("Clicked playershape at: "+ s.X +" "+s.Y);
+                var control = d as AnalyseTab;
+                control.deactivatedMsg.Visibility = Visibility.Hidden;
             }
         }
     }

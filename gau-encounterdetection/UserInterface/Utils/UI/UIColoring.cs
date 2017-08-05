@@ -1,4 +1,5 @@
 ﻿using Data.Gameobjects;
+using Detection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,9 @@ namespace EDGui.Utils
         public static Color TEAM_1 = Color.FromArgb(255, 255, 0, 0);
         public static Color TEAM_2 = Color.FromArgb(255, 0, 0, 255);
         public static Color TEAM_3 = Color.FromArgb(255, 0, 255, 255);
+
+        public static Color COMBATLINK_COLOR = Color.FromArgb(255, 245, 0, 0);
+        public static Color SUPPORTLINK_COLOR = Color.FromArgb(255, 0, 245, 0);
 
         /// <summary>
         /// Changes the color of a given color by a correctionfactor for all rgb values
@@ -45,6 +49,15 @@ namespace EDGui.Utils
             return Color.FromArgb(color.A, Convert.ToByte(red), Convert.ToByte(green), Convert.ToByte(blue));
         }
 
+        public static Brush GetLinkBrush(LinkType type)
+        {
+            if (type == LinkType.COMBATLINK)
+                return Brushes.DarkRed;
+            else if (type == LinkType.SUPPORTLINK)
+                return Brushes.DarkGreen;
+            return Brushes.Black;
+        }
+
         public static Color GetEntityColor(Entity e)
         {
             if (e is Player)
@@ -68,9 +81,7 @@ namespace EDGui.Utils
                         return TEAM_3;
                 }
             }
-
             return DEAD_PLAYER;
-
         }
 
         public static Color RandomColor()

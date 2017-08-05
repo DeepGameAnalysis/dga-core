@@ -162,11 +162,7 @@ namespace Detection
         /// </summary>
         public Map Map;
 
-        /// <summary>
-        /// Name of the map this encounter detection is running on
-        /// </summary>
-        public string Mapname;
-
+  
         /// <summary>
         /// Metadata about map. Important for calculations
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿using Data.Gameobjects;
 using EDGui.Utils;
+using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
 using System;
 using System.Globalization;
@@ -9,7 +10,7 @@ using System.Windows.Shapes;
 
 namespace Shapes
 {
-    class PlayerShape : Shape
+    class EntityShape : Shape
     {
         /// <summary>
         /// Line of sight length of a playershape
@@ -54,7 +55,7 @@ namespace Shapes
                     null);   // Coerce value callback
 
         public static readonly DependencyProperty yawProperty =
-            DependencyProperty.Register("Yaw", typeof(double), typeof(PlayerShape), yawMetadata);
+            DependencyProperty.Register("Yaw", typeof(double), typeof(EntityShape), yawMetadata);
 
 
 
@@ -67,7 +68,7 @@ namespace Shapes
                     null);   // Coerce value callback
 
         public static readonly DependencyProperty plProperty =
-            DependencyProperty.Register("Playerlevel", typeof(string), typeof(PlayerShape), plMetadata);
+            DependencyProperty.Register("Playerlevel", typeof(string), typeof(EntityShape), plMetadata);
 
 
         // DependencyProperty - Position X
@@ -79,7 +80,7 @@ namespace Shapes
                     null);   // Coerce value callback
 
         public static readonly DependencyProperty xProperty =
-            DependencyProperty.Register("X", typeof(double), typeof(PlayerShape), XMetadata);
+            DependencyProperty.Register("X", typeof(double), typeof(EntityShape), XMetadata);
 
 
         // DependencyProperty - Position Y
@@ -91,7 +92,7 @@ namespace Shapes
                     null);   // Coerce value callback
 
         public static readonly DependencyProperty yProperty =
-            DependencyProperty.Register("Y", typeof(double), typeof(PlayerShape), YMetadata);
+            DependencyProperty.Register("Y", typeof(double), typeof(EntityShape), YMetadata);
 
 #endregion  
 
@@ -126,9 +127,9 @@ namespace Shapes
         /// Update the appearance of a playershape by the data provided by a player
         /// </summary>
         /// <param name="p"></param>
-        public void UpdatePlayerWith(Player p)
+        public void UpdatePlayerShape(Player p)
         {
-            PlayerShape ps = this;
+            EntityShape ps = this;
             if (p.HP <= 0)
                 ps.Active = false;
             if (p.HP > 0)
@@ -165,9 +166,8 @@ namespace Shapes
                 ps.Fill = colorps;
             }
 
-            /*var vector = CoordinateConverter.GameToUIPosition(p.Position.SubstractZ());
-            ps.X = vector.X;
-            ps.Y = vector.Y;*/
+            ps.X = p.Position.X;
+            ps.Y = p.Position.Y;
             ps.Yaw = Angle.FromDegrees(-p.Facing.Yaw).Radians;
 
         }

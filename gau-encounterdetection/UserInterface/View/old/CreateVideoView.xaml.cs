@@ -84,7 +84,7 @@ namespace Views
         /// <summary>
         /// All players drawn on the minimap
         /// </summary>
-        private Dictionary<long, PlayerShape> playershapes = new Dictionary<long, PlayerShape>();
+        private Dictionary<long, EntityShape> playershapes = new Dictionary<long, EntityShape>();
 
         /// <summary>
         /// All links between players that are currently drawn
@@ -152,29 +152,29 @@ namespace Views
             var path = "match_0.dem";
             using (var demoparser = new DemoParser(File.OpenRead(path)))
             {
-                ParseTask ptask = new ParseTask
+                ParseTaskSettings ptask = new ParseTaskSettings
                 {
-                    destpath = path,
-                    srcpath = path,
+                    DestPath = path,
+                    SrcPath = path,
                     usepretty = true,
-                    showsteps = true,
-                    specialevents = true,
-                    highdetailplayer = true,
-                    positioninterval = 240,
-                    settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
+                    ShowSteps = true,
+                    Specialevents = true,
+                    HighDetailPlayer = true,
+                    PositionUpdateInterval = 240,
+                    Settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
                 };
-                gsg.GenerateJSONFile(demoparser, ptask);
+                gsg.GenerateJSONFile();
             }
 
             using (var reader = new StreamReader(path.Replace(".dem", ".json")))
             {
                 this.gamestate = Newtonsoft.Json.JsonConvert.DeserializeObject<ReplayGamestate>(reader.ReadToEnd(), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None });
 
-                this.mapname = gamestate.Meta.mapname;
+                this.mapname = gamestate.Meta.Mapname;
                 string metapath = @"E:\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + ".txt";
                 //string path = @"C:\Users\Patrick\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + ".txt";
                 Console.WriteLine("Loaded Mapdata");
-                this.mapmeta = MapMetaDataPropertyReader.readProperties(metapath);
+                this.mapmeta = MapMetaDataPropertyReader.ReadProperties(metapath);
 
                 this.EDAlgorithm = new EncounterDetection(gamestate, mapmeta, new CSGOPreprocessor());
             }
@@ -184,15 +184,15 @@ namespace Views
         private void InitializeGUIData()
         {
 
-            this.tickrate = gamestate.Meta.tickrate;
+            this.tickrate = gamestate.Meta.Tickrate;
             //Jump out of Background to update UI
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 time_slider.Minimum = 0;
-                time_slider.Maximum = gamestate.Match.rounds.Last().ticks.Last().tick_id;
+                time_slider.Maximum = gamestate.Match.Rounds.Last().ticks.Last().tick_id;
             }));
 
-            foreach (var p in gamestate.Meta.players)
+            foreach (var p in gamestate.Meta.Players)
             {
                 if (p.GetTeam() == Data.Gameobjects.Team.CT)
                 {
@@ -231,7 +231,7 @@ namespace Views
                 canvas.Children.Add(map);
 
                 // Initalize all graphical player representations default/start
-                foreach (var p in gamestate.Meta.players) // TODO: old data loaded here -> players are drawn where they stood when freeze began
+                foreach (var p in gamestate.Meta.Players) // TODO: old data loaded here -> players are drawn where they stood when freeze began
                     drawPlayer(p);
 
                 Console.WriteLine("Initialized Map Graphics");
@@ -262,7 +262,7 @@ namespace Views
             {
                 int last_tickid = 0;
 
-                foreach (var tuple in matchreplay.getReplayData())
+                foreach (var tuple in matchreplay.GetReplayData())
                 {
                     if (_replaybw.IsBusy) // Give _busy a chance to reset backgroundworker
                         _busy.WaitOne();
@@ -309,7 +309,7 @@ namespace Views
             updateUI(tick);
 
             // Update map with all active components, player etc 
-            foreach (var p in tick.getUpdatedPlayers())
+            foreach (var p in tick.GetUpdatedPlayers())
             {
                 updatePlayer(p);
             }
@@ -319,12 +319,12 @@ namespace Views
             {
                 foreach (var link in comp.links)
                 {
-                    if (link.coll != null)
+                    if (link.Collision != null)
                     {
                         if (link.GetActor().GetTeam() == Data.Gameobjects.Team.T)
-                            drawPos(link.coll, Color.FromRgb(255, 0, 0));
+                            drawPos(link.Collision, Color.FromRgb(255, 0, 0));
                         else
-                            drawPos(link.coll, Color.FromRgb(0, 0, 255));
+                            drawPos(link.Collision, Color.FromRgb(0, 0, 255));
                         continue;
                     }
                     if (hasActiveLinkShape(link)) // Old link -> update else draw new
@@ -634,13 +634,13 @@ namespace Views
 
         private void drawLink(Data.Gameobjects.Player actor, Data.Gameobjects.Player reciever, LinkType type)
         {
-            LinkShape ls = new LinkShape(actor, reciever);
+            LinkShape ls = new LinkShape();
 
-            PlayerShape aps = playershapes[actor.player_id];
+            EntityShape aps = playershapes[actor.player_id];
             ls.X1 = aps.X;
             ls.Y1 = aps.Y;
 
-            PlayerShape rps = playershapes[reciever.player_id];
+            EntityShape rps = playershapes[reciever.player_id];
             ls.X2 = rps.X;
             ls.Y2 = rps.Y;
 
@@ -660,33 +660,9 @@ namespace Views
         {
             Data.Gameobjects.Player actor = link.GetActor();
             Data.Gameobjects.Player reciever = link.GetReciever();
-            PlayerShape rps = playershapes[reciever.player_id];
-            PlayerShape aps = playershapes[actor.player_id];
+            EntityShape rps = playershapes[reciever.player_id];
+            EntityShape aps = playershapes[actor.player_id];
 
-            foreach (var ls in links)
-            {
-                if (ls.Actor.Equals(actor))
-                {
-                    ls.X1 = aps.X;
-                    ls.Y1 = aps.Y;
-                }
-                else if (ls.Actor.Equals(reciever))
-                {
-                    ls.X1 = rps.X;
-                    ls.Y1 = rps.Y;
-                }
-
-                if (ls.Reciever.Equals(actor))
-                {
-                    ls.X2 = aps.X;
-                    ls.Y2 = aps.Y;
-                }
-                else if (ls.Reciever.Equals(reciever))
-                {
-                    ls.X2 = rps.X;
-                    ls.Y2 = rps.Y;
-                }
-            }
         }
 
         private void drawPos(Point2D? position, Color color)
@@ -735,7 +711,7 @@ namespace Views
 
         private void drawPlayer(Data.Gameobjects.Player p)
         {
-            var ps = new PlayerShape();
+            var ps = new EntityShape();
             ps.Yaw = Angle.FromDegrees(-p.Facing.Yaw).Radians;
             var vector = CSPositionToUIPosition(p.Position.SubstractZ());
             ps.X = vector.X;
@@ -762,7 +738,7 @@ namespace Views
 
         private void updatePlayer(Data.Gameobjects.Player p)
         {
-            PlayerShape ps = playershapes[p.player_id];
+            EntityShape ps = playershapes[p.player_id];
             if (p.HP <= 0)
                 ps.Active = false;
             if (p.HP > 0)
@@ -1015,10 +991,10 @@ namespace Views
         {
             foreach (var l in links)
             {
-                if (l.Actor.Equals(link.GetActor()) || l.Actor.Equals(link.GetReciever()) && l.Reciever.Equals(link.GetActor()) || l.Reciever.Equals(link.GetReciever()))
+                /*if (l.Actor.Equals(link.GetActor()) || l.Actor.Equals(link.GetReciever()) && l.Reciever.Equals(link.GetActor()) || l.Reciever.Equals(link.GetReciever()))
                 {
                     return true;
-                }
+                }*/
             }
             return false;
         }
@@ -1040,9 +1016,9 @@ namespace Views
         public void InitalizeMapConstants() //TODO: initalize this with Data read from files about the current maps
         {
 
-            map_origin = new Point2D(mapmeta.mapcenter_x, mapmeta.mapcenter_y);
-            mapdata_width = mapmeta.width;
-            mapdata_height = mapmeta.height;
+            map_origin = new Point2D(mapmeta.CoordOriginX, mapmeta.CoordOriginY);
+            mapdata_width = mapmeta.Width;
+            mapdata_height = mapmeta.Height;
             mappanel_width = 575;
             mappanel_height = 575;
             Console.WriteLine("Initialized Map Constants");

@@ -42,7 +42,7 @@ namespace Detection
         /// <summary>
         /// Position of a collision with an obstacle by this link
         /// </summary>
-        public Point2D? coll;
+        public Point2D? Collision;
 
         public Link()
         {
@@ -81,7 +81,7 @@ namespace Detection
             players[1] = reciever;
             this.type = type;
             this.dir = dir;
-            this.coll = coll;
+            this.Collision = coll;
         }
 
         public bool IsUndirected()

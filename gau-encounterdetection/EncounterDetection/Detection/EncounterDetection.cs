@@ -41,11 +41,10 @@ namespace Detection
         public EncounterDetection(ReplayGamestate gamestate, MapMetaData mapmeta, IPreprocessor preprocessor)
         {
             Data.Match = gamestate.Match;
-            Data.Mapname = gamestate.Meta.mapname;
             Data.Mapmeta = mapmeta;
-            Data.Tickrate = gamestate.Meta.tickrate;
+            Data.Tickrate = gamestate.Meta.Tickrate;
             Data.Ticktime = 1000 / Data.Tickrate;
-            Data.Players = gamestate.Meta.players.ToArray();
+            Data.Players = gamestate.Meta.Players.ToArray();
 
             Linker = new Linker(CombatlinkSettings.DIRECT_EVENT_BASED);
 
@@ -145,9 +144,10 @@ namespace Detection
         public EncounterDetectionReplay DetectEncounters()
         {
             EncounterDetectionReplay replay = new EncounterDetectionReplay();
+            replay.SetTickrate(Data.Tickrate);
 
             var DetectionWatch = System.Diagnostics.Stopwatch.StartNew();
-            foreach (var round in Data.Match.rounds)
+            foreach (var round in Data.Match.Rounds)
             {
                 //Total gametime -> measure time each round is running
                 totalgametime += (round.getRoundTickRange() * Data.Ticktime / 1000) * Data.Players.Length; // 10 = total playercount for csgo(if no one disconnected)
@@ -161,7 +161,7 @@ namespace Detection
                     HandleServerEvents(tick); // Check if disconnects or reconnects happend in this tick
                     HandleBindings();
 
-                    foreach (var updatedPlayer in tick.getUpdatedPlayers()) // Update tables if player is alive
+                    foreach (var updatedPlayer in tick.GetUpdatedPlayers()) // Update tables if player is alive
                     {
                         UpdatePlayer(updatedPlayer);
                         if (updatedPlayer.IsSpotted) isSpotted_playersCount++;
@@ -450,8 +450,8 @@ namespace Detection
 
             if (idcount == 0)
             {
-                PrintPlayers();
-                PrintRegisteredBots();
+                //PrintPlayers();
+                //PrintRegisteredBots();
                 //throw new Exception("No player(" + updatedPlayer.Playername + ") with id: " + updatedPlayer.player_id + " found.");
             }
 
@@ -1164,7 +1164,7 @@ namespace Detection
                 exporter.AddRow();
                 rowset = true;
             }
-            exporter["Map"] = Data.Mapname;
+            exporter["Map"] = Data.Mapmeta.Mapname;
             exporter["Tickrate"] = Data.Tickrate;
             exporter["Gametime"] = totalgametime;
             exporter["Encountertime"] = totalencountertime;

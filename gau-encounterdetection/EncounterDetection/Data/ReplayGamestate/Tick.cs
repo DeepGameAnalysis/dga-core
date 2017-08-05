@@ -19,7 +19,7 @@ namespace Data.Gamestate
         /// </summary>
         /// <param name="tick"></param>
         /// <returns></returns>
-        public List<Player> getUpdatedPlayers() //TODO: what happens if one player is added multiple times
+        public List<Player> GetUpdatedPlayers() //TODO: what happens if one player is added multiple times
         {
             List<Player> ps = new List<Player>();
             foreach (var g in tickevents)

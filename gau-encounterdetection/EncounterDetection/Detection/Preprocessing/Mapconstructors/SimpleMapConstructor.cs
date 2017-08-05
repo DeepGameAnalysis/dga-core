@@ -92,11 +92,11 @@ namespace Data.Utils
         /// <param name="mapmeta"></param>
         private static void BuildMapGrid(MapMetaData mapmeta)
         {
-            PosX = PosX = (int)mapmeta.mapcenter_x;
-            PosY = PosY = (int)mapmeta.mapcenter_y;
+            PosX = PosX = (int)mapmeta.CoordOriginX;
+            PosY = PosY = (int)mapmeta.CoordOriginY;
 
-            MapWidth = (int)mapmeta.width;
-            MapHeight = (int)mapmeta.height;
+            MapWidth = (int)mapmeta.Width;
+            MapHeight = (int)mapmeta.Height;
 
             CellEdgeLength = (int)Math.Ceiling((double)MapWidth / Cellamount);
 

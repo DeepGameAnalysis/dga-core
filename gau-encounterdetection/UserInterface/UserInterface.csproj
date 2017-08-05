@@ -124,6 +124,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Elements\ProgressBarMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Elements\UIInteractiveMap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -135,6 +139,10 @@
     <Page Include="View\HeatMapsTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ParsingSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\StatisticsTab.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -167,26 +175,36 @@
     <Compile Include="Elements\DeactivatedMessage.xaml.cs">
       <DependentUpon>DeactivatedMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Elements\ProgressBarMessage.xaml.cs">
+      <DependentUpon>ProgressBarMessage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Elements\UIInteractiveMap.xaml.cs">
       <DependentUpon>UIInteractiveMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Demo.cs" />
+    <Compile Include="Models\EDTask.cs" />
     <Compile Include="Models\StatisticalPlayer.cs" />
     <Compile Include="StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\Converters.cs" />
-    <Compile Include="Utils\DialogCloser.cs" />
-    <Compile Include="Utils\IClosableViewModel.cs" />
+    <Compile Include="Utils\Converters\Converters.cs" />
+    <Compile Include="Utils\Converters\ScaleConverter.cs" />
+    <Compile Include="Utils\Converters\TimeFormatConverter.cs" />
+    <Compile Include="Utils\UI\DataContextChangedEventHelper.cs" />
+    <Compile Include="Utils\UI\DialogCloser.cs" />
+    <Compile Include="Utils\UI\IClosableViewModel.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="Utils\UIColoring.cs" />
-    <Compile Include="Utils\UICoordinateConverter.cs" />
-    <Compile Include="Utils\UIObjectRenderer.cs" />
+    <Compile Include="Utils\ObservableDictionary.cs" />
+    <Compile Include="Utils\UI\UIColoring.cs" />
+    <Compile Include="Utils\Converters\UICoordinateConverter.cs" />
+    <Compile Include="Utils\UI\UIRenderer.cs" />
     <Compile Include="ViewModel\ManageDemoTabModel.cs" />
     <Compile Include="ViewModel\AnalyseTabModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\HeatMapsTab.xaml.cs">
       <DependentUpon>HeatMapsTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParsingSettingsView.xaml.cs">
+      <DependentUpon>ParsingSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StatisticsTab.xaml.cs">
       <DependentUpon>StatisticsTab.xaml</DependentUpon>
@@ -224,7 +242,7 @@
       <DependentUpon>ManageDemosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Shapes\RadialEffectShape.cs" />
-    <Compile Include="Shapes\PlayerShape.cs" />
+    <Compile Include="Shapes\EntityShape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -268,6 +286,10 @@
     <ProjectReference Include="..\..\..\mathnet-spatial\src\Spatial\SpatialMath.csproj">
       <Project>{1F3364C6-9DA3-4006-B83F-6D1335099895}</Project>
       <Name>SpatialMath</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Console\Console.csproj">
+      <Project>{3969E612-08B9-406B-9F71-65B761135733}</Project>
+      <Name>Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\EncounterDetection\EncounterDetection.csproj">
       <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>

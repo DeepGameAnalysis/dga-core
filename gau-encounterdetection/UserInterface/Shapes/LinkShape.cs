@@ -13,8 +13,6 @@ namespace Shapes
 {
     class LinkShape : Shape
     {
-        public Player Actor;
-        public Player Reciever;
 
         private Direction LinkDirection;
 
@@ -87,10 +85,8 @@ namespace Shapes
 
 
 
-        public LinkShape(Player actor, Player reciever)
+        public LinkShape()
         {
-            this.Actor = actor;
-            this.Reciever = reciever;
         }
 
         protected override Geometry DefiningGeometry
@@ -138,9 +134,21 @@ namespace Shapes
         /// </summary>
         /// <param name="aps"></param>
         /// <param name="rps"></param>
-        private void UpdateLink(PlayerShape aps, PlayerShape rps)
+        public void UpdateLinkShape(EntityShape aps, EntityShape rps)
         {
+            X1 = aps.X;
+            Y1 = aps.Y;
+            X2 = rps.X;
+            Y2 = rps.Y;
+        }
 
+        internal static long HashLink(Link link)
+        {
+            long id1 = link.GetActor().player_id;
+            long id2 = link.GetReciever().player_id;
+            int result = (int)(id1 ^ (id1 >> 32));
+            result = 31 * result + (int)(id2 ^ (id2 >> 32));
+            return result;
         }
     }
 }

@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace EDGui.Model
 {
-    internal class Demo : INotifyPropertyChanged
+    /// <summary>
+    /// Encounter detection Task - parse a new demo or read an already parsed demo
+    /// </summary>
+    internal class EDTask : INotifyPropertyChanged
     {
-        public Demo()
+        public EDTask()
         {
         }
 
@@ -62,6 +65,12 @@ namespace EDGui.Model
                     OnPropertyChanged("DemoSize");
                 }
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            EDTask e = obj as EDTask;
+            return DemofileName.Equals(e.DemofileName);
         }
 
         public string FileAccessed { get; internal set; }

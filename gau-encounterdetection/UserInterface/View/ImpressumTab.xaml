@@ -8,8 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid Background="#FFE5E5E5">
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center"  Background="#252525" >
-            <Label Content="Impressum" Height="50" VerticalAlignment="Top" FontSize="28" HorizontalAlignment="Center"/>
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="#252525">
+            <Label Content="Impressum"  VerticalAlignment="Top" FontSize="28" HorizontalAlignment="Center"/>
             <Label Content="Patrick Matthäi" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
             <Label Content="Assist and Main Algorithm : Prof. Dr. Matthias Schubert LMU Munich" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
             <Label Content="Demo parsing by StatsHelix : https://github.com/StatsHelix/demoinfo" Height="28" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>

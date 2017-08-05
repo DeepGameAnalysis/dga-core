@@ -36,11 +36,11 @@ namespace Data.Utils
         /// <param name="ps"></param>
         public static Map CreateMap(MapMetaData mapmeta, List<Point3D> ps)
         {
-            PosX = (int)mapmeta.mapcenter_x;
-            PosY = (int)mapmeta.mapcenter_y;
+            PosX = (int)mapmeta.CoordOriginX;
+            PosY = (int)mapmeta.CoordOriginY;
 
-            MapWidth = (int)mapmeta.width;
-            MapHeight = (int)mapmeta.height;
+            MapWidth = (int)mapmeta.Width;
+            MapHeight = (int)mapmeta.Height;
 
             CellEdgeLength = (int)Math.Ceiling((double)MapWidth / Cellamount);
 

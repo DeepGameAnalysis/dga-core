@@ -1,11 +1,4 @@
-﻿using Data.Gameobjects;
-using Data.Gamestate;
-using Detection;
-using EDGui.Utils;
-using MathNet.Spatial.Euclidean;
-using MathNet.Spatial.Units;
-using Shapes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,13 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EDGui.Elements
+namespace EDGui
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// Interaction logic for ParsingSettingsView.xaml
     /// </summary>
-    public partial class UIInteractiveMap : UserControl
+    public partial class ParsingSettingsView
     {
-
+        public ParsingSettingsView()
+        {
+            InitializeComponent();
+        }
     }
 }

@@ -18,7 +18,12 @@ namespace Detection
         /// <summary>
         ///  All tick and component pairs saved in a dicitionary.
         /// </summary>
-        Dictionary<Tick, CombatComponent> data = new Dictionary<Tick, CombatComponent>();
+        Dictionary<Tick, CombatComponent> ReplayData = new Dictionary<Tick, CombatComponent>();
+
+        /// <summary>
+        /// Tickrate this replay is running on
+        /// </summary>
+        public float Tickrate;
 
         /// <summary>
         /// 
@@ -29,17 +34,17 @@ namespace Detection
         {
             if(comp != null) // Comp can only be null if no links have been found -> empty comps are not saved thus are null
                 if (tick.tick_id != comp.tick_id) throw new Exception("Cannot save replaydata. Component and Tickdata are not matching");
-            data.Add(tick, comp);
+            ReplayData.Add(tick, comp);
         }
 
         /// <summary>
         /// Returns the next tick and removes the pair -> at the end the dictionary is cleared
         /// </summary>
         /// <returns></returns>
-        public KeyValuePair<Tick, CombatComponent> getNextTick()
+        public KeyValuePair<Tick, CombatComponent> GetNextTick()
         {
-            var first = data.First();
-            data.Remove(first.Key);
+            var first = ReplayData.First();
+            ReplayData.Remove(first.Key);
             return first;
         }
 
@@ -48,9 +53,9 @@ namespace Detection
         /// </summary>
         /// <param name="tick_id"></param>
         /// <returns></returns>
-        public List<KeyValuePair<Tick,CombatComponent>> getTicksFrom(int tick_id)
+        public List<KeyValuePair<Tick,CombatComponent>> GetTicksFrom(int tick_id)
         {
-            return data.Where(t => t.Key.tick_id >= tick_id).ToList();
+            return ReplayData.Where(t => t.Key.tick_id >= tick_id).ToList();
         }
 
         /// <summary>
@@ -58,9 +63,9 @@ namespace Detection
         /// </summary>
         /// <param name="tick_id"></param>
         /// <returns></returns>
-        public List<KeyValuePair<Tick,CombatComponent>> getTicksUntil(int tick_id)
+        public List<KeyValuePair<Tick,CombatComponent>> GetTicksUntil(int tick_id)
         {
-            return data.Where(t => t.Key.tick_id <= tick_id).ToList();
+            return ReplayData.Where(t => t.Key.tick_id <= tick_id).ToList();
         }
 
         /// <summary>
@@ -71,14 +76,19 @@ namespace Detection
 
         }
 
-        public Dictionary<Tick, CombatComponent> getReplayData()
+        public Dictionary<Tick, CombatComponent> GetReplayData()
         {
-            return data;
+            return ReplayData;
         }
 
         public void Dispose()
         {
-            data = null;
+            ReplayData = null;
+        }
+
+        internal void SetTickrate(float tickrate)
+        {
+            Tickrate = tickrate;
         }
     }
 }

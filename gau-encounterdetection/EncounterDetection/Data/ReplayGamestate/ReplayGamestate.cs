@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Data.Gameobjects;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data.Gameobjects;
 
 namespace Data.Gamestate
 {
@@ -29,31 +26,31 @@ namespace Data.Gamestate
     {
         public int gamestate_id { get; set; }
 
-        public string mapname { get; set; }
+        public string Mapname { get; set; }
 
-        public float tickrate { get; set; }
+        public float Tickrate { get; set; }
 
-        public int tickcount { get; set; }
+        public int Tickcount { get; set; }
 
-        public List<PlayerMeta> players { get; set; }
+        public List<PlayerMeta> Players { get; set; }
     }
 
     public class Match
     {
-        public Team winnerteam { get; set; }
+        public Team WinnerTeam { get; set; }
 
-        public List<Player> winners { get; set; }
+        public List<Player> Winners { get; set; }
 
-        public List<Round> rounds { get; set; }
+        public List<Round> Rounds { get; set; }
 
         /// <summary>
         /// Get tickrange of this match.
         /// </summary>
         /// <returns></returns>
-        public int getRoundTickRange()
+        public int GetRoundTickRange()
         {
             int range = 0;
-            foreach (var round in rounds)
+            foreach (var round in Rounds)
                 range += round.getRoundTickRange();
             return range;
         }
