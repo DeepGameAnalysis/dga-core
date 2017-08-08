@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Views
+namespace EDGui.View
 {
     /// <summary>
-    /// Interaction logic for Impressum.xaml
+    /// Interaction logic for DeleteMessage.xaml
     /// </summary>
-    public partial class Impressum : Page
+    public partial class DeleteMessage : Window
     {
-        public Impressum()
+        public DeleteMessage()
         {
             InitializeComponent();
         }

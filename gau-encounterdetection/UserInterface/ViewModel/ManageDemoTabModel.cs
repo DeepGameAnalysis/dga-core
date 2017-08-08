@@ -24,18 +24,37 @@ namespace EDGui.ViewModel
         private const string META_PATH = @"D:\Ressources\CS GO Demofiles\CS GO Mapmetadata\";
         private const string OUT_PATH = @"D:\Ressources\ParsedDemos\";
 
-        public ObservableCollection<EDTask> SelectedDemos { get; set; }
-        public ObservableCollection<EDTask> ReadyDemos { get; set; }
+        //
+        // BINDED DATA IN THIS VIEW
+        //
 
-        public RelayCommand DetectEncountersCommand { get; set; }
-        public RelayCommand AddDemosCommand { get; set; }
-        public RelayCommand AnalyseDemosCommand { get; set; }
-        public RelayCommand AddAnalyseDemosCommand { get; set; }
-        public RelayCommand AddExistingDemosCommand { get; set; }
-        public RelayCommand OpenParsingOptionsCommand { get; set; }
+        /// <summary>
+        /// Task that await parsing into a JSON file format for later analysis
+        /// </summary>
+        public ObservableCollection<AnalyseTask> NewDemosTaskList { get; set; }
 
+        /// <summary>
+        /// Already parsed demos for which a JSON file is existing for analysis
+        /// </summary>
+        public ObservableCollection<AnalyseTask> ReadyDemosTaskList { get; set; }
+
+        /// <summary>
+        /// The current path to a demo or json awaiting parsing/analysis
+        /// </summary>
+        private string _CurrentParseTaskPath;
+        public string CurrentParseTaskPath
+        {
+            get { return _CurrentParseTaskPath; }
+            set { _CurrentParseTaskPath = value; RaisePropertyChanged("CurrentParseTaskPath"); }
+        }
+
+        //
+        // DIALOGS
+        //
         private OpenFileDialog _DemoDialog;
         private OpenFileDialog _JSONDialog;
+        private ParsingSettingsView _OpenParsingSettings;
+
 
         private static ParseTaskSettings ParseTask = new ParseTaskSettings
         {
@@ -47,18 +66,11 @@ namespace EDGui.ViewModel
             Settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All, Formatting = Formatting.None }
         };
 
-        private string CurrentParseTaskPath;
-
         public ManageDemosTabModel()
         {
-            SelectedDemos = new ObservableCollection<EDTask>();
-            ReadyDemos = new ObservableCollection<EDTask>();
-
-            AddDemosCommand = new RelayCommand(AddNewDemo);
-            AddAnalyseDemosCommand = new RelayCommand(AddAndAnalyseDemo);
-            AnalyseDemosCommand = new RelayCommand(AnalyseExistingDemo);
-            AddExistingDemosCommand = new RelayCommand(AddExistingDemo);
-            OpenParsingOptionsCommand = new RelayCommand(OpenParsingOptions);
+            NewDemosTaskList = new ObservableCollection<AnalyseTask>();
+            ReadyDemosTaskList = new ObservableCollection<AnalyseTask>();
+            CurrentParseTaskPath = String.Empty;
 
             _DemoDialog = new OpenFileDialog()
             {
@@ -75,62 +87,134 @@ namespace EDGui.ViewModel
                 DefaultExt = ".json", // Default file extension
                 Filter = "CSGO Demo Gamestatefile (.json)|*.json" // Filter files by extension
             };
+
+            _OpenParsingSettings = new ParsingSettingsView();
         }
 
-        private void ParseNewDemo(object obj)
+        #region Commands for UI Binding
+
+        /// <summary>
+        /// This command is parsing the demo files to uniform JSON
+        /// </summary>
+        public RelayCommand LoadDemosCommand
         {
-            DemoDataIO.ParseDemoFile(CurrentParseTaskPath, ParseTask);
+            get
+            {
+                return _LoadDemosCommand ?? (_LoadDemosCommand = new RelayCommand(Execute_LoadDemos, CanExecute_LoadDemos));
+            }
         }
 
-        private void ParseAllNewDemos(object obj)
+        private RelayCommand _LoadDemosCommand;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RelayCommand AddTaskCommand
         {
-            foreach(var path in SelectedDemos)
+            get
+            {
+                return _AddTaskCommand ?? (_AddTaskCommand = new RelayCommand(Execute_AddTask, CanExecute_AddTask));
+            }
+        }
+
+        private RelayCommand _AddTaskCommand;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RelayCommand OpenParsingSettingsCommand
+        {
+            get
+            {
+                return _OpenParsingSettingsCommand ?? (_OpenParsingSettingsCommand = new RelayCommand(Execute_OpenParsingSettings, CanExecute_OpenParsingSettings));
+            }
+        }
+
+        private RelayCommand _OpenParsingSettingsCommand;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RelayCommand LoadAndAnalyseCommand
+        {
+            get
+            {
+                return _LoadAndAnalyseCommand ?? (_LoadAndAnalyseCommand = new RelayCommand(Execute_LoadAndAnalyse, CanExecute_LoadAndAnalyse));
+            }
+        }
+
+        private RelayCommand _LoadAndAnalyseCommand;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RelayCommand AnalyseCommand
+        {
+            get
+            {
+                return _AnalyseCommand ?? (_AnalyseCommand = new RelayCommand(Execute_Analyse, CanExecute_Analyse));
+            }
+        }
+
+        private RelayCommand _AnalyseCommand;
+        #endregion
+
+        #region Functions executed by User Input
+
+        private void Execute_LoadDemos(object obj)
+        {
+            foreach (var path in NewDemosTaskList)
+            {
                 DemoDataIO.ParseDemoFile(path.DemofileName, ParseTask);
+                AddNewReadyDemo(path.DemofileName);
+            }
         }
 
-        private void OpenParsingOptions(object obj)
+        private void Execute_OpenParsingSettings(object obj)
         {
-            Console.WriteLine("Open parsing options");
-            new ParsingSettingsView().Show();
+            if (_OpenParsingSettings == null)
+                _OpenParsingSettings = new ParsingSettingsView();
+
+            _OpenParsingSettings.Show();
         }
 
-        private void AddNewDemo(object obj)
+        private void Execute_AddTask(object obj)
         {
-            Nullable<bool> result = _DemoDialog.ShowDialog();
+            var list = obj as ObservableCollection<AnalyseTask>;
+
+            OpenFileDialog pf = null;
+            if (list == NewDemosTaskList)
+                pf = _DemoDialog;
+            else if(list == ReadyDemosTaskList)
+                pf = _JSONDialog;
+
+            Nullable<bool> result = pf.ShowDialog();
+
             if (result == true)
-                foreach (string dem in _DemoDialog.FileNames)
-                    if (System.IO.Path.GetExtension(dem) == ".dem")
+                foreach (string dem in pf.FileNames)
+                {
+                    var task = new AnalyseTask()
                     {
-                        var task = new EDTask()
-                        {
-                            DemofileName = System.IO.Path.GetFileName(dem),
-                            DemoSize = new System.IO.FileInfo(dem).Length / 1000 / 1000
-                        };
+                        DemofileName = System.IO.Path.GetFileName(dem),
+                        DemoSize = new System.IO.FileInfo(dem).Length / 1000 / 1000
+                    };
 
-                        if (!SelectedDemos.Contains(task))
-                            SelectedDemos.Add(task);
-                    }
+                    if (!list.Contains(task))
+                        list.Add(task);
+                }
         }
 
-        private void AddExistingDemo(object obj)
+        private void Execute_Analyse(object obj)
         {
-            Nullable<bool> result = _JSONDialog.ShowDialog();
-            if (result == true)
-                foreach (string json in _JSONDialog.FileNames)
-                    if (System.IO.Path.GetExtension(json) == ".json")
-                    {
-                        var task = new EDTask()
-                        {
-                            DemofileName = System.IO.Path.GetFileName(json),
-                            DemoSize = new System.IO.FileInfo(json).Length / 1000 / 1000
-                        };
-
-                        if (!ReadyDemos.Contains(task))
-                            ReadyDemos.Add(task);
-                    }
+            var path = obj as string;
+            var encounterdetection = DemoDataIO.ReadDemoJSON(path, ParseTask);
+            ProvideReplay(encounterdetection);
         }
 
-        private void AddAndAnalyseDemo(object obj)
+        private void Execute_LoadAndAnalyse(object obj)
         {
             _DemoDialog.Multiselect = false;
             Nullable<bool> result = _DemoDialog.ShowDialog();
@@ -141,20 +225,58 @@ namespace EDGui.ViewModel
                         ParseTask.SrcPath = dem;
                         ParseTask.DestPath = dem;
                         DemoDataIO.ParseDemoFile(dem, ParseTask);
-                        var encounterdetection = DemoDataIO.ReadDemoJSON(dem.Replace(".dem",".json"), ParseTask);
+                        var encounterdetection = DemoDataIO.ReadDemoJSON(dem.Replace(".dem", ".json"), ParseTask);
                         ProvideReplay(encounterdetection);
                     }
             _DemoDialog.Multiselect = true;
-
         }
 
-        private void AnalyseExistingDemo(object obj)
-        {
-            //Parse the chosen replay json to object and send it to the analysetab
-            //ParseTask.SrcPath = CurrentParseTaskPath;
-            //var replay = FileWorker.ReadDemoJSON(CurrentParseTaskPath, ParseTask);
-            ProvideReplay(null);
 
+        #endregion
+
+
+        #region Execution validation for above functions
+        private bool CanExecute_AddTask(object obj)
+        {
+            return true;
+        }
+
+        private bool CanExecute_LoadAndAnalyse(object obj)
+        {
+            return true;
+        }
+
+        private bool CanExecute_LoadDemos(object obj)
+        {
+            return true;
+        }
+
+        private bool CanExecute_OpenParsingSettings(object obj)
+        {
+            return true;
+        }
+
+        private bool CanExecute_Analyse(object obj)
+        {
+            return true;
+        }
+
+        #endregion
+
+
+        //
+        // HELPERS
+        //
+        private void AddNewReadyDemo(string json)
+        {
+            var task = new AnalyseTask()
+            {
+                DemofileName = System.IO.Path.GetFileName(json),
+                DemoSize = new System.IO.FileInfo(json).Length / 1000 / 1000
+            };
+
+            if (!ReadyDemosTaskList.Contains(task))
+                ReadyDemosTaskList.Add(task);
         }
 
         private static void ProvideReplay(EncounterDetection encounterdetection)

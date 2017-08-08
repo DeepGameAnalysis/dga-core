@@ -27,6 +27,5 @@ namespace EDGui.Views
             InitializeComponent();
             DataContext = new ManageDemosTabModel();
         }
-
     }
 }

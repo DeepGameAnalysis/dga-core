@@ -7,14 +7,17 @@
              xmlns:elements="clr-namespace:EDGui.Elements"
              xmlns:shapes="clr-namespace:Shapes"
              xmlns:converters="clr-namespace:EDGui.Utils.Converters"
+             xmlns:vmodels="clr-namespace:EDGui.ViewModel"
 
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     <UserControl.Resources>
-        <converters:TimeFormatConverter x:Key="timeconverter"/>
-        <converters:ScaleConverter x:Key="scaleconverter"/>
+        <converters:TimeFormatConverter x:Key="TimeConverter"/>
+        <converters:XCoordinateConverter x:Key="XCoordConverter"/>
+        <converters:YCoordinateConverter x:Key="YCoordConverter"/>
+        <converters:ScaleConverter x:Key="ScaleConverter"/>
     </UserControl.Resources>
-    
+
     <Grid Background="#FFE5E5E5" IsEnabled="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -35,8 +38,10 @@
 
         <Label Grid.Row="0" Content="Analyse" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="25" Background="DeepSkyBlue" Foreground="Black" Grid.ColumnSpan="5"/>
 
-        <Grid Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-            <ItemsControl ItemsSource="{Binding Path=SpecialRenderShapes}">
+        <Image Grid.Row="1" Grid.Column="2" Source="{Binding GameImageSource}" Width="{Binding ImageWidth}"  Height="{Binding ImageHeight}" />
+
+        <!--<Grid Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+             <ItemsControl ItemsSource="{Binding Path=Renderer.SpecialRenderShapes}">
                 <ItemsControl.Resources>
                     <DataTemplate DataType="{x:Type shapes:EntityShape}">
                         <Path Data="{Binding Geometry}" Stroke="{Binding Stroke}" Fill="{Binding Fill}"/>
@@ -47,20 +52,19 @@
                 </ItemsControl.Resources>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black" />
+                        <Canvas x:Name="Canvas" Background="{Binding MapBackground}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                        <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource XCoordConverter}}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource YCoordConverter}}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
-            </ItemsControl>
-            
+
             <Label x:Name="interactiveMapName" Content="Map:" HorizontalAlignment="Left" VerticalAlignment="Top" />
 
-        </Grid>
+        </Grid>-->
 
         <Grid Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -73,9 +77,9 @@
             <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Background="#576573" >
                 <Button x:Name="playButton" Content="Play" FontSize="10" Height="31" Width="80"  Background="#252525" Foreground="#95C8FC" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding PlayReplayCommand}"/>
                 <Label x:Name="timeLabel" Content="Time:" FontSize="11" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
-                <Label x:Name="time" FontSize="11" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Left" Content="{Binding Time, Converter={StaticResource timeconverter}}" />
+                <Label x:Name="time" FontSize="11" Width="60" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Left" Content="{Binding Time, Converter={StaticResource TimeConverter}}" />
                 <Label x:Name="tickLabel" Content="Tick:" FontSize="11" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Right" />
-                <Label x:Name="tickNumber" FontSize="11" Width="Auto" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding TickID}"/>
+                <Label x:Name="tickNumber" FontSize="11" Width="50" Foreground="White" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding TickID}"/>
                 <Slider x:Name="silder" HorizontalAlignment="Stretch" VerticalAlignment="Center" TickPlacement="BottomRight" TickFrequency="2" Margin="0,0,5,0"/>
             </DockPanel>
 

@@ -10,9 +10,9 @@ namespace EDGui.Model
     /// <summary>
     /// Encounter detection Task - parse a new demo or read an already parsed demo
     /// </summary>
-    internal class EDTask : INotifyPropertyChanged
+    internal class AnalyseTask : INotifyPropertyChanged
     {
-        public EDTask()
+        public AnalyseTask()
         {
         }
 
@@ -69,7 +69,7 @@ namespace EDGui.Model
 
         public override bool Equals(object obj)
         {
-            EDTask e = obj as EDTask;
+            AnalyseTask e = obj as AnalyseTask;
             return DemofileName.Equals(e.DemofileName);
         }
 

@@ -3,6 +3,8 @@ using Data.Gameobjects;
 using Data.Gamestate;
 using Data.Utils;
 using Detection;
+using EDGui.ViewModel;
+using gau_ed_gui.Properties;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Functions;
 using MathNet.Spatial.Units;
@@ -12,7 +14,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -22,7 +26,7 @@ using System.Windows.Threading;
 
 namespace EDGui.Utils
 {
-    class GameRenderer
+    public class GameRenderer : ViewModelBase
     {
         private const string META_PATH = @"D:\Ressources\CS GO Demofiles\CS GO Mapmetadata\";
 
@@ -30,6 +34,7 @@ namespace EDGui.Utils
         //
         // VISUALS OF THE GAME-REPRESENTATION DRAWN TO THE CANVAS
         //
+
         /// <summary>
         /// Entities on the field(RTS etc)
         /// </summary>
@@ -48,12 +53,22 @@ namespace EDGui.Utils
         /// <summary>
         /// 
         /// </summary>
-        private ObservableDictionary<long, Shape> GameShapes = new ObservableDictionary<long, Shape>();
+        public ObservableDictionary<long, GameShape> GameShapes { get; } = new ObservableDictionary<long, GameShape>();
 
         /// <summary>
         /// Special Rendering Objects
         /// </summary>
-        private ObservableCollection<Shape> SpecialRenderShapes = new ObservableCollection<Shape>();
+        public ObservableCollection<GameShape> SpecialRenderShapes { get; } = new ObservableCollection<GameShape>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ImageBrush MapBackground { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public WriteableBitmap GameImageSource { get; set; }
 
         /// <summary>
         /// Origion of the current coordinatesystem used by the inputcoordinates
@@ -65,53 +80,59 @@ namespace EDGui.Utils
         /// </summary>
         private Vector2D Dimension;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         private string Mapname;
-        private double mapimage_width;
-        private double mapimage_height;
-        private double scalefactor_map;
 
-        public GameRenderer(MapMetaData mapmeta)
+
+        public GameRenderer(WriteableBitmap gameImageSource, MapMetaData meta)
         {
-            CoordOrigin = new Point2D(mapmeta.CoordOriginX, mapmeta.CoordOriginY);
-            Dimension = new Vector2D(mapmeta.Width, mapmeta.Height);
-            Mapname = mapmeta.Mapname;
+            GameImageSource = gameImageSource;
+            Dimension = new Vector2D(meta.Width, meta.Height);
+            CoordOrigin = new Point2D(meta.CoordOriginX, meta.CoordOriginY);
+            Mapname = meta.Mapname;
         }
 
-        long currentid;
-
-        public void Test(Point2D vector)
-        {
-            Color color = Color.FromArgb(255, 255, 0, 0);
-            EntityShape ps = new EntityShape()
-            {
-                Yaw = Angle.FromDegrees(-45).Radians,
-                X = vector.X,
-                Y = vector.Y,
-                Radius = 4,
-                Fill = new SolidColorBrush(color),
-                Stroke = new SolidColorBrush(color),
-                StrokeThickness = 0.5,
-                Active = true
-            };
-            SpecialRenderShapes.Add(ps);
-        }
 
         public void DrawMapImage()
         {
             BitmapImage bi = new BitmapImage(new Uri(META_PATH + Mapname + "_radar.jpg", UriKind.Relative));
-            //BitmapImage bi = new BitmapImage(new Uri(@"C:\Users\Patrick\LRZ Sync+Share\Bacheloarbeit\CS GO Encounter Detection\csgo-stats-ed\CSGO Analytics\CSGO Analytics\src\views\mapviews\" + mapname + "_radar.jpg", UriKind.Relative));
+            GameImageSource = new WriteableBitmap(bi);
+        }
 
+
+        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory")]
+        public static extern void CopyMemory(IntPtr dest, IntPtr source, int Length);
+
+        public void DrawImage()
+        {
+            using (GameImageSource.GetBitmapContext())
+            {
+                System.Drawing.Bitmap bitmap = Resources.de_dust2_radar;
+
+                BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                try
+                {
+                    GameImageSource.Lock();
+                    CopyMemory(GameImageSource.BackBuffer, data.Scan0,
+                        (GameImageSource.BackBufferStride * bitmap.Height));
+                    GameImageSource.AddDirtyRect(new Int32Rect(0, 0, bitmap.Width, bitmap.Height));
+                    GameImageSource.Unlock();
+                }
+                finally
+                {
+                    bitmap.UnlockBits(data);
+                    bitmap.Dispose();
+                }
+            }
 
         }
 
-        private float x, y;
         public void RenderReplayTick(Tick tick, CombatComponent comp)
         {
-            currentid++;
-            x += 0.1f;
-            y += 0.1f;
-            Test(new Point2D(x,y));
+
             //
             // Update map with all active components, player etc
             //
@@ -139,12 +160,37 @@ namespace EDGui.Utils
                         var shape = GameShapes[linkkey] as LinkShape;
                         shape.UpdateLinkShape(Entities[link.GetActor().player_id], Entities[link.GetReciever().player_id]);
                     }
-                    // Old link -> update else draw new
                     else
-                        DrawLink(link);
+                        DrawLink(link); // Old link -> update else draw new
                 }
             }
         }
+
+        public void RenderReplayTickCollection(Tick tick, CombatComponent comp)
+        {
+            SpecialRenderShapes.Clear();
+
+            //
+            // Update map with all active components, player etc
+            //
+            foreach (var updatedPlayer in tick.GetUpdatedPlayers())
+                DrawPlayer(updatedPlayer);
+
+
+            if (comp != null && comp.links.Count != 0)
+            {
+                foreach (var link in comp.links)
+                {
+                    if (link.Collision != null) //Just draw collision point if given. No Link
+                    {
+                        DrawPosition(link.Collision.Value, UIColoring.GetEntityColor(link.GetActor()));
+                        continue;
+                    }
+                    DrawLink(link);
+                }
+            }
+        }
+
 
         /// <summary>
         /// Check if a link is active and safe its linkkey for later access on the dictionary.
@@ -164,8 +210,8 @@ namespace EDGui.Utils
             var ps = new EntityShape()
             {
                 Yaw = Angle.FromDegrees(-player.Facing.Yaw).Radians,
-                X = player.Position.X,
-                Y = player.Position.Y,
+                X = Math.Abs(player.Position.X / 10),
+                Y = Math.Abs(player.Position.Y / 10),
                 Radius = 4,
                 Fill = new SolidColorBrush(color),
                 Stroke = new SolidColorBrush(color),
@@ -173,7 +219,8 @@ namespace EDGui.Utils
                 Active = true,
             };
 
-            GameShapes[player.player_id] = ps;
+            //GameShapes[player.player_id] = ps;
+            SpecialRenderShapes.Add(ps);
         }
 
         private void DrawLink(Link link)
@@ -182,20 +229,21 @@ namespace EDGui.Utils
             EntityShape rps = Entities[link.GetReciever().player_id];
             LinkShape ls = new LinkShape()
             {
-                X1 = aps.X,
-                Y1 = aps.Y,
-                X2 = rps.X,
-                Y2 = rps.Y,
+                X = Math.Abs(aps.X / 10),
+                Y = Math.Abs(aps.Y / 10),
+                X2 = Math.Abs(rps.X / 10),
+                Y2 = Math.Abs(rps.Y / 10),
                 StrokeThickness = 2,
                 Stroke = UIColoring.GetLinkBrush(link.GetLinkType())
             };
-            GameShapes.Add(LinkShape.HashLink(link), ls);
+            //GameShapes.Add(LinkShape.HashLink(link), ls);
+            SpecialRenderShapes.Add(ls);
         }
 
 
         public void DrawPosition(Point2D position, Color color)
         {
-            var ps = new System.Windows.Shapes.Ellipse()
+            var ps = new Ellipse()
             {
                 Margin = new Thickness(position.X, position.Y, 0, 0),
                 Width = 2,
@@ -205,12 +253,12 @@ namespace EDGui.Utils
                 Stroke = new SolidColorBrush(color),
                 StrokeThickness = 0.5
             };
-            SpecialRenderShapes.Add(ps);
+            //SpecialRenderShapes.Add(ps);
         }
 
         public void DrawRect(Rectangle2D rect, Color color)
         {
-            var ps = new System.Windows.Shapes.Rectangle()
+            var ps = new Rectangle()
             {
                 Margin = new Thickness(rect.X, rect.Y, 0, 0),
                 Width = rect.Width,
@@ -220,13 +268,13 @@ namespace EDGui.Utils
                 Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0)),
                 StrokeThickness = 0.5
             };
-            SpecialRenderShapes.Add(ps);
+            //SpecialRenderShapes.Add(ps);
 
         }
 
         public void DrawHollowRect(Rectangle2D rect, Color color)
         {
-            var ps = new System.Windows.Shapes.Rectangle()
+            var ps = new Rectangle()
             {
                 Margin = new Thickness(rect.X, rect.Y, 0, 0),
                 Width = rect.Width,
@@ -235,7 +283,7 @@ namespace EDGui.Utils
                 Stroke = new SolidColorBrush(color),
                 StrokeThickness = 0.5
             };
-            SpecialRenderShapes.Add(ps);
+            //SpecialRenderShapes.Add(ps);
         }
 
         /// <summary>

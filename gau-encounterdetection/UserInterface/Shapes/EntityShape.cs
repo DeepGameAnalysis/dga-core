@@ -10,94 +10,22 @@ using System.Windows.Shapes;
 
 namespace Shapes
 {
-    class EntityShape : Shape
+    public class EntityShape : GameShape
     {
         /// <summary>
         /// Line of sight length of a playershape
         /// </summary>
         private const int LOS_LENGTH = 40;
 
-        public bool Active { get; set; }
-
         public double Radius { get; set; }
 
-        public double Yaw
-        {
-            get { return (double)GetValue(yawProperty); }
-            set { SetValue(yawProperty, value); }
-        }
+        public double Yaw { get; set; }
 
-        public string Playerlevel
-        {
-            get { return (string)GetValue(plProperty); }
-            set { SetValue(plProperty, value); }
-        }
-
-        public double X
-        {
-            get { return (double)GetValue(xProperty); }
-            set { SetValue(xProperty, value); }
-        }
-
-        public double Y
-        {
-            get { return (double)GetValue(yProperty); }
-            set { SetValue(yProperty, value); }
-        }
-
-        #region Properties
-        // DependencyProperty - Yaw
-        private static FrameworkPropertyMetadata yawMetadata =
-                new FrameworkPropertyMetadata(
-                    90.0,     // Default value
-                    FrameworkPropertyMetadataOptions.AffectsRender,
-                    null,    // Property changed callback
-                    null);   // Coerce value callback
-
-        public static readonly DependencyProperty yawProperty =
-            DependencyProperty.Register("Yaw", typeof(double), typeof(EntityShape), yawMetadata);
-
-
-
-        // DependencyProperty - Yaw
-        private static FrameworkPropertyMetadata plMetadata =
-                new FrameworkPropertyMetadata(
-                    "",     // Default value
-                    FrameworkPropertyMetadataOptions.AffectsRender,
-                    null,    // Property changed callback
-                    null);   // Coerce value callback
-
-        public static readonly DependencyProperty plProperty =
-            DependencyProperty.Register("Playerlevel", typeof(string), typeof(EntityShape), plMetadata);
-
-
-        // DependencyProperty - Position X
-        private static FrameworkPropertyMetadata XMetadata =
-                new FrameworkPropertyMetadata(
-                    0.0,     // Default value
-                    FrameworkPropertyMetadataOptions.AffectsRender,
-                    null,    // Property changed callback
-                    null);   // Coerce value callback
-
-        public static readonly DependencyProperty xProperty =
-            DependencyProperty.Register("X", typeof(double), typeof(EntityShape), XMetadata);
-
-
-        // DependencyProperty - Position Y
-        private static FrameworkPropertyMetadata YMetadata =
-                new FrameworkPropertyMetadata(
-                    0.0,     // Default value
-                    FrameworkPropertyMetadataOptions.AffectsRender,
-                    null,    // Property changed callback
-                    null);   // Coerce value callback
-
-        public static readonly DependencyProperty yProperty =
-            DependencyProperty.Register("Y", typeof(double), typeof(EntityShape), YMetadata);
-
-#endregion  
+        public string Playerlevel { get; set; }
 
         private Point aimPoint = new Point(0, 0);
-        protected override Geometry DefiningGeometry
+
+        public Geometry Geometry
         {
             get
             {
@@ -106,13 +34,13 @@ namespace Shapes
 
                 aimPoint.X = aimX;
                 aimPoint.Y = aimY;
-                FormattedText text = new FormattedText(Playerlevel,
+                FormattedText text = new FormattedText("",
                         CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
                         new Typeface("Tahoma"),
                         7,
                         Brushes.Black);
-                Geometry textg = text.BuildGeometry(new Point(X-6, Y));
+                Geometry textg = text.BuildGeometry(new Point(X - 6, Y));
                 Geometry line = new LineGeometry(new Point(X, Y), aimPoint);
                 Geometry e = new EllipseGeometry(new Point(X, Y), Radius, Radius);
                 GeometryGroup combined = new GeometryGroup();
@@ -122,6 +50,7 @@ namespace Shapes
                 return combined;
             }
         }
+
 
         /// <summary>
         /// Update the appearance of a playershape by the data provided by a player

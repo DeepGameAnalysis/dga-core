@@ -1,5 +1,6 @@
 ﻿using Data.Gameobjects;
 using Data.Gamestate;
+using Data.Utils;
 using Detection;
 using EDGui.Utils;
 using GameStateGenerators;
@@ -8,6 +9,7 @@ using MathNet.Spatial.Units;
 using Shapes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -15,24 +17,34 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace EDGui.ViewModel
 {
-    class AnalyseTabModel : ViewModelBase
+    public class AnalyseTabModel : ViewModelBase
     {
 
         /// <summary>
-        /// The replay returned by the algorithm and passed by the constrcutor from managetab
+        /// The replay returned by the algorithm.
         /// </summary>
-        private EncounterDetection EncounterDetection;
+        private EncounterDetectionReplay Replay;
+
+
+        /// <summary>
+        /// Renderer using a canvas to display the game replay
+        /// </summary>
+        public GameRenderer Renderer { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        private EncounterDetectionReplay Replay;
-
+        public WriteableBitmap GameImageSource { get; set; }
+        public double ImageHeight { get; set; }
+        public double ImageWidth {get; set; }
 
         //
         // UI VARIABLES
@@ -52,45 +64,75 @@ namespace EDGui.ViewModel
         }
 
 
-        /// <summary>
-        /// Renderer using a canvas to display the game
-        /// </summary>
-        private GameRenderer Renderer; //https://stackoverflow.com/questions/39074981/can-wpf-canvas-children-bind-observablecollection-contain-viewmodel-for-differen
-
-        //
-        // Commands for this VM
-        //
-        public RelayCommand PlayReplayCommand { get; set; }
-        public RelayCommand StopReplayCommand { get; set; }
-
-        public AnalyseTabModel(EncounterDetection ed)
+        public AnalyseTabModel(EncounterDetection EncounterDetection)
         {
-            EncounterDetection = ed;
             Replay = EncounterDetection.DetectEncounters();
-            PlayReplayCommand = new RelayCommand(PlayReplay);
-            StopReplayCommand = new RelayCommand(StopReplay);
-            Renderer = new GameRenderer(EncounterDetection.Data.Mapmeta);
+            // Clear the WriteableBitmap with white color
+            ImageHeight = 720;
+            ImageWidth = 1280;
+            GameImageSource = BitmapFactory.New((int)ImageWidth, (int)ImageHeight);
+            GameImageSource.Clear(Colors.Black);
+            Renderer = new GameRenderer(GameImageSource, EncounterDetection.Data.Mapmeta);
+            Renderer.DrawMapImage();
+
         }
 
+        #region Commands for UI Binding
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RelayCommand PlayReplayCommand
+        {
+            get
+            {
+                return _PlayReplayCommand ?? (_PlayReplayCommand = new RelayCommand(Execute_PlayReplay, CanExecute_PlayReplay));
+            }
+        }
+
+        private RelayCommand _PlayReplayCommand;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public RelayCommand StopReplayCommand
+        {
+            get
+            {
+                return _StopReplayCommand ?? (_StopReplayCommand = new RelayCommand(Execute_StopReplay, CanExecute_StopReplay));
+            }
+        }
+       
+        private RelayCommand _StopReplayCommand;
+
+      
+        #endregion
+
+        #region Functions executed by User Input
         /// <summary>
         /// Backgroundworker to handle the replay. Especially preventing UI-Thread Blocking!
         /// </summary>
-        private BackgroundWorker _replaybw = new BackgroundWorker();
-        private ManualResetEvent _busy = new ManualResetEvent(true);
+        private BackgroundWorker _Replaybw = new BackgroundWorker();
+
+        /// <summary>
+        /// Reset and Set the BackgroundWorker
+        /// </summary>
+        private ManualResetEvent _Busy = new ManualResetEvent(true);
+
         private bool IsPaused = false;
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="obj"></param>
-        private void PlayReplay(object obj)
+        private void Execute_PlayReplay(object obj)
         {
             Console.WriteLine("Play Match");
             if (IsPaused)
             {
-                _busy.Set();
+                _Busy.Set();
                 IsPaused = false;
                 return;
             }
@@ -98,16 +140,15 @@ namespace EDGui.ViewModel
             if (Replay == null)
                 return;
 
-            _replaybw.DoWork += (sender, args) =>
+            _Replaybw.DoWork += (sender, args) =>
             {
-                Renderer.DrawMapImage();
 
                 int last_tickid = 0;
 
                 foreach (var tuple in Replay.GetReplayData())
                 {
-                    if (_replaybw.IsBusy) // Give _busy a chance to reset backgroundworker
-                        _busy.WaitOne();
+                    if (_Replaybw.IsBusy) // Give _busy a chance to reset backgroundworker
+                        _Busy.WaitOne();
 
                     Tick tick = tuple.Key; // Tick is containing the game data (player positions, values of health, facing etc)
                     CombatComponent comp = tuple.Value; //Comp is containing the encounter detection data (links)
@@ -125,7 +166,7 @@ namespace EDGui.ViewModel
                     //Jump out of backgroundworker to render a tick of the game
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                     {
-                        Renderer.RenderReplayTick(tick, comp);
+                        Renderer.RenderReplayTickCollection(tick, comp);
                     }));
 
                     //Wait to render next frame
@@ -135,9 +176,9 @@ namespace EDGui.ViewModel
                 }
             };
 
-            _replaybw.RunWorkerAsync();
+            _Replaybw.RunWorkerAsync();
 
-            _replaybw.RunWorkerCompleted += (sender, args) =>
+            _Replaybw.RunWorkerCompleted += (sender, args) =>
             {
                 if (args.Error != null)
                     MessageBox.Show(args.Error.ToString());
@@ -149,11 +190,25 @@ namespace EDGui.ViewModel
         /// 
         /// </summary>
         /// <param name="obj"></param>
-        private void StopReplay(object obj)
+        private void Execute_StopReplay(object obj)
         {
-            _busy.Reset();
+            _Busy.Reset();
             IsPaused = true;
         }
+        #endregion
+
+        #region Execution validation for above functions
+
+        private bool CanExecute_PlayReplay(object obj)
+        {
+            return true;
+        }
+
+        private bool CanExecute_StopReplay(object obj)
+        {
+            return true;
+        }
+        #endregion
 
     }
 }

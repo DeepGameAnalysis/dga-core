@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace EDGui.ViewModel
 {
-    class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : INotifyPropertyChanged
     {
         internal void RaisePropertyChanged(string prop)
         {

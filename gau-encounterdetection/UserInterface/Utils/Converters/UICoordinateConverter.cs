@@ -11,27 +11,41 @@ using Shapes;
 
 namespace EDGui.Utils.Converters
 {
-    class UICoordinateConverter : IValueConverter
+    public class XCoordinateConverter : IValueConverter
     {
-        /// <summary>
-        /// The ui element this converter is working with
-        /// </summary>
-        private Canvas TargetUi;
-
-        public UICoordinateConverter(Canvas mapCanvas)
-        {
-            this.TargetUi = mapCanvas;
-        }
+        public Point2D coordinateorigin { get; private set; }
+        public Canvas TargetUi { get; private set; }
+        public Vector2D dimension { get; private set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var shape = value as EntityShape;
-            return null;
+            var x = (double)value;
+            var nx = Math.Abs(coordinateorigin.X - x) * (Math.Min(TargetUi.Width, dimension.X) / Math.Max(TargetUi.Width, dimension.X));
+            return nx;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return value;
+        }
+    }
+
+    public class YCoordinateConverter : IValueConverter
+    {
+        public Point2D coordinateorigin { get; private set; }
+        public Canvas TargetUi { get; private set; }
+        public Vector2D dimension { get; private set; }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var y = (double)value;
+            var ny = Math.Abs(coordinateorigin.Y - y) * (Math.Min(TargetUi.Height, dimension.Y) / Math.Max(TargetUi.Height, dimension.Y));
+            return ny;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
         }
 
         /// <summary>
@@ -39,19 +53,18 @@ namespace EDGui.Utils.Converters
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public Point2D GameToUIPosition(Point2D? p, Point2D coordinateorigin, Vector2D dimension)
+        public Point2D GameToUIPosition(Canvas TargetUi, Point2D? p, Point2D coordinateorigin, Vector2D dimension)
         {
-
             if (TargetUi == null) throw new Exception("Unkown UI to map game position to. Please define Ui Variable");
             // Calculate a given demo point into a point suitable for our gui minimap: therefore we need a rotation factor, the origin of the coordinate and other data about the map. 
-            var scaler = GetScaleFactor(dimension);
+            var scaler = GetScaleFactor(TargetUi, dimension);
             var x = Math.Abs(coordinateorigin.X - p.Value.X) * scaler.X;
             var y = Math.Abs(coordinateorigin.Y - p.Value.Y) * scaler.Y;
             return new Point2D(x, y);
 
         }
 
-        public Vector2D GetScaleFactor(Vector2D dimension)
+        public Vector2D GetScaleFactor(Canvas TargetUi,Vector2D dimension)
         {
             if (TargetUi == null) throw new Exception("Unkown UI to define scaling factor. Please define Ui Variable");
             var sx = (Math.Min(TargetUi.Width, dimension.X) / Math.Max(TargetUi.Width, dimension.X));
