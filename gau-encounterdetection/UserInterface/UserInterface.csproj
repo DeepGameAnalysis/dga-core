@@ -123,6 +123,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\StatisticsTabModel.cs" />
+    <Compile Include="Visuals\VisualsHost.cs" />
     <Page Include="Elements\DeactivatedMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -176,10 +178,11 @@
     <Compile Include="Elements\UIInteractiveMap.xaml.cs">
       <DependentUpon>UIInteractiveMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\EDTask.cs" />
+    <Compile Include="Models\AnalyseTask.cs" />
     <Compile Include="Models\StatisticalPlayer.cs" />
-    <Compile Include="Shapes\GameShape.cs" />
-    <Compile Include="Shapes\Test.cs" />
+    <Compile Include="Visuals\EntityVisual.cs" />
+    <Compile Include="Visuals\GameShape.cs" />
+    <Compile Include="Visuals\Test.cs" />
     <Compile Include="StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
@@ -222,11 +225,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shapes\LinkShape.cs" />
+    <Compile Include="Visuals\LinkShape.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shapes\RadialEffectShape.cs" />
-    <Compile Include="Shapes\EntityShape.cs" />
+    <Compile Include="Visuals\RadialEffectShape.cs" />
+    <Compile Include="Visuals\EntityShape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

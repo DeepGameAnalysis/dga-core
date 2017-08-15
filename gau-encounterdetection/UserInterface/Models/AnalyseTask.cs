@@ -50,6 +50,23 @@ namespace EDGui.Model
             }
         }
 
+        string _Path;
+        public string Path
+        {
+            get
+            {
+                return _Path;
+            }
+            set
+            {
+                if (_Path != value)
+                {
+                    _Path = value;
+                    OnPropertyChanged("Path");
+                }
+            }
+        }
+
         double _DemoSize;
         public double DemoSize
         {
@@ -67,10 +84,21 @@ namespace EDGui.Model
             }
         }
 
-        public override bool Equals(object obj)
+        DateTime _CreationDate;
+        public DateTime CreationDate
         {
-            AnalyseTask e = obj as AnalyseTask;
-            return DemofileName.Equals(e.DemofileName);
+            get
+            {
+                return _CreationDate;
+            }
+            set
+            {
+                if (_CreationDate != value)
+                {
+                    _CreationDate = value;
+                    OnPropertyChanged("CreationDate");
+                }
+            }
         }
 
         public string FileAccessed { get; internal set; }

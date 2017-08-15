@@ -7,6 +7,7 @@ using MathNet.Spatial.Units;
 using Shapes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,21 @@ namespace EDGui.Elements
     /// </summary>
     public partial class UIInteractiveMap : UserControl
     {
+        public static readonly DependencyProperty Dependency = DependencyProperty.Register("MapName", typeof(string), typeof(UIInteractiveMap), new UIPropertyMetadata(MapNameChanged));
+        public string MapName
+        {
+            get { return (string)GetValue(Dependency); }
+            set { SetValue(Dependency, value); }
+        }
 
+        public static void MapNameChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            ((UIInteractiveMap)sender).MapLabel.Content += " "+e.NewValue.ToString();
+        }
+
+        public UIInteractiveMap()
+        {
+            InitializeComponent();
+        }
     }
 }

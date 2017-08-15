@@ -27,5 +27,10 @@ namespace EDGui.Views
             InitializeComponent();
             DataContext = new ManageDemosTabModel();
         }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

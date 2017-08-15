@@ -38,8 +38,9 @@
 
         <Label Grid.Row="0" Content="Analyse" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontSize="25" Background="DeepSkyBlue" Foreground="Black" Grid.ColumnSpan="5"/>
 
-        <Image Grid.Row="1" Grid.Column="2" Source="{Binding GameImageSource}" Width="{Binding ImageWidth}"  Height="{Binding ImageHeight}" />
-
+        <!--<Image Grid.Row="1" Grid.Column="2" Source="{Binding Path=Renderer.GameImageSource}" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}" />
+        <Canvas Grid.Row="1" Grid.Column="2" x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
+        <elements:UIInteractiveMap Grid.Row="1" Grid.Column="2" MapName="{Binding MapName, Mode = TwoWay}"/>
         <!--<Grid Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
              <ItemsControl ItemsSource="{Binding Path=Renderer.SpecialRenderShapes}">
                 <ItemsControl.Resources>

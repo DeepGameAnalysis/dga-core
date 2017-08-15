@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -69,6 +70,8 @@ namespace EDGui.Utils
         /// 
         /// </summary>
         public WriteableBitmap GameImageSource { get; set; }
+        public double ImageHeight { get; set; }
+        public double ImageWidth { get; set; }
 
         /// <summary>
         /// Origion of the current coordinatesystem used by the inputcoordinates
@@ -86,48 +89,44 @@ namespace EDGui.Utils
         private string Mapname;
 
 
-        public GameRenderer(WriteableBitmap gameImageSource, MapMetaData meta)
+        public GameRenderer(MapMetaData meta)
         {
-            GameImageSource = gameImageSource;
+            // Clear the WriteableBitmap with white color
+            ImageHeight = 720;
+            ImageWidth = 1280;
+            GameImageSource = BitmapFactory.New((int)ImageWidth, (int)ImageHeight);
+            GameImageSource.Clear(Colors.Black);
             Dimension = new Vector2D(meta.Width, meta.Height);
             CoordOrigin = new Point2D(meta.CoordOriginX, meta.CoordOriginY);
             Mapname = meta.Mapname;
         }
 
 
+        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory")]
+        public static extern void CopyMemory(IntPtr dest, IntPtr source, int Length);
+
         public void DrawMapImage()
         {
             BitmapImage bi = new BitmapImage(new Uri(META_PATH + Mapname + "_radar.jpg", UriKind.Relative));
             GameImageSource = new WriteableBitmap(bi);
+            GameImageSource.DrawLineAa(1, 2, 30, 40, Colors.Green);
+
+
         }
 
-
-        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory")]
-        public static extern void CopyMemory(IntPtr dest, IntPtr source, int Length);
-
-        public void DrawImage()
+        private System.Drawing.Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
-            using (GameImageSource.GetBitmapContext())
+            // BitmapImage bitmapImage = new BitmapImage(new Uri("../Images/test.png", UriKind.Relative));
+
+            using (MemoryStream outStream = new MemoryStream())
             {
-                System.Drawing.Bitmap bitmap = Resources.de_dust2_radar;
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+                enc.Save(outStream);
+                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
 
-                BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-                try
-                {
-                    GameImageSource.Lock();
-                    CopyMemory(GameImageSource.BackBuffer, data.Scan0,
-                        (GameImageSource.BackBufferStride * bitmap.Height));
-                    GameImageSource.AddDirtyRect(new Int32Rect(0, 0, bitmap.Width, bitmap.Height));
-                    GameImageSource.Unlock();
-                }
-                finally
-                {
-                    bitmap.UnlockBits(data);
-                    bitmap.Dispose();
-                }
+                return new System.Drawing.Bitmap(bitmap);
             }
-
         }
 
         public void RenderReplayTick(Tick tick, CombatComponent comp)

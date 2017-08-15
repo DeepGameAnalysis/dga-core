@@ -31,9 +31,16 @@
                     <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
                 
-                <Button x:Name="AnalyseDemo" Grid.Column="0" Content="Choose and analyse a demo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,2,0" Command="{Binding LoadAndAnalyseCommand}"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15*"/>
+                    <RowDefinition Height="85*"/>
+                </Grid.RowDefinitions>
+               
+                <Label Grid.Row="0" Grid.Column="0" Padding="0" Content="Single file upload and analysis:" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" />
+                <Button Grid.Row="1" Grid.Column="0" Content="Choose and analyse a demo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,2,0" Command="{Binding LoadAndAnalyseCommand}"/>
 
-                <Grid Grid.Column="1">
+                <Label Grid.Row="0" Grid.Column="1" Padding="0" Content="Multi file upload:" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" />
+                <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20*"/>
                         <ColumnDefinition Width="80*"/>
@@ -43,7 +50,7 @@
                         <ListView.View >
                             <GridView >
                                 <GridViewColumn Header="Game" Width="Auto" DisplayMemberBinding="{Binding GameName}" />
-                                <GridViewColumn Header="Demo" Width="Auto" DisplayMemberBinding="{Binding DemofileName}" />
+                                <GridViewColumn Header="Demo" Width="Auto" DisplayMemberBinding="{Binding Path}" />
                                 <GridViewColumn Header="Filesize (in MB)" Width="Auto" DisplayMemberBinding="{Binding DemoSize}" />
                             </GridView>
                         </ListView.View>
@@ -55,7 +62,7 @@
                             <RowDefinition Height="33*"/>
                             <RowDefinition Height="33*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.Row="0" Content="Load demos" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding AddTaskCommand}" CommandParameter="{Binding NewDemosTaskList}"/>
+                        <Button Grid.Row="0" Content="Load demos" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding AddTasksCommand}" CommandParameter="{Binding NewDemosTaskList}"/>
                         <Button Grid.Row="1" Content="Read listed demos" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding LoadDemosCommand}" Background="#576573"/>
                         <Button Grid.Row="2" Content="Options" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding OpenParsingOptionsCommand}"/>
                     </Grid>
@@ -68,50 +75,60 @@
             <GroupBox DockPanel.Dock="Bottom" Header="Available Demos" Grid.Row="0" HorizontalAlignment="Stretch" >
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="12*"/>
-                        <RowDefinition Height="7*"/>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="15*"/>
                         <RowDefinition Height="95*"/>
                     </Grid.RowDefinitions>
 
-                    <DockPanel Grid.Row="0" LastChildFill="False">
-                        <Label DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Black" Margin="0,0,5,0" Width="Auto" Height="Auto">
-                            <TextBlock>
-                                In the following list you can find all your already loaded demos which are ready for analysis.<LineBreak/>
-                                Analyse your demos by double clicking on the entry in the list."
+                    <DockPanel Grid.Row="0" HorizontalAlignment="Stretch">
+                            <TextBlock Padding="0" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black">
+                                In the following list you can find all your already loaded demos which are ready for analysis.
+                                Analyse your demos by <Underline>double clicking</Underline> on the entry in the list.
                             </TextBlock>
-                        </Label>
-                        <Button DockPanel.Dock="Right" Content="Delete Demo (Entf)" Margin="0,0,10,0"/>
-                        <Button DockPanel.Dock="Right" Content="Export Analyse Results (Strg + E)" Margin="0,0,10,0"/>
-                        <Button DockPanel.Dock="Right" Grid.Row="2" Content="Add analysed demo" Margin="0,0,10,0" Command="{Binding AddTaskCommand}" CommandParameter="{Binding ReadyDemosTaskList}"/>
                     </DockPanel>
                     
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,5,0,0">
                         <Label Content="Sort by game:" Foreground="Black" Margin="0,0,5,0" Width="Auto" Height="30" />
-                        <ComboBox Width="120" Height="30"  Margin="0,0,10,0">
+                        <ComboBox Width="120" Height="30"  Margin="0,0,10,0" SelectedIndex="0">
+                            <ComboBoxItem>None</ComboBoxItem>
                             <ComboBoxItem>CSGO</ComboBoxItem>
                             <ComboBoxItem>AOE2HD</ComboBoxItem>
                         </ComboBox>
                         <Button Content="Show Game Demos" Height="30"  Width="Auto"/>
                     </StackPanel>
 
+                    <Grid Grid.Row="2" HorizontalAlignment="Stretch" Margin="0,5,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="33*"/>
+                            <ColumnDefinition Width="33*"/>
+                            <ColumnDefinition Width="33*"/>
+                            <ColumnDefinition Width="33*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <ListView ItemsSource="{Binding ReadyDemosTaskList}" SelectedItem="{Binding SelectedReadyDemo}" Grid.Row="2" Margin="10" x:Name="demos" Width="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" >
+                        <Button Grid.Column="0" Content="Add analysed demo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding AddTasksCommand}" CommandParameter="{Binding ReadyDemosTaskList}"  />
+                        <Button Grid.Column="1" Content="Analyse demo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding AnalyseCommand}" CommandParameter="{Binding SelectedReadyDemo}"  />
+                        <Button Grid.Column="2" Content="Delete Demo (Entf)" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <Button Grid.Column="3" Content="Export Analyse Results (Strg + E)" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </Grid>
+
+                    <ListView ItemsSource="{Binding ReadyDemosTaskList}" SelectedItem="{Binding SelectedReadyDemo}" Grid.Row="3" Width="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" >
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <Grid.InputBindings>
-                                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AnalyseCommand}"/>
                                     </Grid.InputBindings>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Game" Width="50" DisplayMemberBinding="{Binding GameName}" />
-                                <GridViewColumn Header="Demo" Width="1200" DisplayMemberBinding="{Binding DemofileName}" />
-                                <GridViewColumn Header="Size" Width="150" DisplayMemberBinding="{Binding DemoSize}" />
-                                <GridViewColumn Header="Last accessed" Width="150" DisplayMemberBinding="{Binding FileAccessed}" />
-                                <GridViewColumn Header="Analyse" Width="100" DisplayMemberBinding="{Binding AnalyseButton}" />
+                                <GridViewColumn Header="Game" Width="Auto" DisplayMemberBinding="{Binding GameName}" />
+                                <GridViewColumn Header="Demo" Width="Auto" DisplayMemberBinding="{Binding Path}" />
+                                <GridViewColumn Header="Size" Width="Auto" DisplayMemberBinding="{Binding DemoSize}" />
+                                <GridViewColumn Header="Last accessed" Width="Auto" DisplayMemberBinding="{Binding FileAccessed}" />
+                                <GridViewColumn Header="Created" Width="Auto" DisplayMemberBinding="{Binding CreationDate}" />
+                                <GridViewColumn Header="Analyse" Width="Auto" DisplayMemberBinding="{Binding AnalyseButton}" />
                             </GridView>
                         </ListView.View>
                     </ListView>

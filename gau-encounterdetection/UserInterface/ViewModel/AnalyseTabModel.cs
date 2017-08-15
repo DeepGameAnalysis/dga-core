@@ -3,6 +3,7 @@ using Data.Gamestate;
 using Data.Utils;
 using Detection;
 using EDGui.Utils;
+using EDGui.Visuals;
 using GameStateGenerators;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Units;
@@ -39,16 +40,16 @@ namespace EDGui.ViewModel
         /// </summary>
         public GameRenderer Renderer { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public WriteableBitmap GameImageSource { get; set; }
-        public double ImageHeight { get; set; }
-        public double ImageWidth {get; set; }
-
         //
         // UI VARIABLES
         //
+        private string _MapName;
+        public string MapName
+        {
+            get { return _MapName; }
+            set { _MapName = value; RaisePropertyChanged("MapName"); }
+        }
+
         private long _Time;
         public long Time
         {
@@ -67,14 +68,10 @@ namespace EDGui.ViewModel
         public AnalyseTabModel(EncounterDetection EncounterDetection)
         {
             Replay = EncounterDetection.DetectEncounters();
-            // Clear the WriteableBitmap with white color
-            ImageHeight = 720;
-            ImageWidth = 1280;
-            GameImageSource = BitmapFactory.New((int)ImageWidth, (int)ImageHeight);
-            GameImageSource.Clear(Colors.Black);
-            Renderer = new GameRenderer(GameImageSource, EncounterDetection.Data.Mapmeta);
-            Renderer.DrawMapImage();
-
+            MapName = EncounterDetection.Data.Mapmeta.Mapname;
+            Console.WriteLine(MapName);
+            Renderer = new GameRenderer(EncounterDetection.Data.Mapmeta);
+            //Renderer.DrawMapImage();
         }
 
         #region Commands for UI Binding
@@ -120,6 +117,9 @@ namespace EDGui.ViewModel
         /// </summary>
         private ManualResetEvent _Busy = new ManualResetEvent(true);
 
+        /// <summary>
+        /// Indicating if the game is stopped
+        /// </summary>
         private bool IsPaused = false;
 
 
@@ -135,6 +135,9 @@ namespace EDGui.ViewModel
                 _Busy.Set();
                 IsPaused = false;
                 return;
+            } else
+            {
+                Console.WriteLine("Game already running");
             }
 
             if (Replay == null)
@@ -142,7 +145,6 @@ namespace EDGui.ViewModel
 
             _Replaybw.DoWork += (sender, args) =>
             {
-
                 int last_tickid = 0;
 
                 foreach (var tuple in Replay.GetReplayData())

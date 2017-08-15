@@ -38,14 +38,25 @@ namespace EDGui.ViewModel
         /// </summary>
         public ObservableCollection<AnalyseTask> ReadyDemosTaskList { get; set; }
 
+
         /// <summary>
-        /// The current path to a demo or json awaiting parsing/analysis
+        /// The current selected task for a demo in the ready demos list
         /// </summary>
-        private string _CurrentParseTaskPath;
-        public string CurrentParseTaskPath
+        private AnalyseTask _SelectedReadyDemo;
+        public AnalyseTask SelectedReadyDemo
         {
-            get { return _CurrentParseTaskPath; }
-            set { _CurrentParseTaskPath = value; RaisePropertyChanged("CurrentParseTaskPath"); }
+            get { return _SelectedReadyDemo; }
+            set { _SelectedReadyDemo = value; RaisePropertyChanged("SelectedReadyDemo"); }
+        }
+
+        /// <summary>
+        /// The current selected task for a demo in the todo demos list
+        /// </summary>
+        private AnalyseTask _SelectedNewDemo;
+        public AnalyseTask SelectedNewDemo
+        {
+            get { return _SelectedNewDemo; }
+            set { _SelectedNewDemo = value; RaisePropertyChanged("SelectedNewDemo"); }
         }
 
         //
@@ -70,7 +81,6 @@ namespace EDGui.ViewModel
         {
             NewDemosTaskList = new ObservableCollection<AnalyseTask>();
             ReadyDemosTaskList = new ObservableCollection<AnalyseTask>();
-            CurrentParseTaskPath = String.Empty;
 
             _DemoDialog = new OpenFileDialog()
             {
@@ -110,15 +120,15 @@ namespace EDGui.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        public RelayCommand AddTaskCommand
+        public RelayCommand AddTasksCommand
         {
             get
             {
-                return _AddTaskCommand ?? (_AddTaskCommand = new RelayCommand(Execute_AddTask, CanExecute_AddTask));
+                return _AddTasksCommand ?? (_AddTasksCommand = new RelayCommand(Execute_AddTask, CanExecute_AddTask));
             }
         }
 
-        private RelayCommand _AddTaskCommand;
+        private RelayCommand _AddTasksCommand;
 
 
         /// <summary>
@@ -162,7 +172,7 @@ namespace EDGui.ViewModel
         private RelayCommand _AnalyseCommand;
         #endregion
 
-        #region Functions executed by User Input
+        #region Functions executed by User Input Commands
 
         private void Execute_LoadDemos(object obj)
         {
@@ -199,6 +209,7 @@ namespace EDGui.ViewModel
                     var task = new AnalyseTask()
                     {
                         DemofileName = System.IO.Path.GetFileName(dem),
+                        Path = dem,
                         DemoSize = new System.IO.FileInfo(dem).Length / 1000 / 1000
                     };
 
@@ -207,10 +218,16 @@ namespace EDGui.ViewModel
                 }
         }
 
+        private void Execute_DeleteTask(object obj)
+        {
+
+        }
+
         private void Execute_Analyse(object obj)
         {
-            var path = obj as string;
-            var encounterdetection = DemoDataIO.ReadDemoJSON(path, ParseTask);
+            if (obj == null) return;
+            var task = obj as AnalyseTask;
+            var encounterdetection = DemoDataIO.ReadDemoJSON(task.Path, ParseTask);
             ProvideReplay(encounterdetection);
         }
 
@@ -225,7 +242,9 @@ namespace EDGui.ViewModel
                         ParseTask.SrcPath = dem;
                         ParseTask.DestPath = dem;
                         DemoDataIO.ParseDemoFile(dem, ParseTask);
-                        var encounterdetection = DemoDataIO.ReadDemoJSON(dem.Replace(".dem", ".json"), ParseTask);
+                        string jsonpath = dem.Replace(".dem", ".json");
+                        var encounterdetection = DemoDataIO.ReadDemoJSON(jsonpath, ParseTask);
+                        AddNewReadyDemo(jsonpath);
                         ProvideReplay(encounterdetection);
                     }
             _DemoDialog.Multiselect = true;
@@ -269,9 +288,11 @@ namespace EDGui.ViewModel
         //
         private void AddNewReadyDemo(string json)
         {
+            json = json.Replace(".dem", ".json");
             var task = new AnalyseTask()
             {
                 DemofileName = System.IO.Path.GetFileName(json),
+                Path = json,
                 DemoSize = new System.IO.FileInfo(json).Length / 1000 / 1000
             };
 
