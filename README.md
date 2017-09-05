@@ -1,4 +1,4 @@
-# GameAnalysisUniverse - Encounter Detection
+# DeepGameAnalysis - Encounter Detection
 
 A so called encounter detection is used to find important battles in all sorts of multiplayer games.
 This code and idea is based on a work by : 
