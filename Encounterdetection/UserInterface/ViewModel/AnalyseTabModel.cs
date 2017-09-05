@@ -43,6 +43,14 @@ namespace EDGui.ViewModel
         //
         // UI VARIABLES
         //
+        #region Binded Variables
+        private string _TickRate;
+        public string TickRate
+        {
+            get { return _TickRate; }
+            set { _TickRate = value; RaisePropertyChanged("TickRate"); }
+        }
+
         private string _MapName;
         public string MapName
         {
@@ -69,10 +77,11 @@ namespace EDGui.ViewModel
         {
             Replay = EncounterDetection.DetectEncounters();
             MapName = EncounterDetection.Data.Mapmeta.Mapname;
-            Console.WriteLine(MapName);
+            TickRate = EncounterDetection.Data.Tickrate.ToString();
             Renderer = new GameRenderer(EncounterDetection.Data.Mapmeta);
             //Renderer.DrawMapImage();
         }
+        #endregion
 
         #region Commands for UI Binding
 
@@ -100,10 +109,10 @@ namespace EDGui.ViewModel
                 return _StopReplayCommand ?? (_StopReplayCommand = new RelayCommand(Execute_StopReplay, CanExecute_StopReplay));
             }
         }
-       
+
         private RelayCommand _StopReplayCommand;
 
-      
+
         #endregion
 
         #region Functions executed by User Input
@@ -135,7 +144,8 @@ namespace EDGui.ViewModel
                 _Busy.Set();
                 IsPaused = false;
                 return;
-            } else
+            }
+            else
             {
                 Console.WriteLine("Game already running");
             }

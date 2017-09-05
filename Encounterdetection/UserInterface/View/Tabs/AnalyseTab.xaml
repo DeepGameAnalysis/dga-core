@@ -40,7 +40,7 @@
 
         <!--<Image Grid.Row="1" Grid.Column="2" Source="{Binding Path=Renderer.GameImageSource}" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}" />
         <Canvas Grid.Row="1" Grid.Column="2" x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>-->
-        <elements:UIInteractiveMap Grid.Row="1" Grid.Column="2" MapName="{Binding MapName, Mode = TwoWay}"/>
+        <elements:UIInteractiveMap Grid.Row="1" Grid.Column="2" MapName="{Binding MapName, Mode = TwoWay}" TickRate="{Binding TickRate, Mode=TwoWay}" Height="Auto" Width="Auto"/>
         <!--<Grid Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
              <ItemsControl ItemsSource="{Binding Path=Renderer.SpecialRenderShapes}">
                 <ItemsControl.Resources>

@@ -8,7 +8,8 @@
              Height="720"
              Width="1280">
     <Grid>
-        <Canvas x:Name="MapCanvas"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black"/>
+        <!--<Canvas x:Name="MapCanvas"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black"/>-->
+        <Image Source="{Binding Path=Renderer.GameImageSource}" Width="{Binding ImageWidth}" Height="{Binding ImageHeight}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
         <Label x:Name="MapLabel" Content="Map:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <Label x:Name="TickRateLabel" Content="Tickrate:" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
     </Grid>
