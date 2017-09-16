@@ -107,7 +107,7 @@ namespace Data.Gameevents
         /// <returns></returns>
         public bool hasFinished()
         {
-            foreach (var p in Flashedplayers.Where(player => player.GetTeam() != Actor.GetTeam() && !player.IsDead()))
+            foreach (var p in Flashedplayers.Where(player => player.Team != Actor.Team && !player.IsDead()))
             if (p.Flashedduration > 0)
                     return true;
             Console.WriteLine("Flash finished");

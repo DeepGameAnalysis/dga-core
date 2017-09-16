@@ -105,7 +105,7 @@ namespace Preprocessing
                 attackcluster.CalculateClusterRanges(edData.Hit_hashtable);
                 attackerclusters.Add(attackcluster);
             }
-            edData.PlayerHurt_clusters = attackerclusters.ToArray();
+            edData.Clusters_PlayerHurt = attackerclusters.ToArray();
         }
     }
 }

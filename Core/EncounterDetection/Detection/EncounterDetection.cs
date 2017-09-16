@@ -5,7 +5,6 @@ using Data.Gameevents;
 using Data.Gameobjects;
 using Data.Gamestate;
 using Data.Utils;
-using Export;
 using MathNet.Spatial.Euclidean;
 using MathNet.Spatial.Functions;
 using Preprocessing;
@@ -19,8 +18,6 @@ namespace Detection
 
     public class EncounterDetection
     {
-
-        private CSVExporter exporter = new CSVExporter();
 
         /// <summary>
         /// All data structures, tables and variables needed for encounter detection
@@ -286,11 +283,6 @@ namespace Detection
 
             Console.WriteLine("\n  Time to run Algorithm: " + sec + "sec. \n");
             #endregion
-            //
-            // Export data to csv
-            //
-            if (Data.ExportingEnabled)
-                ExportEDDataToCSV(sec);
 
             return replay;
         }
@@ -481,11 +473,11 @@ namespace Detection
                     if (intersectPlayers.Count < 2)
                         continue;
                     //are these players from different teams
-                    var knownteam = intersectPlayers[0].GetTeam(); //TODO: Shorten
+                    var knownteam = intersectPlayers[0].Team; //TODO: Shorten
                     foreach (var p in intersectPlayers)
                     {
                         // Team different to one we know -> this encounter e is a predecessor of the component comp
-                        if (knownteam != Team.None && knownteam != p.GetTeam())
+                        if (knownteam != Team.None && knownteam != p.Team)
                         {
                             predecessors.Add(encounter);
                             registered = true; // Stop multiple adding of encounter
@@ -665,9 +657,9 @@ namespace Detection
             }
 
             // Check for each team if a player can see a player of the other team
-            foreach (var player in Data.Players.Where(player => !player.IsDead() && player.GetTeam() == Team.CT))
+            foreach (var player in Data.Players.Where(player => !player.IsDead() && player.Team == Team.CT))
             {
-                foreach (var counterplayer in Data.Players.Where(counterplayer => !counterplayer.IsDead() && counterplayer.GetTeam() != Team.CT))
+                foreach (var counterplayer in Data.Players.Where(counterplayer => !counterplayer.IsDead() && counterplayer.Team != Team.CT))
                 {
                     CheckVisibilityBetween(player, counterplayer, links);
                 }
@@ -741,12 +733,12 @@ namespace Detection
                 {
                     var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
 
-                    if (distance <= Data.ATTACKRANGE_AVERAGE && other.GetTeam() != player.GetTeam())
+                    if (distance <= Data.ATTACKRANGE_AVERAGE && other.Team != player.Team)
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
                         distancetestCLinksCount++;
                     }/*
-                    else if (distance <= SUPPORTRANGE_AVERAGE && other.getTeam() == player.getTeam())
+                    else if (distance <= SUPPORTRANGE_AVERAGE && other.Team == player.Team)
                     {
                         links.Add(new Link(player, other, LinkType.SUPPORTLINK, Direction.DEFAULT));
                         distancetestSLinksCount++;
@@ -767,9 +759,9 @@ namespace Detection
                 {
                     var distance = DistanceFunctions.GetEuclidDistance3D(player.Position, other.Position);
                     PlayerHurtCluster playercluster = null;
-                    for (int i = 0; i < Data.PlayerHurt_clusters.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
+                    for (int i = 0; i < Data.Clusters_PlayerHurt.Length; i++) // TODO: Change this if clustercount gets to high. Very slow
                     {
-                        var cluster = Data.PlayerHurt_clusters[i];
+                        var cluster = Data.Clusters_PlayerHurt[i];
                         if (cluster.Boundings.Contains(player.Position.SubstractZ()))
                         {
                             playercluster = cluster;
@@ -783,7 +775,7 @@ namespace Detection
                     }
 
                     var attackrange = playercluster.AttackRangeAverage;
-                    if (distance <= attackrange && other.GetTeam() != player.GetTeam())
+                    if (distance <= attackrange && other.Team != player.Team)
                     {
                         links.Add(new Link(player, other, LinkType.COMBATLINK, Direction.DEFAULT));
                         clustered_average_distancetestCLinksCount++;
@@ -811,7 +803,7 @@ namespace Detection
                     //
                     case "player_hurt":
                         PlayerHurt ph = (PlayerHurt)g;
-                        if (ph.Actor.GetTeam() == ph.Victim.GetTeam()) continue; // No Team damage
+                        if (ph.Actor.Team == ph.Victim.Team) continue; // No Team damage
                         var link_ph = new Link(ph.Actor, ph.Victim, LinkType.COMBATLINK, Direction.DEFAULT);
                         links.Add(link_ph);
                         link_ph.Impact = ph.HP_damage + ph.Armor_damage;
@@ -820,13 +812,13 @@ namespace Detection
                         break;
                     case "player_killed":
                         PlayerKilled pk = (PlayerKilled)g;
-                        if (pk.Actor.GetTeam() == pk.Victim.GetTeam()) continue; // No Team kills
+                        if (pk.Actor.Team == pk.Victim.Team) continue; // No Team kills
                         var link_pk = new Link(pk.Actor, pk.Victim, LinkType.COMBATLINK, Direction.DEFAULT);
                         link_pk.Impact = pk.HP_damage + pk.Armor_damage;
                         link_pk.IsKill = true;
                         links.Add(link_pk);
 
-                        if (pk.Assister != null && pk.Assister.GetTeam() == pk.Actor.GetTeam())
+                        if (pk.Assister != null && pk.Assister.Team == pk.Actor.Team)
                         {
                             //links.Add(new Link(pk.assister, pk.actor, LinkType.SUPPORTLINK, Direction.DEFAULT));
                             //killAssistCount++;
@@ -840,7 +832,7 @@ namespace Detection
 
                         // No candidate found. Either wait for a incoming playerhurt event or there was no suitable victim
                         if (potential_victim == null) break;
-                        if (wf.Actor.GetTeam() != potential_victim.GetTeam()) break;
+                        if (wf.Actor.Team != potential_victim.Team) break;
                         wf_matchedVictimCount++;
                         links.Add(new Link(wf.Actor, potential_victim, LinkType.COMBATLINK, Direction.DEFAULT));
                         eventtestCLinksCount++;
@@ -873,14 +865,14 @@ namespace Detection
                 }
 
                 // If same victim but different actors from the same team-> damageassist -> multiple teammates attack one enemy
-                if (ph.Victim.Equals(hurtevent.Victim) && !ph.Actor.Equals(hurtevent.Actor) && ph.Actor.GetTeam() == hurtevent.Actor.GetTeam())
+                if (ph.Victim.Equals(hurtevent.Victim) && !ph.Actor.Equals(hurtevent.Actor) && ph.Actor.Team == hurtevent.Actor.Team)
                 {
                     links.Add(new Link(ph.Actor, hurtevent.Actor, LinkType.SUPPORTLINK, Direction.DEFAULT));
                     if (!Data.DamageAssist_hashtable.ContainsKey(ph.Actor.Position)) Data.DamageAssist_hashtable.Add(ph.Actor.Position, hurtevent.Actor.Position);
                     damageAssistCount++;
                 }
                 // If ph.actor hits an enemy while this enemy has hit somebody from p.actors team
-                if (ph.Victim.Equals(hurtevent.Actor) && hurtevent.Victim.GetTeam() == ph.Actor.GetTeam())
+                if (ph.Victim.Equals(hurtevent.Actor) && hurtevent.Victim.Team == ph.Actor.Team)
                 {
                     links.Add(new Link(ph.Actor, hurtevent.Victim, LinkType.SUPPORTLINK, Direction.DEFAULT));
                     if (!Data.DirectAssist_hashtable.ContainsKey(ph.Actor.Position)) Data.DirectAssist_hashtable.Add(ph.Actor.Position, hurtevent.Victim.Position);
@@ -999,7 +991,7 @@ namespace Detection
                 FlashNade flash = (FlashNade)f.Key;
 
                 // Each (STILL!) living flashed player - as long as it is not a teammate of the actor - is tested for sight on a teammember of the flasher (has flasher prevented sight on one of his teammates) 
-                var flashedenemies = flash.Flashedplayers.Where(player => player.GetTeam() != flash.Actor.GetTeam() && player.Flashedduration >= 0 && GetLivingPlayer(player) != null);
+                var flashedenemies = flash.Flashedplayers.Where(player => player.Team != flash.Actor.Team && player.Flashedduration >= 0 && GetLivingPlayer(player) != null);
                 if (flashedenemies.Count() == 0)
                     continue;
 
@@ -1010,7 +1002,7 @@ namespace Detection
                     eventtestCLinksCount++;
                     flashCLinkCount++;
 
-                    foreach (var teammate in Data.Players.Where(teamate => !teamate.IsDead() && teamate.GetTeam() == flash.Actor.GetTeam() && flash.Actor != teamate))
+                    foreach (var teammate in Data.Players.Where(teamate => !teamate.IsDead() && teamate.Team == flash.Actor.Team && flash.Actor != teamate))
                     {
                         if (CheckVisibilityBetween(GetLivingPlayer(flashedEnemyplayer), teammate, null))
                         {
@@ -1032,14 +1024,14 @@ namespace Detection
         {
             foreach (var smokeitem in activeNades.Where(item => item.Key.GameeventType == "smoke_exploded"))
             {
-                foreach (var counterplayer in Data.Players.Where(player => !player.IsDead() && player.GetTeam() != smokeitem.Key.Actor.GetTeam()))
+                foreach (var counterplayer in Data.Players.Where(player => !player.IsDead() && player.Team != smokeitem.Key.Actor.Team))
                 {
                     //If a player from the opposing team of the smoke thrower saw into the smoke
                     var nadecircle = new Circle2D(new Point2D(smokeitem.Key.position.X, smokeitem.Key.position.Y), 250);
                     if (nadecircle.IntersectsVector2D(counterplayer.Position.SubstractZ(), counterplayer.Facing.Yaw))
                     {
                         // Check if he could have seen a player from the thrower team
-                        foreach (var teammate in Data.Players.Where(teammate => !teammate.IsDead() && teammate.GetTeam() == smokeitem.Key.Actor.GetTeam()))
+                        foreach (var teammate in Data.Players.Where(teammate => !teammate.IsDead() && teammate.Team == smokeitem.Key.Actor.Team))
                         {
                             if (CheckVisibilityBetween(counterplayer, teammate, null))
                             {
@@ -1080,7 +1072,7 @@ namespace Detection
                 }
                 // If we find a actor that hurt somebody. this weaponfireevent is likely to be a part of his burst and is therefore a combatlink
                 var aliveplayers = Data.Players.Where(player => !player.IsDead());
-                if (wf.Actor.Equals(hurtevent.Actor) && hurtevent.Victim.GetTeam() != wf.Actor.GetTeam() && aliveplayers.Contains(hurtevent.Victim) && aliveplayers.Contains(wf.Actor))
+                if (wf.Actor.Equals(hurtevent.Actor) && hurtevent.Victim.Team != wf.Actor.Team && aliveplayers.Contains(hurtevent.Victim) && aliveplayers.Contains(wf.Actor))
                 {
                     // Roughly test if an enemy can see our actor
                     if (FOVFunctions.IsInHVFOV(wf.Actor.Position, wf.Actor.Facing.Yaw, hurtevent.Victim.Position, 106.0f) && hurtevent.Victim.IsSpotted)
@@ -1104,7 +1096,7 @@ namespace Detection
                 return null;
             // Choose the first in the list as we ordered it by Offset (see above)
             var victim = vcandidates[0];
-            if (victim.GetTeam() == wf.Actor.GetTeam()) throw new Exception("No teamfire possible for combatlink creation");
+            if (victim.Team == wf.Actor.Team) throw new Exception("No teamfire possible for combatlink creation");
             vcandidates.Clear();
             return victim;
         }
@@ -1119,7 +1111,7 @@ namespace Detection
         {
             if (actor.IsDead()) return null;
 
-            foreach (var counterplayer in Data.Players.Where(player => !player.IsDead() && player.GetTeam() != actor.GetTeam()))
+            foreach (var counterplayer in Data.Players.Where(player => !player.IsDead() && player.Team != actor.Team))
             {
                 // Test if an enemy can see our actor
                 if (FOVFunctions.IsInHVFOV(counterplayer.Position, counterplayer.Facing.Yaw, actor.Position, 106.0f))
@@ -1133,7 +1125,7 @@ namespace Detection
                 return null;
 
             var nearestplayer = scandidates[0];
-            if (nearestplayer.GetTeam() == actor.GetTeam()) throw new Exception("No teamspotting possible");
+            if (nearestplayer.Team == actor.Team) throw new Exception("No teamspotting possible");
             scandidates.Clear();
             return nearestplayer;
         }
@@ -1154,7 +1146,7 @@ namespace Detection
         #region Helping Methods
         private bool rowset = false;
 
-        private void ExportEDDataToCSV(float sec)
+        /*private void ExportEDDataToCSV(float sec)
         {
             //TODO: check this earlier!
             if (totalencounterhurtevents == 0 || totalencounterkillevents == 0)
@@ -1202,7 +1194,7 @@ namespace Detection
             exporter["Supportlinks - Assist"] = killAssistCount;
             exporter["Supportlinks - Damageassist"] = damageAssistCount;
             exporter.ExportToFile("encounter_detection_results.csv");
-        }
+        }*/
 
 
         /// <summary>

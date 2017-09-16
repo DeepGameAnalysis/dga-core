@@ -52,11 +52,11 @@ namespace Detection
         public Link(Player actor, Player reciever, LinkType type, Direction dir)
         {
             if (actor == null || reciever == null) throw new Exception("Players cannot be null");
-            if (actor.GetTeam() != reciever.GetTeam() && type == LinkType.SUPPORTLINK)
+            if (actor.Team != reciever.Team && type == LinkType.SUPPORTLINK)
             {
                 Console.WriteLine("Cannot create Supportlink between different teams"); // Occurs if a kill occurs where an enemy hit his teammate so hard that he is registered as assister
             }
-            if (actor.GetTeam() == reciever.GetTeam() && type == LinkType.COMBATLINK)
+            if (actor.Team == reciever.Team && type == LinkType.COMBATLINK)
             {
                 Console.WriteLine("Cannot create Combatlink in the same team"); //Can occur if teamdamage happens. Dman antimates
             }
@@ -71,9 +71,9 @@ namespace Detection
         public Link(Player actor, Player reciever, LinkType type, Direction dir, Point2D? coll)
         {
             if (actor == null || reciever == null) throw new Exception("Players cannot be null");
-            if (actor.GetTeam() != reciever.GetTeam() && type == LinkType.SUPPORTLINK)
+            if (actor.Team != reciever.Team && type == LinkType.SUPPORTLINK)
                 Console.WriteLine("Cannot create Supportlink between different teams"); // Occurs if a kill occurs where an enemy hit his teammate so hard that he is registered as assister
-            if (actor.GetTeam() == reciever.GetTeam() && type == LinkType.COMBATLINK)
+            if (actor.Team == reciever.Team && type == LinkType.COMBATLINK)
                 Console.WriteLine("Cannot create Combatlink in the same team"); //Can occur if teamdamage happens. Dman antimates
 
             players = new Player[2];

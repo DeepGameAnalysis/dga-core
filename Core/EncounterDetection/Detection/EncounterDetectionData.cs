@@ -4,7 +4,6 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Export;
 using Data.Gameobjects;
 using Data.Gamestate;
 using Clustering;
@@ -122,7 +121,7 @@ namespace Detection
         /// <summary>
         /// All clusters of attackpositions
         /// </summary>
-        public PlayerHurtCluster[] PlayerHurt_clusters;
+        public PlayerHurtCluster[] Clusters_PlayerHurt;
 
 
 

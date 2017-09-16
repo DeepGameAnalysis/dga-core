@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A36A9504-DD34-4C5C-A1E5-BFF7528344F0}</ProjectGuid>
+    <ProjectGuid>{09043B53-0BC3-44CC-AE5D-1BB3BD446D20}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>gau_encounterdetection</RootNamespace>
-    <AssemblyName>gau-encounterdetection</AssemblyName>
+    <RootNamespace>gau_json</RootNamespace>
+    <AssemblyName>gau-json</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -53,17 +53,11 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MathNet.Numerics, Version=3.19.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.3.19.0\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\dga-encounterdetection\Encounterdetection\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -72,26 +66,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Detection\Controllers\ConnectionController.cs" />
-    <Compile Include="Detection\EncounterDetectionData.cs" />
-    <Compile Include="Detection\Preprocessing\Mapconstructors\LeveldMapConstructor.cs" />
-    <Compile Include="Detection\Preprocessing\Mapconstructors\PolygonalMapConstructor.cs" />
-    <Compile Include="Detection\Clustertypes\EventCluster.cs" />
-    <Compile Include="Detection\Clustertypes\PlayerHurtCluster.cs" />
-    <Compile Include="Detection\Controllers\CollisionController.cs" />
-    <Compile Include="Detection\Linker.cs" />
-    <Compile Include="Detection\Preprocessing\MainPreprocessor.cs" />
-    <Compile Include="Detection\Preprocessing\Preprocessors\AOE2Preprocessor.cs" />
-    <Compile Include="Exceptions\InsufficientPlayersException.cs" />
-    <Compile Include="Exceptions\InvalidEntityException.cs" />
-    <Compile Include="Exceptions\InvalidReplayDataException.cs" />
-    <Compile Include="Detection\Preprocessing\Mapconstructors\SimpleMapConstructor.cs" />
-    <Compile Include="Exceptions\PlayerBindingException.cs" />
-    <Compile Include="Exceptions\PlayerDisconnectException.cs" />
-    <Compile Include="Detection\EncounterDetection.cs" />
-    <Compile Include="Detection\EncounterDetectionReplay.cs" />
-    <Compile Include="Detection\Preprocessing\Preprocessors\CSGOPreprocessor.cs" />
-    <Compile Include="Detection\Preprocessing\IPreprocessor.cs" />
+    <Compile Include="Generators\AOE2HDGameStateGenerator.cs" />
+    <Compile Include="Generators\CSGOGameStateGenerator.cs" />
+    <Compile Include="Generators\GameStateGenerator.cs" />
+    <Compile Include="Generators\IGameStateGenerator.cs" />
+    <Compile Include="Parsers\AOE2HDJSONParser.cs" />
+    <Compile Include="Parsers\IJSONParsing.cs" />
+    <Compile Include="Parsers\JSONParser.cs" />
+    <Compile Include="Parsers\CSGOJSONParser.cs" />
+    <Compile Include="Parsers\ParseTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -100,17 +83,21 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\dga-mathnet\src\Spatial\SpatialMath.csproj">
-      <Project>{1f3364c6-9da3-4006-b83f-6d1335099895}</Project>
-      <Name>SpatialMath</Name>
+    <ProjectReference Include="..\..\..\demoinfo\DemoInfo\DemoInfo.csproj">
+      <Project>{22d4cfc7-6810-4c18-a353-71a49782394f}</Project>
+      <Name>DemoInfo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Data\Data.csproj">
+    <ProjectReference Include="..\Core\EncounterDetection\EncounterDetection.csproj">
+      <Project>{a36a9504-dd34-4c5c-a1e5-bff7528344f0}</Project>
+      <Name>EncounterDetection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dga-core\Core\Data\Data.csproj">
       <Project>{190d2940-9e01-46fe-97e0-4b1a30af923b}</Project>
       <Name>Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SpatialAnalysis\SpatialAnalysis.csproj">
-      <Project>{6b5b8f00-f0ba-4ac2-af69-6c851628ef59}</Project>
-      <Name>SpatialAnalysis</Name>
+    <ProjectReference Include="..\..\dga-mathnet\src\Spatial\SpatialMath.csproj">
+      <Project>{1f3364c6-9da3-4006-b83f-6d1335099895}</Project>
+      <Name>SpatialMath</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

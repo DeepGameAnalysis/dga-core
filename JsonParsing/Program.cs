@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace gau_encounterdetection.utils
+namespace gau_json
 {
-    class PropertyReader
+    class Program
     {
+        static void Main(string[] args)
+        {
+        }
     }
 }

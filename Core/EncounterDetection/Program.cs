@@ -14,6 +14,7 @@ namespace gau_encounterdetection
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Started Project: Encounter Detection");
         }
     }
 }

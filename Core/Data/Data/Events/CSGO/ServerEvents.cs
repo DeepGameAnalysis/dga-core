@@ -12,7 +12,7 @@ namespace Data.Gameevents
         /// <summary>
         /// Type of the server event (Disconnect, Connect etc)
         /// </summary>
-        public string servereventtype { get; set; }
+        public string Servereventtype { get; set; }
     }
 
     public class TakeOverEvent : ServerEvents

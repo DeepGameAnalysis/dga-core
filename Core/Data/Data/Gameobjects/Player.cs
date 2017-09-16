@@ -1,9 +1,11 @@
 ﻿using MathNet.Spatial.Euclidean;
+using System;
 using System.Collections.Generic;
 
 namespace Data.Gameobjects
 {
-    public enum Team { //@TODO: Split for each game
+    public enum Team
+    { //@TODO: Split for each game
         //CSGO
         None,
         CT,
@@ -35,65 +37,20 @@ namespace Data.Gameobjects
 
         public long player_id { get; set; }
 
-        public string Team { get; set; }
-
-        /// <summary>
-        /// Range this player can currently attack on if he is limited to this range
-        /// </summary>
-        public double Attackrange { get; set; }
-
-        /// <summary>
-        /// Range the player can currently support his teammates in any way.
-        /// </summary>
-        public double Supportrange { get; set; }
-
         /// <summary>
         /// Controlled entities by this player (nades, units, other AI or objects of this player which are networked)
         /// </summary>
-        public HashSet<Entity> Entities;
+        public HashSet<Unit> Units;
 
         /// <summary>
-        /// Defining a position of a player (if hes not controlling entities in the current game)
-        /// Change in X means left or right movement on a minimap
-        /// Change in Y means up or down movement on a minimap
-        /// Change in Z means vertical movement (jumps, heightchanges on the map by climbing etc)
+        /// Team of the player of this unit
         /// </summary>
-        public Point3D Position { get; set; }
+        public Team Team { get; set; }
 
-        /// <summary>
-        /// Holding Yaw and Pitch of a players current sight vector
-        /// </summary>
-        public Facing Facing { get; set; }
-
-        /// <summary>
-        /// Velocity changes correlate with the positioning as mentioned for a players "position"
-        /// </summary>
-        public Velocity Velocity { get; set; }
-
-        public int HP { get; set; }
-
-        public bool IsSpotted { get; set; }
-
-        /// <summary>
-        /// Maps strings back to Team.Enum
-        /// </summary>
-        /// <returns></returns>
-        public Team GetTeam()
-        {
-            if(Team == "Terrorist")
-            {
-                return Gameobjects.Team.T;
-            } else if(Team == "CounterTerrorist")
-            {
-                return Gameobjects.Team.CT;
-            }
-            return Gameobjects.Team.None;
-
-        }
 
         public bool SameTeam(Player p)
         {
-            if (GetTeam() == p.GetTeam())
+            if (Team == p.Team)
                 return true;
 
             return false;
@@ -103,13 +60,12 @@ namespace Data.Gameobjects
         {
             if (HP == 0)
                 return true;
-            else
-                return false;
+            return false;
         }
 
         public override string ToString()
         {
-            return "Name: " + Playername + " ID: "+ player_id + " Team: " +Team;
+            return "Name: " + Playername + " ID: " + player_id + " Team: " + Team;
         }
 
         public override bool Equals(object obj) //Why does a true overriden Equals kill the json serialisation?!?
@@ -117,8 +73,16 @@ namespace Data.Gameobjects
             Player p = obj as Player;
             if (p == null)
                 return false;
+
             if (player_id == p.player_id)
+            {
+                if (!SameTeam(p))
+                    throw new Exception("Player with same IDs cannot be in different teams!");
+                if (Playername.Trim().Equals(p.Playername.Trim()))
+                    throw new Exception("Player with same IDs cannot be in different teams!");
+
                 return true;
+            }
 
             return false;
         }
@@ -157,42 +121,5 @@ namespace Data.Gameobjects
         public float Flashedduration { get; set; }
     }
 
-    /// <summary>
-    /// Facing-class: Holding the direction of sight if given. For example as yaw and pitch values
-    /// </summary>
-    public class Facing
-    {
-        public float Yaw { get; set; }
-        public float Pitch { get; set; }
 
-        internal Facing Copy()
-        {
-            return new Facing() { Yaw = Yaw, Pitch = Pitch };
-        }
-
-        internal float[] GetAsArray()
-        {
-            return new float[] { Yaw, Pitch };
-        }
-    }
-
-    /// <summary>
-    /// Veolcity-class: Holding every component of a velocity vector
-    /// </summary>
-    public class Velocity
-    {
-        public float VX { get; set; }
-        public float VY { get; set; }
-        public float VZ { get; set; }
-
-        internal Velocity Copy()
-        {
-            return new Velocity() { VX = VX, VY = VY, VZ = VZ };
-        }
-
-        internal float[] GetAsArray()
-        {
-            return new float[] { VX, VY, VZ };
-        }
-    }
 }

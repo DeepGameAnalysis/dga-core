@@ -1,16 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Windows;
-using System.Collections;
 using QuadTree;
-using QuadTree.Common;
-using KDTree.Math;
 using Data.Gameobjects;
 using MathNet.Spatial.Euclidean;
 using Clustering;
