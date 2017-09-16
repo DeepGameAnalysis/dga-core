@@ -7,13 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncounterDetection", "Encou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{A610B179-882F-4DE5-AF4D-92799B1ECB41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnalysis", "..\..\dga-spatialanalysis\Spatialanalysis\SpatialAnalysis\SpatialAnalysis.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialMath", "..\..\dga-mathnet\src\Spatial\SpatialMath.csproj", "{1F3364C6-9DA3-4006-B83F-6D1335099895}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonParsing", "..\..\dga-json\Json\JsonParsing\JsonParsing.csproj", "{09043B53-0BC3-44CC-AE5D-1BB3BD446D20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{190D2940-9E01-46FE-97E0-4B1A30AF923B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialAnalysis", "SpatialAnalysis\SpatialAnalysis.csproj", "{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,46 +119,6 @@ Global
 		{A610B179-882F-4DE5-AF4D-92799B1ECB41}.YoloDebug|x64.Build.0 = Debug|Any CPU
 		{A610B179-882F-4DE5-AF4D-92799B1ECB41}.YoloDebug|x86.ActiveCfg = Debug|x86
 		{A610B179-882F-4DE5-AF4D-92799B1ECB41}.YoloDebug|x86.Build.0 = Debug|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|Any CPU.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|ARM.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|ARM.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x64.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x64.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x86.ActiveCfg = Debug|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x86.Build.0 = Debug|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|ARM.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x64.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x86.ActiveCfg = Debug|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x86.Build.0 = Debug|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|ARM.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|ARM.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x64.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x64.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x86.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x86.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|Any CPU.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|Any CPU.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|ARM.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|ARM.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x64.ActiveCfg = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x64.Build.0 = Release|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x86.ActiveCfg = Release|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x86.Build.0 = Release|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|Any CPU.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|ARM.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|ARM.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x64.ActiveCfg = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x64.Build.0 = Debug|Any CPU
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x86.ActiveCfg = Debug|x86
-		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x86.Build.0 = Debug|x86
 		{1F3364C6-9DA3-4006-B83F-6D1335099895}.Bitstream-Debugging|Any CPU.ActiveCfg = Debug|Any CPU
 		{1F3364C6-9DA3-4006-B83F-6D1335099895}.Bitstream-Debugging|Any CPU.Build.0 = Debug|Any CPU
 		{1F3364C6-9DA3-4006-B83F-6D1335099895}.Bitstream-Debugging|ARM.ActiveCfg = Debug|Any CPU
@@ -279,6 +239,46 @@ Global
 		{190D2940-9E01-46FE-97E0-4B1A30AF923B}.YoloDebug|x64.Build.0 = Debug|Any CPU
 		{190D2940-9E01-46FE-97E0-4B1A30AF923B}.YoloDebug|x86.ActiveCfg = Debug|Any CPU
 		{190D2940-9E01-46FE-97E0-4B1A30AF923B}.YoloDebug|x86.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|Any CPU.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|ARM.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|ARM.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x64.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x64.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x86.ActiveCfg = Debug|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Bitstream-Debugging|x86.Build.0 = Debug|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|ARM.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x64.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x86.ActiveCfg = Debug|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Debug|x86.Build.0 = Debug|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|ARM.Build.0 = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x64.ActiveCfg = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x64.Build.0 = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x86.ActiveCfg = Release|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.Release|x86.Build.0 = Release|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|Any CPU.ActiveCfg = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|Any CPU.Build.0 = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|ARM.ActiveCfg = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|ARM.Build.0 = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x64.ActiveCfg = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x64.Build.0 = Release|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x86.ActiveCfg = Release|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.SavePropValues|x86.Build.0 = Release|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|Any CPU.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|ARM.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|ARM.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x64.ActiveCfg = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x64.Build.0 = Debug|Any CPU
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x86.ActiveCfg = Debug|x86
+		{6B5B8F00-F0BA-4AC2-AF69-6C851628EF59}.YoloDebug|x86.Build.0 = Debug|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
